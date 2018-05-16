@@ -1,0 +1,122 @@
+body {
+    overflow: hidden;
+    font-family: tahoma;
+    font-weight: normal;
+    background: #6ea4ca;
+}
+
+.container{
+    margin-left: 10px;
+    margin-top: 20px;
+}
+.chart-area{
+    position: relative;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1; 
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.custom_modal_header {
+    height: 38px;
+    background-color: #0c3c60;
+    color: #fff!important;
+}
+
+.custom_modal_header_text {
+    margin-top: 8px;
+}
+
+.custom_modal_content {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.custom_modal_footer {
+    height: 30px;
+    background-color: #0c3c60;
+    color: #fff!important;
+}
+
+.custom_modal_footer_text {
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.w3-animate-opacity {
+    animation: opac 0.8s;
+}
+    
+@keyframes opac {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+    
+.w3-animate-show {
+    animation: show 0.8s;
+    animation-fill-mode: forwards;
+}
+    
+@keyframes show {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.patient_data_table{
+    width: 100%;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.patient_data_table tr:nth-child(1) {
+    font-size: 14px;
+    border-bottom: 2px solid #000000;
+}	
+
+.patient_data_table tr {
+    font-size: 12px;
+    border-bottom: 1px solid #000000;
+}
+
+.patient_data_table tr.not_header:hover {
+    background: #dbddff;
+}
+
+.patient_data_table td label {
+    display: inherit;
+}
+
+.patient_data_col {
+    margin-right: 120px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;	
+}
+
+.watermark {
+    color: #d0d0d0;
+    font-size: 0.85em;
+    position: relative;
+    margin-top: -25px;
+}
+
+.table_title {
+    font-size: 18px;
+    font-family: Arial;
+    font-weight: bold;
+}
