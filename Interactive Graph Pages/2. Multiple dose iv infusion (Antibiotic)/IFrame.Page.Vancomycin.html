@@ -9,7 +9,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
 			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
 			  crossorigin="anonymous"/>
-		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+		 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
@@ -293,16 +293,16 @@ body {
 //Global parameters defined here
 var BodyWeight = 65;
 var VolumnDistribution = {mean: 1.1, std: 0.4};
-var Tau = 6;
+var Tau = 8;
 var Infusion = 2;
-var Dose = 975;
+var Dose = 500;
 var Clearance = {mean: 100, std: 16};
 var MIC = 1;
 var hMax = 60;
 var vMax = 0;
 var onePopulation = true;
 var firstPopulation = true;
-var DefaultPatient, DefaultTau, DefaultDose, ActivePatient, Washout;
+var DefaultPatient, DefaultTau, DefaultDose, ActivePatient, Infusion, Washout;
 
 //Calculation parameters defined here
 var clearance, actualKe;
@@ -673,7 +673,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [20, 40, 60, 80, 100]
+            ticks: [10, 20, 30, 40, 50]
         },
         chartArea: {
             top: 30,
