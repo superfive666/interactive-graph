@@ -5,7 +5,7 @@ var messageRepository = {
     BackToFirstPatient: {Message: "back to first patient"},
     Yes: {Message: "yes button clicked"},
     FrequencySelection: {Message: "selected new frequency", Value: "6"},
-	DosageInput: {Message: "user input new new dosage", Value: "1000"},
+	DosageInput: {Message: "user input new new dosage", Value: "500"},
 	OptimizeCondition: {
 		Message: "apply changes to dosage and frequency",
 		Frequency: "6",
@@ -27,7 +27,7 @@ var controllers = {
 
 var questionText = [
     "Would you like to see all the 20 patients in the population?",
-    "Would you like to go back to singple patient view?"
+    "Would you like to go back to single patient view?"
 ];
 var textIndex = 0;
 

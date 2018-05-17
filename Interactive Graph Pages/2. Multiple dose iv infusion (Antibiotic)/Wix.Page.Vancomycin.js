@@ -4,78 +4,119 @@ var messageRepository = {
     ShowPatientData: {Message: "show patient data"},
     BackToFirstPatient: {Message: "back to first patient"},
     Yes: {Message: "yes button clicked"},
-    FrequencySelection: {Message: "selected new frequency", Value: "8"},
+    FrequencySelection: {Message: "selected new frequency", Value: "6"},
 	DosageInput: {Message: "user input new new dosage", Value: "500"},
 	OptimizeCondition: {
 		Message: "apply changes to dosage and frequency",
-		Frequency: "8",
+		Frequency: "6",
 		Dosage: "500"
 	}
 }
 
-$w.onReady(function () {
-	//TODO: write your page related code here...
+var controllers = {
+    SwitchPatient: "#SwitchPatientButton",
+    ChangePopulation: "#ChangePopulationButton",
+    ShowPatient: "#ShowPatientButton",
+    BackToFirstPatient: "#FirstPatientButton",
+    Yes: "#YesButton",
+    AppyChange: "#ApplyChangeButton",
+    GraphArea: "#GraphArea",
+    QuestionText: "#QuestionText",
+	Frequecny: "#FrequencyGroup",
+	DosageInput: "#DosageInput"
+}
 
+var textRepository = {
+	QuestionText = {
+		TexTItems = [
+			"Would you like to see all the 20 patients in the population?",
+			"Would you like to go back to single patient view?"
+		],
+		TextIndex = 0
+	},
+	ShowPatientButton = {
+		TextItems = [
+			"Show patient data",
+			"Show population data"
+		],
+		TextIndex = 0
+	},
+	FirstPatientButton = {
+		TextItems = [
+			"Back to first patient",
+			"Back to first population"
+		],
+		TextIndex = 0
+	}
+}
+
+var Internal = {
+	ToggleText = function (target, i) {
+		var key = target.id;
+		textRepository[key].TextIndex = i == undefined? 1 - textRepository[key].TextIndex : i;
+		target.text = textRepository[key].TextItems[textRepository[key].TextIndex];
+	},
+	ToggleLabel = function (target, i) {
+		var key = target.id;
+		textRepository[key].TextIndex = i == undefined? 1 - textRepository[key].TextIndex : i;
+		target.label = textRepository[key].TextItems[textRepository[key].TextIndex];
+	}
+}
+
+$w.onReady(function () {
+	$w(controllers.ChangePopulation).disable();
+	textRepository.QuestionText.TextIndex = 0;
+	$w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[textRepository.QuestionText.TextIndex];
+	textRepository.ShowPatientButton.TextIndex = 0;
+	$w(controllers.ShowPatient).label = textRepository.ShowPatientButton.TextItems[textRepository.ShowPatientButton.TextIndex];
+	textRepository.FirstPatientButton.TextIndex = 0;
+	$w(controllers.BackToFirstPatient).label = textRepository.FirstPatientButton.TextItems[textRepository.FirstPatientButton.TextIndex];
 });
 
 export function ResamplePatientButton_click(event, $w) {
-	//Add your code for this event here:
-	$w("#GraphArea").postMessage({Message: "switch patient"}, "*");
+	$w(controllers.GraphArea).postMessage(messageRepository.SwitchPatient, "*");
 }
 
 export function ChangePopulationButton_click(event, $w) {
-    //Add your code for this event here:
-    $w("#ResamplePatientButton").disable();
-    $w("#YesButton").disable();
-	$w("#GraphArea").postMessage({Message: "change population"}, "*");
+    $w(controllers.SwitchPatient).disable();
+    $w(controllers.Yes).disable();
+	$w(controllers.GraphArea).postMessage(messageRepository.ChangePopulation, "*");
 }
 
 export function ShowPatientButton_click(event, $w) {
-	//Add your code for this event here:
-	$w("#GraphArea").postMessage({Message: "show patient data"}, "*");
+	$w(controllers.GraphArea).postMessage(messageRepository.ShowPatientData, "*");
 }
 
 export function FirstPatientButton_click(event, $w) {
-    //Add your code for this event here:
-    $w("#ResamplePatientButton").enable();
-    $w("#YesButton").enable();
-    $w("#FrequencyGroup").value = "8";
-    $w("#DosageInput").value = "";
-	$w("#GraphArea").postMessage({Message: "back to first patient"}, "*");
+    $w(controllers.SwitchPatient).enable();
+    $w(controllers.Yes).enable();
+    $w(controllers.Frequency).value = "8";
+    $w(controllers.DosageInput).value = "";
+	$w(controllers.GraphArea).postMessage(messageRepository.BackToFirstPatient, "*");
 }
 
 export function YesButton_click(event, $w) {
-	//Add your code for this event here:
-	if($w("#QuestionText").text == "Would you like to see all the 20 patients in the population?")
+	Internal.ToggleText($w(controllers.QuestionText));
+	if (textRepository[$w(controllers.QuestionText).id].TextIndex == 0)
 	{
-        $w("#ChangePopulationButton").enable();
-		$w("#QuestionText").text = "Would you like to go back to single patient view?";
+		$w(controllers.ChangePopulation).enable();
+	} else {
+		$w(controllers.ChangePopulation).enable();
 	}
-	else
-	{
-        $w("#ChangePopulationButton").disable();
-		$w("#QuestionText").text = "Would you like to see all the 20 patients in the population?";
-	}
-
-	$w("#GraphArea").postMessage({Message: "yes button clicked"}, "*");
+	$w(controllers.GraphArea).postMessage(messageRepository.Yes, "*");
 }
 
-//export function FrequencyGroup_change(event, $w) {
-	//Add your code for this event here:
-//	var freq = $w("#FrequencyGroup").value;
-//	$w("#QuestionText").text = "Would you like to see all the 20 patients in the population?";
-//	$w("#GraphArea").postMessage({Message: "selected new frequency", Value: freq}, "*");
-//}
+export function FrequencyGroup_change(event, $w) {
+	//To-do: further enhancement if separate control...
+
+}
 
 export function ApplyChangesButton_click(event, $w) {
-	//Add your code for this event here:
-	if($w("#DosageInput").value == "") return;
-	var dose = $w("#DosageInput").value;
-	var freq = $w("#FrequencyGroup").value;
-	$w("#QuestionText").text = "Would you like to see all the 20 patients in the population?";
-	$w("#GraphArea").postMessage({
-		Message: "apply changes to dosage and frequency",
-		Frequency: freq,
-		Dosage: dose
-	}, "*");
+	if($w(controllers.DosageInput).value == "") return;
+	var dose = $w(controllers.DosageInput).value;
+	var freq = $w(controllers.Frequecny).value;
+	Internal.ToggleText($w(controllers.QuestionText), 0);
+	messageRepository.OptimizeCondition.Dosage = dose;
+	messageRepository.OptimizeCondition.Frequency = freq;
+	$w(controllers.GraphArea).postMessage(messageRepository.OptimizeCondition, "*");
 }

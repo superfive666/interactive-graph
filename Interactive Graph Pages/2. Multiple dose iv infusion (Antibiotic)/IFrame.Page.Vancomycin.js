@@ -1,9 +1,9 @@
 //Global parameters defined here
 var BodyWeight = 65;
 var VolumnDistribution = {mean: 1.1, std: 0.4};
-var Tau = 6;
+var Tau = 8;
 var Infusion = 2;
-var Dose = 975;
+var Dose = 500;
 var Clearance = {mean: 100, std: 16};
 var MIC = 1;
 var hMax = 60;
