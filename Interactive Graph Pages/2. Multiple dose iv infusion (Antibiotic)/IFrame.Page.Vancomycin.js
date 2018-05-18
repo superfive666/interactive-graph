@@ -69,6 +69,10 @@ function ReceiveMessage(e) {
         return;
     }
 
+    var single = document.getElementById("SinglePatientData").style.display == "block";
+    var all = document.getElementById("PopulationModal").style.display == "block";
+    if (single || all) return;
+
     switch(e.data.Message)
     {
         case messageRepository.SwitchPatient: SwitchPatient(); break;
@@ -115,6 +119,7 @@ function OptimizeCondition (dose, freq) {
 
 function SwitchPatient () {
     if (!firstPopulation) return;
+    
     ActivePatient++;
     ActivePatient %= 20;
     SetGraphData();					
