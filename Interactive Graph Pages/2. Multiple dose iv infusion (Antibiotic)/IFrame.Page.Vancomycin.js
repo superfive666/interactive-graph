@@ -259,7 +259,9 @@ function OnePopulation() {
             if (a > cmax) cmax = a;
             if (a < cmin) cmin = a;
         }
-    }					
+    }				
+    
+    for(var i = 240 - 24*4; i < 240; i++) auc += dataArray[i][1];
     
     $("#SinglePatient_IfsRt").text(Round2Decimal(Dose).toString());
     $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
