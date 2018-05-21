@@ -52,6 +52,10 @@ body {
     background-color: rgba(0,0,0,0.4);
 }
 
+.modal_close {
+    height: 38px;
+}
+
 .custom_modal_header {
     height: 38px;
     background-color: #0c3c60;
@@ -165,7 +169,7 @@ body {
 		<div id="SinglePatientData" class="w3-modal w3-animate-opacity">
 			<div class="w3-modal-content w3-card-4">
 				<header class="w3-container custom_modal_header">
-					<span class="w3-button w3-middle w3-display-topright close" id="close_single">&times;</span>
+					<span class="w3-button w3-middle w3-display-topright close modal_close" id="close_single">&times;</span>
 					<h5 class="custom_modal_header_text">Single Patient Data</h5>
 				</header>
 				<div class="w3-container custom_modal_content">
@@ -228,7 +232,7 @@ body {
 		<div id="PopulationModal" class="w3-modal w3-animate-opacity">
 			<div class="w3-modal-content w3-card-4">
 				<header class="w3-container custom_modal_header">
-					<span class="w3-button w3-large w3-display-topright close" id="close_all_pop">&times;</span>
+					<span class="w3-button w3-large w3-display-topright close modal_close" id="close_all_pop">&times;</span>
 					<h5 class="custom_modal_header_text">All Population Average Data</h5>
 				</header>
 				<div class="w3-container custom_modal_content">
@@ -284,7 +288,7 @@ body {
 					</table>      
 				</div>
 				<footer class="w3-container custom_modal_footer">
-					<p class="modal_footer custom_modal_footer_texts">&copy; pharmacologytutorials.com</p>
+					<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
 				</footer>
 			</div>
 		</div>

@@ -36,6 +36,27 @@ var _First20Patients = {};
 //Default values stored here
 var DefaultDose, DefaultTau, DefaultPatient;
 
+document.getElementById("close_single").addEventListener("click", function() {
+    $("#SinglePatientData")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
+});
+document.getElementById("close_all_pop").addEventListener("click", function() {
+    $("#PopulationModal")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
+});
+document.getElementById("SinglePatientData").addEventListener('animationend', function() {
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
+});
+document.getElementById("PopulationModal").addEventListener('animationend', function() {
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
+});
+
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
@@ -128,9 +149,15 @@ function OptimizeCondition(freq, dose) {
         alert("No dosage passed by the page!");
         return;
     }
-
+    
     Dose = parseInt(dose);
     Tau = parseInt(freq);
+
+    for(var i = 0; i < 20; i++)
+    {
+        _D[i] = Dose;
+    }
+    
     SetGraphData();
 }
 
@@ -223,7 +250,6 @@ function Round2Decimal(val) {
 }
 
 function OnePopulation() {
-    PrepareParameters();
     var dataArray = new Array();
     var t = 0;
     while (t <= hMax)

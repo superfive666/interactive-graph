@@ -27,6 +27,10 @@ body {
     background-color: rgba(0,0,0,0.4);
 }
 
+.modal_close {
+    height: 38px;
+}
+
 .custom_modal_header {
     height: 38px;
     background-color: #0c3c60;

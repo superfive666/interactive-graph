@@ -24,7 +24,7 @@
 				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 				crossorigin="anonymous"></script>
 		<style>
-			body {
+body {
     overflow: hidden;
     font-family: tahoma;
     font-weight: normal;
@@ -51,6 +51,10 @@
     overflow: auto; 
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
+}
+
+.modal_close {
+    height: 38px;
 }
 
 .custom_modal_header {
@@ -165,7 +169,7 @@
 		<div id="SinglePatientData" class="w3-modal w3-animate-opacity">
 				<div class="w3-modal-content w3-card-4">
 					<header class="w3-container custom_modal_header">
-						<span class="w3-button w3-middle w3-display-topright close" id="close_single">&times;</span>
+						<span class="w3-button w3-middle w3-display-topright close modal_close" id="close_single">&times;</span>
 						<h5 class="custom_modal_header_text">Single Patient Data</h5>
 					</header>
 					<div class="w3-container custom_modal_content">
@@ -208,7 +212,7 @@
 		<div id="PopulationModal" class="w3-modal w3-animate-opacity">
 				<div class="w3-modal-content w3-card-4">
 					<header class="w3-container custom_modal_header">
-						<span class="w3-button w3-large w3-display-topright close" id="close_all_pop">&times;</span>
+						<span class="w3-button w3-large w3-display-topright close modal_close" id="close_all_pop">&times;</span>
 						<h5 class="custom_modal_header_text">All Population Average Data</h5>
 					</header>
 					<div class="w3-container custom_modal_content">
@@ -244,7 +248,7 @@
 						</table>      
 					</div>
 					<footer class="w3-container custom_modal_footer">
-						<p class="modal_footer custom_modal_footer_texts">&copy; pharmacologytutorials.com</p>
+						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
 					</footer>
 				</div>
 		</div>
@@ -286,6 +290,27 @@ var _First20Patients = {};
 
 //Default values stored here
 var DefaultDose, DefaultTau, DefaultPatient;
+
+document.getElementById("close_single").addEventListener("click", function() {
+    $("#SinglePatientData")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
+});
+document.getElementById("close_all_pop").addEventListener("click", function() {
+    $("#PopulationModal")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
+});
+document.getElementById("SinglePatientData").addEventListener('animationend', function() {
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
+});
+document.getElementById("PopulationModal").addEventListener('animationend', function() {
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
+});
 
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
@@ -379,9 +404,15 @@ function OptimizeCondition(freq, dose) {
         alert("No dosage passed by the page!");
         return;
     }
-
+    
     Dose = parseInt(dose);
     Tau = parseInt(freq);
+
+    for(var i = 0; i < 20; i++)
+    {
+        _D[i] = Dose;
+    }
+    
     SetGraphData();
 }
 
@@ -474,7 +505,6 @@ function Round2Decimal(val) {
 }
 
 function OnePopulation() {
-    PrepareParameters();
     var dataArray = new Array();
     var t = 0;
     while (t <= hMax)
