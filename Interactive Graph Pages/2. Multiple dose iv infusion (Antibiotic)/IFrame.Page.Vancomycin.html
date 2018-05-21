@@ -336,21 +336,23 @@ $(document).ready(function () {
 
 document.getElementById("close_single").addEventListener("click", function() {
     $("#SinglePatientData")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
 });
 document.getElementById("close_all_pop").addEventListener("click", function() {
     $("#PopulationModal")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
 });
 document.getElementById("SinglePatientData").addEventListener('animationend', function() {
-      if (this.classList.contains('w3-animate-show')) {
-            this.style.display = 'none';
-            this.classList.remove('w3-animate-show')
-      }
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
 });
 document.getElementById("PopulationModal").addEventListener('animationend', function() {
-      if (this.classList.contains('w3-animate-show')) {
-            this.style.display = 'none';
-            this.classList.remove('w3-animate-show')
-      }
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
 });
 
 //Behavior function define below
