@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <script	src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+              integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+              crossorigin="anonymous">
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
+        <script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>	
+        
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+              rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+              crossorigin="anonymous">
+        <link href="Backend/CommonStyle.css" rel="stylesheet">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+                crossorigin="anonymous"></script>
+        <style>
+
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div class="row container" id="GraphContainer">
+            <div class="col-md-6">
+                <h5>INTERACTIVE GRAPH - 1 Morphine Continuous</h5>
+                <h6> <br /></h6>
+                <div class="chart-area" style="position:relative" id="ChartArea">
+                    <div>
+                        <p class="watermark">	&copy; pharmacologytutorials.com</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 input_area">
+                <div class="row input_header">
+                    <h5 style="font-size: 18px">Input Parameters</h5>
+                    <a class="reset" id="ResetButton" href="#">Reset</a>
+                </div>
+                <div class="row input_content" id="InputParameters">
+                    <table class="input_table">
+                        <tr>
+                            <th>Parameters</th>
+                            <th>Value</th>
+                            <th>St.dev</th>
+                        </tr>
+                        <tr>
+                            <td>Body Weight (Kg)</td>
+                            <td>
+                                <input type="text" id="BWValue" default-value="47">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Height (m)</td>
+                            <td>
+                                <input type="text" id="HeightValue" default-value="1.8">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Dose (mg)</td>
+                            <td>
+                                <input type="text" id="DoseValue" default-value="1.5">
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Volume Distribution (L)</td>
+                            <td>
+                                <input type="text" id="VdMeanValue" default-value="4">
+                            </td>
+                            <td>
+                                <input type="text" id="VdStdValue" default-value="1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Clearance (mL/min)</td>
+                            <td>
+                                <input type="text" id="CLMeanValue" default-value="40">
+                            </td>
+                            <td>
+                                <input type="text" id="CLStdValue" default-value="6">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Maximum Hours (hr)</td>
+                            <td>
+                                <input type="text" id="HMAXValue" default-value="20">
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row input_content">
+                    <button class="action_button" id="ChangePopulation">
+                        Draw Graph
+                    </button>
+                    <button class="action_button" id="ChangeSample" style="margin-left: 10px">
+                        Change Sample
+                    </button>
+                </div>
+                <div class="row input_content">
+                    <button class="action_button" id="ShowPatientData" behaviour="show" all-population="false">Show Patient Data</button>
+                </div>
+                <div class="row input_content" >
+                    <p style="font-size: 14px">Would you like to view a population of 20 similar patients?</p>
+                </div>
+                <div class="row input_content" style="margin-top: 5px">
+                    <button class="action_button" id="AllPopulation">Yes</button>
+                </div>
+                    
+            </div>
+        </div>
+        <div class="row display_area" id="PatientData" style="display: none">
+            <div class="col-md-4 patient_data_col" id="SinglePatientData">
+                <div class = "row">
+                    <p class="table_title"> Single Patient Data </p>
+                </div>
+                <div class="row">
+                    <table class="patient_data_table" id="SinglePatientDataTable">
+                        <tr>
+                            <th>Parameters</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Vd (L)</td>
+                            <td ><label id="SinglePatient_Vd" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Cl (mL/min)</td>
+                            <td ><label id="SinglePatient_Cl" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Half-life (hr)</td>
+                            <td ><label id="SinglePatient_THalf" >test_value_1</label></td>
+                        </tr>
+                        <tr>
+                            <td>Ka (/hr)</td>
+                            <td ><label id="SinglePatient_Ka" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Steady state concentration (CSS) </td>
+                            <td ><label id="SinglePatient_CSS" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Time to reach steady state (hr)</td>
+                            <td ><label id="SinglePatient_SteadyT" >test_value_1</label></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-5" id="AllPopulationData" style="display: none">
+                <div class = "row">
+                    <p class="table_title"> All Population Patient Data (Average Value) </p>
+                </div>
+                <div class="row">
+                    <table class="patient_data_table" id="AllPopulationDataTable">
+                        <tr>
+                            <th>Parameters</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Vd (L)</td>
+                            <td ><label id="AllPatient_Vd" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Cl (mL/min)</td>
+                            <td ><label id="AllPatient_Cl" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Half-life (hr)</td>
+                            <td ><label id="AllPatient_THalf" >test_value_1</label></td>
+                        </tr>
+                        <tr>
+                            <td>Ka (/hr)</td>
+                            <td ><label id="AllPatient_Ka" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Steady state concentration (CSS) </td>
+                            <td ><label id="AllPatient_CSS" >test_value_1</label></td>
+                        </tr>
+                        <tr class="not_header">
+                            <td>Time to reach steady state (hr)</td>
+                            <td ><label id="AllPatient_SteadyT" >test_value_1</label></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        <div>
+        
+        <script>	
+ 
+        </script>
+    </body>
+</html>

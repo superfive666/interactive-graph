@@ -5,11 +5,12 @@ var Age = 30;
 var BodyWeight = 65;
 var Height = 1.8;
 var Dose = 100;
-var Tau = 24;
-var VolumnDistribution = {mean: 25, std: 5};
+var Dose = 75;
+var Tau = 12;
+var VolumnDistribution = {mean: 8, std: 1.6};
 var ExtractionRate = {mean: 0.1, std: 0.02};
 var Ka = {mean: 2, std: 0.4};
-var Clearance = {mean: 240, std: 48};
+var Clearance = {mean: 15, std: 3};
 var hMax = 100;
 var vMax = 0;
 var clearance, actualKe;
@@ -157,7 +158,7 @@ function OptimizeCondition(freq, dose) {
     {
         _D[i] = Dose;
     }
-    
+
     SetGraphData();
 }
 
@@ -375,7 +376,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [2, 4, 6, 8, 10]
+            ticks: [2, 4, 6, 8, 10, 12, 14]
         },
         chartArea: {
             top: 30,

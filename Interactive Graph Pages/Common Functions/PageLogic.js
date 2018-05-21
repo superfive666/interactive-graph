@@ -151,7 +151,7 @@ export function FrequencyGroup_change(event, $w) {
 export function ApplyChangesButton_click(event, $w) {
 	if($w(controllers.DosageInput).value === "") return;
 	var dose = $w(controllers.DosageInput).value;
-	var freq = $w(controllers.Frequecny).value;
+	var freq = $w(controllers.Frequency).value;
 	Internal.ToggleText($w(controllers.QuestionText), 0);
 	messageRepository.OptimizeCondition.Dosage = dose;
 	messageRepository.OptimizeCondition.Frequency = freq;
