@@ -2,6 +2,7 @@
 var BodyWeight = 47;
 var VolumnDistribution = {mean: 4, std: 1};
 var Dose = 1.5;
+var InfusionRate = 1.0;
 var Clearance = {mean: 40, std: 6};
 var hMax = 20;
 var vMax = 0;
@@ -23,7 +24,7 @@ var messageRepository = {
     Yes: "yes button clicked",
     FrequencySelection: "selected new frequency",
     DosageInput: "user input new new dosage",
-    OptimizeCondition: "apply changes to dosage and frequency"
+    OptimizeCondition: "apply changes to infusion rate and frequency"
 }
 
 //Page Logic define here
@@ -78,7 +79,11 @@ function ReceiveMessage(e) {
         case messageRepository.ShowPatientData: ShowPatientData(); break;
         case messageRepository.Yes: YesButtonClick(); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
-        case messageRepository.OptimizeCondition: OptimizeCondition(); break;
+        case messageRepository.OptimizeCondition: 
+            OptimizeCondition({
+                Dosage: e.data.Dosage,
+                InfusionRate: e.data.InfusionRate
+            }); break;
         case messageRepository.FrequencySelection: alert("Not in use."); break;
         case messageRepository.DosageInput: alert("Not in use."); break;
         default:
@@ -89,8 +94,6 @@ function ReceiveMessage(e) {
 
 function InitVariables() {
     ActivePatient = Math.floor(Math.random()*20);
-
-    var _K0, _Ke, _Vd;
 
     _K0 = new Array(20);
     _Ke = new Array(20);
@@ -120,32 +123,63 @@ function RestoreDefault() {
 }
 
 function SwitchPatient() {
-
+    if (!firstPopulation) return;
+    ActivePatient++;
+    ActivePatient %= 20;
+    SetGraphData();
 }
 
 function ShowPatientData() {
-
+    var target = onePopulation? $("#SinglePatientData") : $("#PopulationModal");
+    target.css("display", "block");
 }
 
 function ChangePopulation() {
-
+    firstPopulation = false;
+    Get20Patients();
+    SetGraphData();
 }
 
 function YesButtonClick() {
-
-
+    onePopulation = !onePopulation;
+    SetGraphData();
 }
 
 function BackToFirstPatient() {
-
+    RestoreDefault();
+    firstPopulation = true;
+    SetGraphData();
 }
 
-function OptimizeCondition() {
-
+function OptimizeCondition(e) {
+    RestoreDefault();
+    var dose = e.Dosage;
+    var rate = e.InfusionRate;
+    if (dose == undefined)
+    {
+        alert("No dosage input!");
+        return;
+    }
+    if (rate == undefined) 
+    {
+        alert("No infusion rate input!");
+        return;
+    }
+    Dose = parseFloat(dose);
+    InfusionRate = parseFloat(rate);
+    for(var i = 0; i < 20; i++)
+    {
+        _K0[i] = Dose * InfusionRate;
+    }
+    onePopulation = true;
+    SetGraphData();
 }
 
 function Get20Patients() {
-
+    for(var i = 0; i < 20; i++)
+    {
+        PrepareParameters(i);
+    }
 }
 
 //Calculation function define below		
@@ -163,26 +197,26 @@ function CalculateStd(m, s)
     return Math.sqrt(Math.log(a2/a1));
 }
 
-function PrepareParameters() {
+function PrepareParameters(i) {
     vMax = 0.00;
     
-    _K0 = Dose;
-    _Vd = jStat.lognormal.inv(Math.random(), 
-                              CalculateMean( VolumnDistribution.mean, VolumnDistribution.std),
-                              CalculateStd( VolumnDistribution.mean, VolumnDistribution.std)) * BodyWeight;
+    _K0[i] = Dose * InfusionRate;
+    _Vd[i] = jStat.lognormal.inv(Math.random(), 
+                              CalculateMean(VolumnDistribution.mean, VolumnDistribution.std),
+                              CalculateStd(VolumnDistribution.mean, VolumnDistribution.std)) * BodyWeight;
                               
-    clearance = jStat.lognormal.inv(Math.random(), 
+    clearance[i] = jStat.lognormal.inv(Math.random(), 
                                     CalculateMean(Clearance.mean, Clearance.std),
                                     CalculateStd(Clearance.mean, Clearance.std));
                                     
-    actualKe = Math.min(0.9999, (clearance*60)/(_Vd*1000)*BodyWeight);
-    _Ke = Math.log(1) - Math.log(1 - actualKe);
+    actualKe[i] = Math.min(0.9999, (clearance[i]*60)/(_Vd[i]*1000)*BodyWeight);
+    _Ke[i] = Math.log(1) - Math.log(1 - actualKe[i]);
 }
 
-function AmountAtTime(t) {
-    var a1 = _K0;
-    var a2 = _Ke * _Vd;
-    var a3 = 1 - Math.exp(-_Ke*t);
+function AmountAtTime(t, i) {
+    var a1 = _K0[i];
+    var a2 = _Ke[i] * _Vd[i];
+    var a3 = 1 - Math.exp(-_Ke[i]*t);
     return a1*a3/a2;
 }
 
@@ -195,31 +229,29 @@ function Round4Decimal(val) {
 }
 
 function OnePopulation() {
-    PrepareParameters();
     var dataArray = new Array();
     var t = 0;
     while (t <= hMax)
     {
-        var a = AmountAtTime(t)
+        var a = AmountAtTime(t, ActivePatient)
         dataArray.push([t, a]);
         t += 0.25;
 
         if (a > vMax) vMax = a;
     }
                             
-    $("#SinglePatient_Vd").text(Round2Decimal(_Vd).toString());
-    $("#SinglePatient_Cl").text(Round2Decimal(clearance).toString());
-    $("#SinglePatient_THalf").text(Round2Decimal((Math.log(2)/_Ke)).toString());
-    $("#SinglePatient_Ka").text(Round2Decimal(actualKe).toString());
+    $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
+    $("#SinglePatient_Cl").text(Round2Decimal(clearance[ActivePatient]).toString());
+    $("#SinglePatient_THalf").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient])).toString());
+    $("#SinglePatient_Ka").text(Round2Decimal(actualKe[ActivePatient]).toString());
     $("#SinglePatient_CSS").text(Round4Decimal(dataArray[dataArray.length - 1][1]).toString());
-    $("#SinglePatient_SteadyT").text(Round2Decimal((Math.log(2)/_Ke)*4.5).toString());
+    $("#SinglePatient_SteadyT").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient]*4.5).toString()));
     
     vMax = Math.round(vMax*10000)/10000;
     return dataArray;
 }
 
-function AllPopulation() {
-    OnePopulation();							
+function AllPopulation() {						
     var population = new Array(hMax*4);
     var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0;
     
@@ -232,10 +264,10 @@ function AllPopulation() {
     for(var j = 0; j < 21; j++)
     {	
         PrepareParameters();
-        vd += _Vd/20;
-        cl += clearance/20;
-        thalf += Math.log(2)/_Ke/20;
-        ke += actualKe/20;
+        vd += _Vd[j%20]/20*(j<20);
+        cl += clearance[j%20]/20*(j<20);
+        thalf += Math.log(2)/_Ke[j%20]/20*(j<20);
+        ke += actualKe[j%20]/20*(j<20);
         for(var i = 0; i < hMax*4; i++)
         {
             var t = i * 0.25;
@@ -243,7 +275,7 @@ function AllPopulation() {
                 population[i][j] = t;
             }
             else {
-                population[i][j] = AmountAtTime(t);
+                population[i][j] = AmountAtTime(t, j-1);
                 population[i][21] += population[i][j]/20;
             }
         }
@@ -264,17 +296,7 @@ function AllPopulation() {
 }
 
 function SetGraphData() {
-    var data; 
-
-
-    if ($("#ShowPatientData").attr("all-population") == "false")
-    {
-        data = OnePopulation();
-    }
-    else
-    {
-        data = AllPopulation();
-    }
+    var data = onePopulation? OnePopulation() : AllPopulation();
 
     DrawGraph(data);
 }
@@ -309,7 +331,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks:[0, 15, 30, 45, 60]
+            ticks:[0, 5, 10, 15, 20]
         },
         vAxis: {
             title: "Antibiotic Concentration (mg/L)",
@@ -330,7 +352,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [20, 40, 60, 80, 100]
+            ticks: [0.01, 0.02, 0.03, 0.04]
         },
         chartArea: {
             top: 30,

@@ -125,8 +125,8 @@ export function ShowPatientButton_click(event, $w) {
 export function FirstPatientButton_click(event, $w) {
     $w(controllers.SwitchPatient).enable();
     $w(controllers.Yes).enable();
-    $w(controllers.Frequency).value = "8";
-    $w(controllers.DosageInput).value = "";
+    $w(controllers.Frequency).value = "12";
+    $w(controllers.DosageInput).value = "75";
 	$w(controllers.GraphArea).postMessage(messageRepository.BackToFirstPatient, "*");
 }
 
@@ -151,8 +151,10 @@ export function FrequencyGroup_change(event, $w) {
 export function ApplyChangesButton_click(event, $w) {
 	if($w(controllers.DosageInput).value === "") return;
 	var dose = $w(controllers.DosageInput).value;
-	var freq = $w(controllers.Frequecny).value;
+	var freq = $w(controllers.Frequency).value;
 	Internal.ToggleText($w(controllers.QuestionText), 0);
+	Internal.ToggleLabel($w(controllers.ShowPatient), 0);
+    Internal.ToggleLabel($w(controllers.BackToFirstPatient), 0);
 	messageRepository.OptimizeCondition.Dosage = dose;
 	messageRepository.OptimizeCondition.Frequency = freq;
 	$w(controllers.GraphArea).postMessage(messageRepository.OptimizeCondition, "*");

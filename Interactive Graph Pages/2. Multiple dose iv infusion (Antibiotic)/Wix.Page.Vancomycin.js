@@ -153,6 +153,8 @@ export function ApplyChangesButton_click(event, $w) {
 	var dose = $w(controllers.DosageInput).value;
 	var freq = $w(controllers.Frequency).value;
 	Internal.ToggleText($w(controllers.QuestionText), 0);
+	Internal.ToggleLabel($w(controllers.ShowPatient), 0);
+    Internal.ToggleLabel($w(controllers.BackToFirstPatient), 0);
 	messageRepository.OptimizeCondition.Dosage = dose;
 	messageRepository.OptimizeCondition.Frequency = freq;
 	$w(controllers.GraphArea).postMessage(messageRepository.OptimizeCondition, "*");

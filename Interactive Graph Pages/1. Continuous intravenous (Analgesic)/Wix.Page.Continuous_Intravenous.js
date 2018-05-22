@@ -23,9 +23,9 @@ let messageRepository = {
 		Value: "500"
 	},
 	OptimizeCondition: {
-		Message: "apply changes to dosage and frequency",
-		Frequency: "8",
-		Dosage: "500"
+		Message: "apply changes to infusion rate and frequency",
+		InfusionRate: "1.0",
+		Dosage: "1.5"
 	}
 };
 
@@ -38,7 +38,7 @@ let controllers = {
 	AppyChange: "#ApplyChangeButton",
 	GraphArea: "#GraphArea",
 	QuestionText: "#QuestionText",
-	Frequency: "#FrequencyGroup",
+	InfusionRate: "#InfusionRate",
 	DosageInput: "#DosageInput"
 };
 
@@ -149,11 +149,14 @@ export function FrequencyGroup_change(event, $w) {
 }
 
 export function ApplyChangesButton_click(event, $w) {
-	if($w(controllers.DosageInput).value === "") return;
+    if($w(controllers.DosageInput).value === "") return;
+    if($w(controllers.InfusionRate).value === "") return;
 	var dose = $w(controllers.DosageInput).value;
-	var freq = $w(controllers.Frequency).value;
-	Internal.ToggleText($w(controllers.QuestionText), 0);
+	var rate = $w(controllers.InfusionRate).value;
+    Internal.ToggleText($w(controllers.QuestionText), 0);
+    Internal.ToggleLabel($w(controllers.ShowPatient), 0);
+    Internal.ToggleLabel($w(controllers.BackToFirstPatient), 0);
 	messageRepository.OptimizeCondition.Dosage = dose;
-	messageRepository.OptimizeCondition.Frequency = freq;
+	messageRepository.OptimizeCondition.InfusionRate = rate;
 	$w(controllers.GraphArea).postMessage(messageRepository.OptimizeCondition, "*");
 }
