@@ -6,94 +6,146 @@ var Clearance = {mean: 40, std: 6};
 var hMax = 20;
 var vMax = 0;
 var clearance, actualKe;
+var ActivePatient, DefaultPatient;
+var firstPopulation = true;
+var onePopulation = true;
 
 //Calculation parameters defined here
 var _K0, _Ke, _Vd;
+var _First20Patients = {};
+
+//Message repository variables
+var messageRepository = {
+    SwitchPatient: "switch patient",
+    ChangePopulation: "change population",
+    ShowPatientData: "show patient data",
+    BackToFirstPatient: "back to first patient",
+    Yes: "yes button clicked",
+    FrequencySelection: "selected new frequency",
+    DosageInput: "user input new new dosage",
+    OptimizeCondition: "apply changes to dosage and frequency"
+}
 
 //Page Logic define here
+document.getElementById("close_single").addEventListener("click", function() {
+    $("#SinglePatientData")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
+});
+
+document.getElementById("close_all_pop").addEventListener("click", function() {
+    $("#PopulationModal")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
+});
+
+document.getElementById("SinglePatientData").addEventListener('animationend', function() {
+    if (this.classList.contains('w3-animate-show')) {
+        this.style.display = 'none';
+        this.classList.remove('w3-animate-show')
+    }
+});
+
+document.getElementById("PopulationModal").addEventListener('animationend', function() {
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
+});
+
 $(document).ready(function () {
-    RestoreDefault();
-    PrepareParameters();
+    window.addEventListener("message", ReceiveMessage, false);
+    InitVariables();
+    SaveDefault();
     google.charts.load('current', {'packages':['line', 'corechart']});
     google.charts.setOnLoadCallback(SetGraphData);
-    
-    $("#ChangeSample").hide();
-});
-
-$("#AllPopulation").on("click", function () {
-    if ($(this).text() == "Yes")
-    {
-        $(this).text("No");
-        $("#ShowPatientData").attr("all-population", "true");
-        $("#AllPopulationData").show();
-        $("#ChangeSample").show();
-    }
-    else
-    {
-        $(this).text("Yes");
-        $("#ShowPatientData").attr("all-population", "false");
-        $("#AllPopulationData").hide();
-        $("#ChangeSample").hide();
-    }
-    
-    UpdateParameters();
-    PrepareParameters();
-    SetGraphData();
-});
-
-$("#ChangeSample").on("click", OnePopulation);
-
-$("#ShowPatientData").on("click", function () {
-    if ($(this).text().trim() == "Show Patient Data") 
-    {
-        $("#PatientData").show();
-        $(this).text("Hide Patient Data");
-    }
-    else 
-    {
-        $("#PatientData").hide();
-        $(this).text("Show Patient Data");
-    }
-});
-
-$("#ChangePopulation").on("click", function() {
-    UpdateParameters();
-    PrepareParameters();
-    SetGraphData();
-});
-
-$("#ResetButton").on("click", function() {
-    RestoreDefault();
-})
-
-$(document).find("input").each(function () {
-    $(this).on("change", function() {
-        if (parseFloat($(this).val()) === NaN)
-        {
-            alert("Invalid input parameters, must be a number!");
-            $(this).val("");
-        }
-    });
 });
 
 //Behavioural functions define below
-function RestoreDefault(){
-    $(document).find("input").each(function() {
-        if($(this).attr("default-value") != undefined)
-        {
-            $(this).val($(this).attr("default-value"));
-        }
-    });
+function ReceiveMessage(e) {
+    var message = e.data.Message;
+    if (message == undefined) 
+    {
+        alert("Unrecognized message received.");
+        return;
+    }
+
+    var single = document.getElementById("SinglePatientData").style.display == "block";
+    var all = document.getElementById("PopulationModal").style.display == "block";
+    if (single || all) return;
+
+    switch(message) {
+        case messageRepository.SwitchPatient: SwitchPatient(); break;
+        case messageRepository.ChangePopulation: ChangePopulation(); break;
+        case messageRepository.ShowPatientData: ShowPatientData(); break;
+        case messageRepository.Yes: YesButtonClick(); break;
+        case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
+        case messageRepository.OptimizeCondition: OptimizeCondition(); break;
+        case messageRepository.FrequencySelection: alert("Not in use."); break;
+        case messageRepository.DosageInput: alert("Not in use."); break;
+        default:
+            alert("Invalid message posted, I am not reacting to it!");
+            break;
+    }
 }
 
-function UpdateParameters(){
-    BodyWeight = $("#BWValue").val();
-    Dose = $("#DoseValue").val();
-    VolumnDistribution.mean = $("#VdMeanValue").val();
-    VolumnDistribution.std = $("#VdStdValue").val();
-    Clearance.mean = $("#CLMeanValue").val();
-    Clearance.std = $("#CLStdValue").val();
-    hMax = $("#HMAXValue").val();
+function InitVariables() {
+    ActivePatient = Math.floor(Math.random()*20);
+
+    var _K0, _Ke, _Vd;
+
+    _K0 = new Array(20);
+    _Ke = new Array(20);
+    _Vd = new Array(20);
+    clearance = new Array(20);
+    actualKe = new Array(20);
+
+    Get20Patients();
+}
+
+function SaveDefault() {
+    _First20Patients["_K0"] = _K0.slice();
+    _First20Patients["_Ke"] = _Ke.slice();
+    _First20Patients["_Vd"] = _Vd.slice();
+    _First20Patients["clearance"] = clearance.slice();
+    _First20Patients["actualKe"] = actualKe.slice();
+    DefaultPatient = ActivePatient;
+}
+
+function RestoreDefault() {
+   _K0 = _First20Patients._K0.slice();
+   _Ke = _First20Patients._Ke.slice();
+   _Vd = _First20Patients._Vd.slice();
+   clearance = _First20Patients.clearance.slice();
+   actualKe = _First20Patients.actualKe.slice();
+   ActivePatient = DefaultPatient;
+}
+
+function SwitchPatient() {
+
+}
+
+function ShowPatientData() {
+
+}
+
+function ChangePopulation() {
+
+}
+
+function YesButtonClick() {
+
+
+}
+
+function BackToFirstPatient() {
+
+}
+
+function OptimizeCondition() {
+
+}
+
+function Get20Patients() {
+
 }
 
 //Calculation function define below		
@@ -212,7 +264,9 @@ function AllPopulation() {
 }
 
 function SetGraphData() {
-    var data;
+    var data; 
+
+
     if ($("#ShowPatientData").attr("all-population") == "false")
     {
         data = OnePopulation();
