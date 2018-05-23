@@ -471,7 +471,7 @@ function PrepareParameters(i) {
     var f = jStat.lognormal.inv(Math.random(),
                                 CalculateMean(ExtractionRate.mean, ExtractionRate.std),
                                 CalculateStd(ExtractionRate.mean, ExtractionRate.std));
-    _F[i] = 1 - f;
+    _F[i] = (1 - f)*(f < 1);
     _D[i] = Dose;
     _Ka[i] = jStat.lognormal.inv(Math.random(),
                               CalculateMean(Ka.mean, Ka.std),
