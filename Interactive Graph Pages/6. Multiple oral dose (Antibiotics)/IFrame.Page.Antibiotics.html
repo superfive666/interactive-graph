@@ -1,16 +1,271 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<script	src="https://code.jquery.com/jquery-3.3.1.min.js"
+				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+				crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+			  crossorigin="anonymous"/>
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
+		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+		<script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
+		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
+
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+			  crossorigin="anonymous">
+		<link href="Backend/CommonStyle.css" rel="stylesheet">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+				crossorigin="anonymous"></script>
+		<style>
+body {
+    overflow: hidden;
+    font-family: tahoma;
+    font-weight: normal;
+    background: #6ea4ca;
+}
+
+.container{
+    margin-left: 10px;
+    margin-top: 20px;
+}
+.chart-area{
+    position: relative;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal_close {
+    height: 38px;
+    color: #fff;
+}
+
+.custom_modal_header {
+    height: 38px;
+    background-color: #0c3c60;
+    color: #fff!important;
+}
+
+.custom_modal_header_text {
+    margin-top: 8px;
+}
+
+.custom_modal_content {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.custom_modal_footer {
+    height: 30px;
+    background-color: #0c3c60;
+    color: #fff!important;
+}
+
+.custom_modal_footer_text {
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.w3-animate-opacity {
+    animation: opac 0.8s;
+}
+
+@keyframes opac {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+.w3-animate-show {
+    animation: show 0.8s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes show {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+.patient_data_table{
+    width: 100%;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.patient_data_table tr:nth-child(1) {
+    font-size: 14px;
+    border-bottom: 2px solid #000000;
+}
+
+.patient_data_table tr {
+    font-size: 12px;
+    border-bottom: 1px solid #000000;
+}
+
+.patient_data_table tr.not_header:hover {
+    background: #dbddff;
+}
+
+.patient_data_table td label {
+    display: inherit;
+}
+
+.patient_data_col {
+    margin-right: 120px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.watermark {
+    color: #d0d0d0;
+    font-size: 0.85em;
+    position: relative;
+    margin-top: -25px;
+}
+
+.table_title {
+    font-size: 18px;
+    font-family: Arial;
+    font-weight: bold;
+}
+		</style>
+		<title></title>
+	</head>
+	<body>
+		<div class="row container" id="GraphContainer">
+			<div class="col-lg-12">
+				<h6> <br /></h6>
+				<h6> <br /></h6>
+				<div class="chart-area" style="position:relative" id="ChartArea">
+					<div>
+						<p class="watermark">	&copy; pharmacologytutorials.com</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--Modal Area-->
+		<div id="SinglePatientData" class="w3-modal w3-animate-opacity">
+				<div class="w3-modal-content w3-card-4">
+					<header class="w3-container custom_modal_header">
+						<span class="w3-button w3-middle w3-display-topright close modal_close" id="close_single">&times;</span>
+						<h5 class="custom_modal_header_text">Single Patient Data</h5>
+					</header>
+					<div class="w3-container custom_modal_content">
+						<table class="patient_data_table" id="SinglePatientDataTable">
+							<tr>
+								<th>Parameters</th>
+								<th>Value</th>
+							</tr>
+							<tr class="not_header">
+								<td>Vd (L)</td>
+								<td ><label id="SinglePatient_Vd" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>Cl (mL/min)</td>
+								<td ><label id="SinglePatient_Cl" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>Half-life (hr)</td>
+								<td ><label id="SinglePatient_THalf" >test_value_1</label></td>
+							</tr>
+							<tr>
+								<td>Ka (/hr)</td>
+								<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>C_max</td>
+								<td ><label id="SinglePatient_CMax" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>C_min</td>
+								<td ><label id="SinglePatient_CMin" >test_value_1</label></td>
+							</tr>
+						</table>
+					</div>
+					<footer class="w3-container custom_modal_footer">
+						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
+					</footer>
+				</div>
+		</div>
+		<div id="PopulationModal" class="w3-modal w3-animate-opacity">
+				<div class="w3-modal-content w3-card-4">
+					<header class="w3-container custom_modal_header">
+						<span class="w3-button w3-large w3-display-topright close modal_close" id="close_all_pop">&times;</span>
+						<h5 class="custom_modal_header_text">All Population Average Data</h5>
+					</header>
+					<div class="w3-container custom_modal_content">
+						<table class="patient_data_table" id="AllPopulationDataTable">
+							<tr>
+								<th>Parameters</th>
+								<th>Value</th>
+							</tr>
+							<tr class="not_header">
+								<td>Vd (L)</td>
+								<td ><label id="AllPatient_Vd" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>Cl (mL/min)</td>
+								<td ><label id="AllPatient_Cl" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>Half-life (hr)</td>
+								<td ><label id="AllPatient_THalf" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>Ka (/hr)</td>
+								<td ><label id="AllPatient_Ka" >test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>C_max</td>
+								<td ><label id="AllPatient_CMax"> test_value_1</label></td>
+							</tr>
+							<tr class="not_header">
+								<td>C_min</td>
+								<td ><label id="AllPatient_CMin" >test_value_1</label></td>
+							</tr>
+						</table>
+					</div>
+					<footer class="w3-container custom_modal_footer">
+						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
+					</footer>
+				</div>
+		</div>
+		<script>
 //Global parameters defined here
 var Gender = "Male";
 var Race = "Chinese";
 var Age = 30;
 var BodyWeight = 65;
 var Height = 1.8;
-var Dose = 100;
-var Dose = 75;
+var Dose = 250;
 var Tau = 12;
-var VolumnDistribution = {mean: 8, std: 1.6};
-var ExtractionRate = {mean: 0.1, std: 0.02};
-var Ka = {mean: 2, std: 0.4};
-var Clearance = {mean: 15, std: 3};
+var VolumnDistribution = {mean: 250, std: 50};
+var ExtractionRate = {mean: 0.3, std: 0.06};
+var Ka = {mean: 0.8, std: 0.16};
+var Clearance = {mean: 550, std: 110};
 var hMax = 100;
 var vMax = 0;
 var clearance, actualKe;
@@ -62,7 +317,7 @@ $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
     google.charts.load('current', {'packages':['line', 'corechart']});
-    google.charts.setOnLoadCallback(SetGraphData);    
+    google.charts.setOnLoadCallback(SetGraphData);
 });
 
 //Behavioural functions define below
@@ -90,7 +345,7 @@ function ReceiveMessage(e) {
         case messageRepository.OptimizeCondition: OptimizeCondition(e.data.Frequency, e.data.Dosage); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
         case messageRepository.Yes: YesButton(); break;
-        default: 
+        default:
             alert("Invalid message posted, I am not reacting to it!");
             break;
     }
@@ -135,7 +390,7 @@ function RetrieveDefault(){
     clearance = _First20Patients.clearance.slice();
     actualKe = _First20Patients.actualKe.slice();
     Dose = DefaultDose;
-    Tau = DefaultTau;    
+    Tau = DefaultTau;
 }
 
 function OptimizeCondition(freq, dose) {
@@ -150,25 +405,26 @@ function OptimizeCondition(freq, dose) {
         alert("No dosage passed by the page!");
         return;
     }
-    
+
     Dose = parseInt(dose);
     Tau = parseInt(freq);
-
+    onePopulation = true;
+    firstPopulation = true;
+    
     for(var i = 0; i < 20; i++)
     {
         _D[i] = Dose;
     }
-    onePopulation = true;
-    firstPopulation = true;
+
     SetGraphData();
 }
 
 function SwitchPatient () {
     if (!firstPopulation) return;
-    
+
     ActivePatient++;
     ActivePatient %= 20;
-    SetGraphData();					
+    SetGraphData();
 }
 
 function BackToFirstPatient() {
@@ -184,7 +440,7 @@ function ShowPatientData() {
 
 function ChangePopulation(){
     firstPopulation = false;
-    Generate20();	
+    Generate20();
     SetGraphData();
 }
 
@@ -195,11 +451,11 @@ function YesButton() {
 
 function Generate20() {
     for (var i = 0; i < 20; i++) {
-        PrepareParameters(i);            
+        PrepareParameters(i);
     }
 }
 
-//Calculation function define below		
+//Calculation function define below
 function CalculateMean(m, s)
 {
     var a1 = m * m;
@@ -215,18 +471,18 @@ function CalculateStd(m, s)
 }
 
 function PrepareParameters(i) {
-    var f = jStat.lognormal.inv(Math.random(), 
+    var f = jStat.lognormal.inv(Math.random(),
                                 CalculateMean(ExtractionRate.mean, ExtractionRate.std),
                                 CalculateStd(ExtractionRate.mean, ExtractionRate.std));
     _F[i] = 1 - f;
     _D[i] = Dose;
-    _Ka[i] = jStat.lognormal.inv(Math.random(), 
+    _Ka[i] = jStat.lognormal.inv(Math.random(),
                               CalculateMean(Ka.mean, Ka.std),
                               CalculateStd(Ka.mean, Ka.std));
-    _Vd[i] = _F[i] * jStat.lognormal.inv(Math.random(), 
+    _Vd[i] = _F[i] * jStat.lognormal.inv(Math.random(),
                                    CalculateMean(VolumnDistribution.mean, VolumnDistribution.std),
                                    CalculateStd(VolumnDistribution.mean, VolumnDistribution.std));
-    clearance[i] = jStat.lognormal.inv(Math.random(), 
+    clearance[i] = jStat.lognormal.inv(Math.random(),
                                         CalculateMean(Clearance.mean, Clearance.std),
                                         CalculateStd(Clearance.mean, Clearance.std)) * _F[i];
     actualKe[i] = Math.min((clearance[i]*60)/(_Vd[i]*1000), 0.9999);
@@ -262,22 +518,22 @@ function OnePopulation() {
 
         if (a > vMax) vMax = a;
     }
-    
+
     $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
     $("#SinglePatient_Cl").text(Round2Decimal(clearance[ActivePatient]).toString());
     $("#SinglePatient_THalf").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient])).toString());
     $("#SinglePatient_Ka").text(Round2Decimal(actualKe[ActivePatient]).toString());
     $("#SinglePatient_CMin").text("0.00");
     $("#SinglePatient_CMax").text(Round2Decimal(vMax).toString());
-    
+
     vMax = Math.round(vMax*10)/10;
     return dataArray;
 }
 
-function AllPopulation() {						
+function AllPopulation() {
     var population = new Array(hMax*4);
     var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0;
-    
+
     for(var i = 0; i < hMax*4; i++)
     {
         population[i] = new Array(22);
@@ -285,8 +541,8 @@ function AllPopulation() {
     }
 
     for(var j = 0; j < 21; j++)
-    {	
-        var local_max = 0; 
+    {
+        var local_max = 0;
         vd += _Vd[j%20]/20*(j<20);
         cl += clearance[j%20]/20*(j<20);
         thalf += Math.log(2)/_Ke[j%20]/20*(j<20);
@@ -304,7 +560,7 @@ function AllPopulation() {
                 population[i][21] += population[i][j]/20;
             }
         }
-        
+
         if (j == 0) continue;
         if (local_max < cmin) cmin = local_max;
         if (local_max > cmax) cmax = local_max;
@@ -316,7 +572,7 @@ function AllPopulation() {
     $("#AllPatient_THalf").text(Round2Decimal(thalf).toString());
     $("#AllPatient_CMin").text(Round2Decimal(cmin).toString());
     $("#AllPatient_CMax").text(Round2Decimal(cmax).toString());
-    
+
     vMax = Math.round(vMax*10)/10;
     return population;
 }
@@ -327,8 +583,8 @@ function SetGraphData() {
 }
 
 function DrawGraph(data) {
-    var chart_styling = 
-    chart_styling = 
+    var chart_styling =
+    chart_styling =
     {
         legend: {
             textStyle: {
@@ -377,7 +633,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [2, 4, 6, 8, 10, 12, 14]
+            ticks: [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6]
         },
         chartArea: {
             top: 30,
@@ -402,7 +658,7 @@ function DrawGraph(data) {
         for (var i = 1; i <= 20; i++)
         {
             table.addColumn("number", "Patient-"+i);
-            if (!firstPopulation || i != ActivePatient+1) 
+            if (!firstPopulation || i != ActivePatient+1)
                 chart_styling.series[i-1] = {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],
@@ -427,3 +683,6 @@ function DrawGraph(data) {
     var chart = new google.visualization.LineChart(document.getElementById("ChartArea"));
     chart.draw(table, chart_styling);
 }
+		</script>
+	</body>
+</html>

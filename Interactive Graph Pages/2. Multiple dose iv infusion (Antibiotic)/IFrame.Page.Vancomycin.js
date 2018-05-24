@@ -44,21 +44,23 @@ $(document).ready(function () {
 
 document.getElementById("close_single").addEventListener("click", function() {
     $("#SinglePatientData")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
 });
 document.getElementById("close_all_pop").addEventListener("click", function() {
     $("#PopulationModal")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
 });
 document.getElementById("SinglePatientData").addEventListener('animationend', function() {
-      if (this.classList.contains('w3-animate-show')) {
-            this.style.display = 'none';
-            this.classList.remove('w3-animate-show')
-      }
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
 });
 document.getElementById("PopulationModal").addEventListener('animationend', function() {
-      if (this.classList.contains('w3-animate-show')) {
-            this.style.display = 'none';
-            this.classList.remove('w3-animate-show')
-      }
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
 });
 
 //Behavior function define below
@@ -68,6 +70,10 @@ function ReceiveMessage(e) {
         alert("Unrecognized message received.");
         return;
     }
+
+    var single = document.getElementById("SinglePatientData").style.display == "block";
+    var all = document.getElementById("PopulationModal").style.display == "block";
+    if (single || all) return;
 
     switch(e.data.Message)
     {
@@ -110,11 +116,13 @@ function OptimizeCondition (dose, freq) {
     Tau = parseInt(freq);
     Washout = Tau - Infusion;
     onePopulation = true;
+    firstPopulation = true;
     SetGraphData();
 }
 
 function SwitchPatient () {
     if (!firstPopulation) return;
+    
     ActivePatient++;
     ActivePatient %= 20;
     SetGraphData();					
@@ -259,7 +267,9 @@ function OnePopulation() {
             if (a > cmax) cmax = a;
             if (a < cmin) cmin = a;
         }
-    }					
+    }				
+    
+    for(var i = 240 - 24*4; i < 240; i++) auc += dataArray[i][1];
     
     $("#SinglePatient_IfsRt").text(Round2Decimal(Dose).toString());
     $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());

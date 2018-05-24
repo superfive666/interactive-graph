@@ -52,6 +52,11 @@ body {
     background-color: rgba(0,0,0,0.4);
 }
 
+.modal_close {
+    height: 38px;
+    color: #fff;
+}
+
 .custom_modal_header {
     height: 38px;
     background-color: #0c3c60;
@@ -165,7 +170,7 @@ body {
 		<div id="SinglePatientData" class="w3-modal w3-animate-opacity">
 			<div class="w3-modal-content w3-card-4">
 				<header class="w3-container custom_modal_header">
-					<span class="w3-button w3-middle w3-display-topright close" id="close_single">&times;</span>
+					<span class="w3-button w3-middle w3-display-topright close modal_close" id="close_single">&times;</span>
 					<h5 class="custom_modal_header_text">Single Patient Data</h5>
 				</header>
 				<div class="w3-container custom_modal_content">
@@ -228,7 +233,7 @@ body {
 		<div id="PopulationModal" class="w3-modal w3-animate-opacity">
 			<div class="w3-modal-content w3-card-4">
 				<header class="w3-container custom_modal_header">
-					<span class="w3-button w3-large w3-display-topright close" id="close_all_pop">&times;</span>
+					<span class="w3-button w3-large w3-display-topright close modal_close" id="close_all_pop">&times;</span>
 					<h5 class="custom_modal_header_text">All Population Average Data</h5>
 				</header>
 				<div class="w3-container custom_modal_content">
@@ -284,7 +289,7 @@ body {
 					</table>      
 				</div>
 				<footer class="w3-container custom_modal_footer">
-					<p class="modal_footer custom_modal_footer_texts">&copy; pharmacologytutorials.com</p>
+					<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
 				</footer>
 			</div>
 		</div>
@@ -336,21 +341,23 @@ $(document).ready(function () {
 
 document.getElementById("close_single").addEventListener("click", function() {
     $("#SinglePatientData")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
 });
 document.getElementById("close_all_pop").addEventListener("click", function() {
     $("#PopulationModal")[0].classList.add('w3-animate-show');
+    window.parent.postMessage("Close", "*");
 });
 document.getElementById("SinglePatientData").addEventListener('animationend', function() {
-      if (this.classList.contains('w3-animate-show')) {
-            this.style.display = 'none';
-            this.classList.remove('w3-animate-show')
-      }
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
 });
 document.getElementById("PopulationModal").addEventListener('animationend', function() {
-      if (this.classList.contains('w3-animate-show')) {
-            this.style.display = 'none';
-            this.classList.remove('w3-animate-show')
-      }
+    if (this.classList.contains('w3-animate-show')) {
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
+    }
 });
 
 //Behavior function define below
@@ -360,6 +367,10 @@ function ReceiveMessage(e) {
         alert("Unrecognized message received.");
         return;
     }
+
+    var single = document.getElementById("SinglePatientData").style.display == "block";
+    var all = document.getElementById("PopulationModal").style.display == "block";
+    if (single || all) return;
 
     switch(e.data.Message)
     {
@@ -402,11 +413,13 @@ function OptimizeCondition (dose, freq) {
     Tau = parseInt(freq);
     Washout = Tau - Infusion;
     onePopulation = true;
+    firstPopulation = true;
     SetGraphData();
 }
 
 function SwitchPatient () {
     if (!firstPopulation) return;
+    
     ActivePatient++;
     ActivePatient %= 20;
     SetGraphData();					
@@ -551,7 +564,9 @@ function OnePopulation() {
             if (a > cmax) cmax = a;
             if (a < cmin) cmin = a;
         }
-    }					
+    }				
+    
+    for(var i = 240 - 24*4; i < 240; i++) auc += dataArray[i][1];
     
     $("#SinglePatient_IfsRt").text(Round2Decimal(Dose).toString());
     $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
