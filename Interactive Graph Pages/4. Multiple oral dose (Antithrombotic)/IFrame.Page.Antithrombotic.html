@@ -408,7 +408,9 @@ function OptimizeCondition(freq, dose) {
 
     Dose = parseInt(dose);
     Tau = parseInt(freq);
-
+    onePopulation = true;
+    firstPopulation = true;
+    
     for(var i = 0; i < 20; i++)
     {
         _D[i] = Dose;

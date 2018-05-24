@@ -172,6 +172,7 @@ function OptimizeCondition(e) {
         _K0[i] = Dose * InfusionRate;
     }
     onePopulation = true;
+    firstPopulation = true;
     SetGraphData();
 }
 

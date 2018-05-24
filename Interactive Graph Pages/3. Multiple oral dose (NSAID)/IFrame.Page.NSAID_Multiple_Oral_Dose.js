@@ -158,7 +158,8 @@ function OptimizeCondition(freq, dose) {
     {
         _D[i] = Dose;
     }
-
+    onePopulation = true;
+    firstPopulation = true;
     SetGraphData();
 }
 

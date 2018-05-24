@@ -116,6 +116,7 @@ function OptimizeCondition (dose, freq) {
     Tau = parseInt(freq);
     Washout = Tau - Infusion;
     onePopulation = true;
+    firstPopulation = true;
     SetGraphData();
 }
 
