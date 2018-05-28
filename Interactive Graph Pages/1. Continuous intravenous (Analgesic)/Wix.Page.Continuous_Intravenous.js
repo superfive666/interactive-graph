@@ -125,7 +125,7 @@ export function ShowPatientButton_click(event, $w) {
 export function FirstPatientButton_click(event, $w) {
     $w(controllers.SwitchPatient).enable();
     $w(controllers.Yes).enable();
-    $w(controllers.Frequency).value = "8";
+    $w(controllers.InfusionRate).value = "";
     $w(controllers.DosageInput).value = "";
 	$w(controllers.GraphArea).postMessage(messageRepository.BackToFirstPatient, "*");
 }
