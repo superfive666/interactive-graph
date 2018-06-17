@@ -7,6 +7,8 @@ var VMAX = 0.03;
 var Km = 0.009;
 var TimeInterval = 0.1;
 var Tau = 12;
+var MaxTime = 440;
+var T = 0;
 
 //Current or active patient indicators
 var onePopulation = true;
@@ -203,25 +205,82 @@ function PrepareParameters(i) {
             CalculateStd(Vd.mean, Vd.std));
 }
 
-function CalculateAmount(t, i) {
-
+function CalculateABS(t, i) {
+    var a1 = _F[i] * Dose;
+    var a2 = 1 - Math.exp(-_Ka[i]*t);
+    return a1*a2/_Vd[i];
 }
 
-function AmountAtTime(t, i) {
+function CalculateELI(i, p) {
+    var a1 = VMAX * p * 1000;
+    var a2 = (Km + p) * _Vd[i];
+    return TimeInterval*a1/a2;
+}
 
+function CumulativeABS(t, i) {
+    return t < Tau? CalculateABS(t, i) : CalculateABS(t, i) + CumulativeABS(t - Tau, i);
+}
+
+function AmountAtTime(t, i, j) {
+    var abs = CumulativeABS(t,i);
+    T += t%Tau==0? CalculateELI(i, abs):CalculateELI(i, j);
+    return abs - T;
 }
 
 function RoundNDecimal(val, n) {
     n = Math.pow(10, n);
-    return Math.round(val*n/n);
+    return Math.round(val*n)/n;
 }
 
 function onePopulation() {
+    T = 0; var t = 0; var sum = 0;
+    var dataArray = new Array();
+    while(t <= MaxTime)
+    {
+        var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1]);
+        dataArray.push([t,a]);
+        t += TimeInterval;
+        sum += a;
+    }
 
+    $("#SinglePatient_Dose").text(Dose.toString());
+    $("#SinglePatient_F").text(RoundNDecimal(_F[ActivePatient], 2).toString());
+    $("#SinglePatient_Vd").text(RoundNDecimal(_Vd[ActivePatient], 2).toString());
+    $("#SinglePatient_Conc").text(RoundNDecimal(sum/dataArray.length, 2).toString());
 }
 
 function AllPopulation() {
+    var population = new Array(Math.ceil(MaxTime/TimeInterval));
+    var f = 0, vd = 0, ave = 0, t;
 
+    for(var i = 0; i < population.length; i++)
+    {
+        population[i] = new Array(22);
+        population[i][21] = 0;
+    }
+
+    for(var j = 0; j < 21; j++)
+    {
+        T = 0; t = 0;
+        f += _F[j%20]/20*(j<20);
+        vd += _Vd[j%20]/20*(j<20);
+        for(var i = 0; i < population.length; i++)
+        {
+            if (j == 0) {
+                population[i][j] = t;
+            } else {
+                population[i][j] = AmountAtTime(t, j-1, i==0? 0:population[i-1][j]);
+                population[i][21] += population[i][j]/20;
+            }
+            t += TimeInterval;
+        }
+    }
+
+    $("#AllPatient_Dose").text(Dose.toString());
+    $("#AllPatient_F").text(RoundNDecimal(f, 2).toString());
+    $("#AllPatient_Vd").text(RoundNDecimal(vd, 2).toString());
+    $("#AllPatient_Conc").text(RoundNDecimal(ave, 2).toString());
+    return population;
 }
 
 //Draw graph
