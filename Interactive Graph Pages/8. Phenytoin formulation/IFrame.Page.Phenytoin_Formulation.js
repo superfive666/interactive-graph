@@ -7,7 +7,7 @@ var VMAX = 0.03;
 var Km = 0.009;
 var TimeInterval = 0.1;
 var Tau = 12;
-var MaxTime = 440;
+var MaxTime = 400;
 var T = 0;
 
 //Current or active patient indicators
@@ -232,12 +232,12 @@ function RoundNDecimal(val, n) {
     return Math.round(val*n)/n;
 }
 
-function onePopulation() {
+function OnePopulation() {
     T = 0; var t = 0; var sum = 0;
     var dataArray = new Array();
     while(t <= MaxTime)
     {
-        var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1]);
+        var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1][1]);
         dataArray.push([t,a]);
         t += TimeInterval;
         sum += a;
@@ -247,6 +247,8 @@ function onePopulation() {
     $("#SinglePatient_F").text(RoundNDecimal(_F[ActivePatient], 2).toString());
     $("#SinglePatient_Vd").text(RoundNDecimal(_Vd[ActivePatient], 2).toString());
     $("#SinglePatient_Conc").text(RoundNDecimal(sum/dataArray.length, 2).toString());
+
+    return dataArray;
 }
 
 function AllPopulation() {
@@ -319,10 +321,10 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks:[0, 25, 50, 75, 100]
+            ticks:[0, 100, 200, 300, 400]
         },
         vAxis: {
-            title: "Antibiotic Concentration (mg/L)",
+            title: "Concentration (mg/L)",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -340,7 +342,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [2, 4, 6, 8, 10, 12, 14]
+            ticks: [0.005, 0.01, 0.015, 0.02, 0.025, 0.03]
         },
         chartArea: {
             top: 30,
