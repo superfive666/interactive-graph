@@ -39,7 +39,8 @@ let controllers = {
 	GraphArea: "#GraphArea",
 	QuestionText: "#QuestionText",
 	InfusionRate: "#InfusionRate",
-	DosageInput: "#DosageInput"
+	DosageInput: "#DosageInput",
+	Hint: "#HintText"
 };
 
 let textRepository = {
@@ -110,6 +111,7 @@ export function ChangePopulationButton_click(event, $w) {
     $w(controllers.SwitchPatient).disable();
     $w(controllers.Yes).disable();
 	$w(controllers.GraphArea).postMessage(messageRepository.ChangePopulation, "*");
+	$w(controllers.Hint).hide();
 }
 
 export function ShowPatientButton_click(event, $w) {
@@ -128,6 +130,7 @@ export function FirstPatientButton_click(event, $w) {
     $w(controllers.InfusionRate).value = "";
     $w(controllers.DosageInput).value = "";
 	$w(controllers.GraphArea).postMessage(messageRepository.BackToFirstPatient, "*");
+	$w(controllers.Hint).hide();
 }
 
 export function YesButton_click(event, $w) {
