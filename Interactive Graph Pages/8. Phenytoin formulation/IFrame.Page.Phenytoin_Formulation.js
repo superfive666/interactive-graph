@@ -7,7 +7,7 @@ var VMAX = 0.03;
 var Km = 0.009;
 var TimeInterval = 0.1;
 var Tau = 12;
-var MaxTime = 400;
+var MaxTime = 300;
 var T = 0;
 
 //Current or active patient indicators
@@ -233,27 +233,27 @@ function RoundNDecimal(val, n) {
 }
 
 function OnePopulation() {
-    T = 0; var t = 0; var sum = 0;
+    T = 0; var t = 0; var cmax = 0;
     var dataArray = new Array();
     while(t <= MaxTime)
     {
         var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1][1]);
+        cmax = a>cmax? a:cmax;
         dataArray.push([t,a]);
         t += TimeInterval;
-        sum += a;
     }
 
     $("#SinglePatient_Dose").text(Dose.toString());
     $("#SinglePatient_F").text(RoundNDecimal(_F[ActivePatient], 2).toString());
-    $("#SinglePatient_Vd").text(RoundNDecimal(_Vd[ActivePatient], 2).toString());
-    $("#SinglePatient_Conc").text(RoundNDecimal(sum/dataArray.length, 2).toString());
+    $("#SinglePatient_Vd").text(RoundNDecimal(_Vd[ActivePatient]/1000, 2).toString());
+    $("#SinglePatient_cmax").text(RoundNDecimal(cmax, 2).toString());
 
     return dataArray;
 }
 
 function AllPopulation() {
     var population = new Array(Math.ceil(MaxTime/TimeInterval));
-    var f = 0, vd = 0, ave = 0, t;
+    var f = 0, vd = 0, cmax = 0, t;
 
     for(var i = 0; i < population.length; i++)
     {
@@ -272,6 +272,7 @@ function AllPopulation() {
                 population[i][j] = t;
             } else {
                 population[i][j] = AmountAtTime(t, j-1, i==0? 0:population[i-1][j]);
+                cmax = population[i][j]>cmax? population[i][j]:cmax;
                 population[i][21] += population[i][j]/20;
             }
             t += TimeInterval;
@@ -280,8 +281,8 @@ function AllPopulation() {
 
     $("#AllPatient_Dose").text(Dose.toString());
     $("#AllPatient_F").text(RoundNDecimal(f, 2).toString());
-    $("#AllPatient_Vd").text(RoundNDecimal(vd, 2).toString());
-    $("#AllPatient_Conc").text(RoundNDecimal(ave, 2).toString());
+    $("#AllPatient_Vd").text(RoundNDecimal(vd/1000, 2).toString());
+    $("#AllPatient_Cmax").text(RoundNDecimal(cmax, 2).toString());
     return population;
 }
 
@@ -321,7 +322,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks:[0, 100, 200, 300, 400]
+            ticks:[0, 50, 100, 150, 200, 250, 300]
         },
         vAxis: {
             title: "Concentration (mg/L)",
