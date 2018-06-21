@@ -178,22 +178,30 @@ body {
 							<tr>
 								<th>Parameters</th>
 								<th>Value</th>
+                            </tr>
+                            <tr class="not_header">
+								<td>Bioavailability</td>
+								<td ><label id="SinglePatient_F" >test_value_1</label></td>
+                            </tr>
+                            <tr>
+								<td>Ka (/hr)</td>
+								<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
+                            </tr>
+                            <tr>
+								<td>Dose (mg)</td>
+								<td ><label id="SinglePatient_Dose" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
 								<td>Vd (L)</td>
 								<td ><label id="SinglePatient_Vd" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
-								<td>Cl (mL/min)</td>
+								<td>CL (mL/min)</td>
 								<td ><label id="SinglePatient_Cl" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
 								<td>Half-life (hr)</td>
 								<td ><label id="SinglePatient_THalf" >test_value_1</label></td>
-							</tr>
-							<tr>
-								<td>Ka (/hr)</td>
-								<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
 								<td>C_max</td>
@@ -221,22 +229,30 @@ body {
 							<tr>
 								<th>Parameters</th>
 								<th>Value</th>
+                            </tr>
+                            <tr class="not_header">
+								<td>Bioavailability</td>
+								<td ><label id="AllPatient_Vd" >test_value_1</label></td>
+                            </tr>
+                            <tr class="not_header">
+								<td>Ka (/hr)</td>
+								<td ><label id="AllPatient_Ka" >test_value_1</label></td>
+                            </tr>
+                            <tr class="not_header">
+								<td>Dose (mg)</td>
+								<td ><label id="AllPatient_Dose" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
 								<td>Vd (L)</td>
 								<td ><label id="AllPatient_Vd" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
-								<td>Cl (mL/min)</td>
+								<td>CL (mL/min)</td>
 								<td ><label id="AllPatient_Cl" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
 								<td>Half-life (hr)</td>
 								<td ><label id="AllPatient_THalf" >test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>Ka (/hr)</td>
-								<td ><label id="AllPatient_Ka" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
 								<td>C_max</td>
@@ -525,6 +541,8 @@ function OnePopulation() {
     $("#SinglePatient_Ka").text(Round2Decimal(actualKe[ActivePatient]).toString());
     $("#SinglePatient_CMin").text("0.00");
     $("#SinglePatient_CMax").text(Round2Decimal(vMax).toString());
+    $("#SinglePatient_F").text(Round2Decimal(_F[ActivePatient]).toString());
+    $("#SinglePatient_Dose").text(Round2Decimal(_D[ActivePatient]).toString());
 
     vMax = Math.round(vMax*10)/10;
     return dataArray;
@@ -533,6 +551,7 @@ function OnePopulation() {
 function AllPopulation() {
     var population = new Array(hMax*4);
     var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0;
+    var f = 0;
 
     for(var i = 0; i < hMax*4; i++)
     {
@@ -547,6 +566,7 @@ function AllPopulation() {
         cl += clearance[j%20]/20*(j<20);
         thalf += Math.log(2)/_Ke[j%20]/20*(j<20);
         ke += actualKe[j%20]/20*(j<20);
+        f += _F[j%20]/20*(j<20);
         for(var i = 0; i < hMax*4; i++)
         {
             var t = i * 0.25;
@@ -572,6 +592,8 @@ function AllPopulation() {
     $("#AllPatient_THalf").text(Round2Decimal(thalf).toString());
     $("#AllPatient_CMin").text(Round2Decimal(cmin).toString());
     $("#AllPatient_CMax").text(Round2Decimal(cmax).toString());
+    $("#AllPatient_F").text(Round2Decimal(f).toString());
+    $("#AllPatient_Dose").text(Round2Decimal(_D[0]).toString());
 
     vMax = Math.round(vMax*10)/10;
     return population;
