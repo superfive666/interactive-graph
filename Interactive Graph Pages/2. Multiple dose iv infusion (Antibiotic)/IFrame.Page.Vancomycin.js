@@ -372,7 +372,7 @@ function DrawGraph(data) {
             ticks:[0, 15, 30, 45, 60]
         },
         vAxis: {
-            title: "Antibiotic Concentration (mg/L)",
+            title: "Concentration (mg/L)",
             gridlines: {
                 color: "#3a3a3a"
             },
