@@ -486,7 +486,7 @@ function OnePopulation() {
     $("#SinglePatient_Dose").text(Dose.toString());
     $("#SinglePatient_F").text(RoundNDecimal(_F[ActivePatient], 2).toString());
     $("#SinglePatient_Vd").text(RoundNDecimal(_Vd[ActivePatient]/1000, 2).toString());
-    $("#SinglePatient_cmax").text(RoundNDecimal(cmax, 2).toString());
+    $("#SinglePatient_Cmax").text(RoundNDecimal(cmax, 5).toString());
 
     return dataArray;
 }
@@ -504,6 +504,7 @@ function AllPopulation() {
     for(var j = 0; j < 21; j++)
     {
         T = 0; t = 0;
+        var local_max = 0;
         f += _F[j%20]/20*(j<20);
         vd += _Vd[j%20]/20*(j<20);
         for(var i = 0; i < population.length; i++)
@@ -512,17 +513,19 @@ function AllPopulation() {
                 population[i][j] = t;
             } else {
                 population[i][j] = AmountAtTime(t, j-1, i==0? 0:population[i-1][j]);
-                cmax = population[i][j]>cmax? population[i][j]:cmax;
+                local_max = population[i][j]>local_max? population[i][j]:local_max;
                 population[i][21] += population[i][j]/20;
             }
             t += TimeInterval;
         }
+        if (j == 0) continue;
+        cmax += local_max/20;
     }
 
     $("#AllPatient_Dose").text(Dose.toString());
     $("#AllPatient_F").text(RoundNDecimal(f, 2).toString());
     $("#AllPatient_Vd").text(RoundNDecimal(vd/1000, 2).toString());
-    $("#AllPatient_Cmax").text(RoundNDecimal(cmax, 2).toString());
+    $("#AllPatient_Cmax").text(RoundNDecimal(cmax, 5).toString());
     return population;
 }
 
