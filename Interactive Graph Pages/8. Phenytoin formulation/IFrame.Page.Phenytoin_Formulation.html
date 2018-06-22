@@ -6,17 +6,17 @@
 		<script	src="https://code.jquery.com/jquery-3.3.1.min.js"
 				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 				crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
 			  crossorigin="anonymous"/>
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
-		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
-
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>	
+		
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
+			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
 			  crossorigin="anonymous">
 		<link href="Backend/CommonStyle.css" rel="stylesheet">
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -42,13 +42,13 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1; 
     padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
@@ -87,17 +87,17 @@ body {
 .w3-animate-opacity {
     animation: opac 0.8s;
 }
-
+    
 @keyframes opac {
     0% {opacity: 0;}
     100% {opacity: 1;}
 }
-
+    
 .w3-animate-show {
     animation: show 0.8s;
     animation-fill-mode: forwards;
 }
-
+    
 @keyframes show {
     0% {opacity: 1;}
     100% {opacity: 0;}
@@ -112,7 +112,7 @@ body {
 .patient_data_table tr:nth-child(1) {
     font-size: 14px;
     border-bottom: 2px solid #000000;
-}
+}	
 
 .patient_data_table tr {
     font-size: 12px;
@@ -136,7 +136,7 @@ body {
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 80%;	
 }
 
 .watermark {
@@ -182,36 +182,20 @@ body {
                             <tr class="not_header">
 								<td>Bioavailability</td>
 								<td ><label id="SinglePatient_F" >test_value_1</label></td>
-                            </tr>
-                            <tr>
-								<td>Ka (/hr)</td>
-								<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
-                            </tr>
-                            <tr>
+							</tr>
+							<tr class="not_header">
 								<td>Dose (mg)</td>
 								<td ><label id="SinglePatient_Dose" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
-								<td>Vd (L)</td>
+								<td>Volume distribution (L)</td>
 								<td ><label id="SinglePatient_Vd" >test_value_1</label></td>
+                            </tr>
+                            <tr class="not_header">
+								<td>C_max (mg/mL)</td>
+								<td ><label id="SinglePatient_Cmax" >test_value_1</label></td>
 							</tr>
-							<tr class="not_header">
-								<td>CL (mL/min)</td>
-								<td ><label id="SinglePatient_Cl" >test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>Half-life (hr)</td>
-								<td ><label id="SinglePatient_THalf" >test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>C_max</td>
-								<td ><label id="SinglePatient_CMax" >test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>C_min</td>
-								<td ><label id="SinglePatient_CMin" >test_value_1</label></td>
-							</tr>
-						</table>
+						</table>      
 					</div>
 					<footer class="w3-container custom_modal_footer">
 						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
@@ -233,63 +217,45 @@ body {
                             <tr class="not_header">
 								<td>Bioavailability</td>
 								<td ><label id="AllPatient_F" >test_value_1</label></td>
-                            </tr>
-                            <tr class="not_header">
-								<td>Ka (/hr)</td>
-								<td ><label id="AllPatient_Ka" >test_value_1</label></td>
-                            </tr>
-                            <tr class="not_header">
+							</tr>
+							<tr class="not_header">
 								<td>Dose (mg)</td>
 								<td ><label id="AllPatient_Dose" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
-								<td>Vd (L)</td>
+								<td>Volume distribution (L)</td>
 								<td ><label id="AllPatient_Vd" >test_value_1</label></td>
+                            </tr>
+                            <tr class="not_header">
+								<td>C_max (mg/mL)</td>
+								<td ><label id="AllPatient_Cmax" >test_value_1</label></td>
 							</tr>
-							<tr class="not_header">
-								<td>Cl (mL/min)</td>
-								<td ><label id="AllPatient_Cl" >test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>Half-life (hr)</td>
-								<td ><label id="AllPatient_THalf" >test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>C_max</td>
-								<td ><label id="AllPatient_CMax"> test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>C_min</td>
-								<td ><label id="AllPatient_CMin" >test_value_1</label></td>
-							</tr>
-						</table>
+						</table>      
 					</div>
 					<footer class="w3-container custom_modal_footer">
 						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
 					</footer>
 				</div>
 		</div>
-		<script>
-//Global parameters defined here
-var Gender = "Male";
-var Race = "Chinese";
-var Age = 30;
-var BodyWeight = 65;
-var Height = 1.8;
-var Dose = 400;
+        <script>	
+//Global parameters definition
+var F = {mean: 0.9, std: 0.15};
+var Dose = 250;
+var Ka = {mean: 1, std: 1/6.0};
+var Vd = {mean: 50000, std: 50000/6.0};
+var VMAX = 0.03;
+var Km = 0.009;
+var TimeInterval = 0.1;
 var Tau = 12;
-var VolumnDistribution = {mean: 3120, std: 624};
-var ExtractionRate = {mean: 0.9, std: 0.18};
-var Ka = {mean: 0.8, std: 0.16};
-var Clearance = {mean: 2740, std: 548};
-var hMax = 100;
-var vMax = 0;
-var clearance, actualKe;
+var MaxTime = 300;
+var T = 0;
+
+//Current or active patient indicators
 var onePopulation = true;
 var firstPopulation = true;
 var ActivePatient;
 
-//Message repository variables
+//Message repository parameters
 var messageRepository = {
     SwitchPatient: "switch patient",
     ChangePopulation: "change population",
@@ -301,13 +267,14 @@ var messageRepository = {
     OptimizeCondition: "apply changes to dosage and frequency"
 }
 
-//Calculation parameters defined here
-var _F, _D, _Ka, _Ke, _Vd;
-var _First20Patients = {};
+//Calculation parameters definition
+var _F, _Vd, _Ka;
 
-//Default values stored here
+//Default value store here
+var _First20Patients = {};
 var DefaultDose, DefaultTau, DefaultPatient;
 
+//Document functions
 document.getElementById("close_single").addEventListener("click", function() {
     $("#SinglePatientData")[0].classList.add('w3-animate-show');
     window.parent.postMessage("Close", "*");
@@ -329,14 +296,15 @@ document.getElementById("PopulationModal").addEventListener('animationend', func
     }
 });
 
+//Document init
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
     google.charts.load('current', {'packages':['line', 'corechart']});
-    google.charts.setOnLoadCallback(SetGraphData);
+    google.charts.setOnLoadCallback(SetGraphData);    
 });
 
-//Behavioural functions define below
+//Behavioural functions
 function ReceiveMessage(e) {
     if (e.data == undefined)
     {
@@ -361,7 +329,7 @@ function ReceiveMessage(e) {
         case messageRepository.OptimizeCondition: OptimizeCondition(e.data.Frequency, e.data.Dosage); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
         case messageRepository.Yes: YesButton(); break;
-        default:
+        default: 
             alert("Invalid message posted, I am not reacting to it!");
             break;
     }
@@ -369,15 +337,9 @@ function ReceiveMessage(e) {
 
 function InitVariables() {
     ActivePatient = Math.floor(Math.random()*20);
-
     _F = new Array(20);
-    _D = new Array(20);
     _Ka = new Array(20);
-    _Ke = new Array(20);
     _Vd = new Array(20);
-
-    clearance = new Array(20);
-    actualKe = new Array(20);
 
     Generate20();
     SaveDefault();
@@ -386,12 +348,8 @@ function InitVariables() {
 function SaveDefault() {
     DefaultPatient = ActivePatient;
     _First20Patients["_F"] = _F.slice();
-    _First20Patients["_D"] = _D.slice();
     _First20Patients["_Ka"] = _Ka.slice();
-    _First20Patients["_Ke"] = _Ke.slice();
     _First20Patients["_Vd"] = _Vd.slice();
-    _First20Patients["clearance"] = clearance.slice();
-    _First20Patients["actualKe"] = actualKe.slice();
     DefaultDose = Dose;
     DefaultTau = Tau;
 }
@@ -399,14 +357,10 @@ function SaveDefault() {
 function RetrieveDefault(){
     ActivePatient = DefaultPatient;
     _F = _First20Patients._F.slice();
-    _D = _First20Patients._D.slice();
     _Ka = _First20Patients._Ka.slice();
-    _Ke = _First20Patients._Ke.slice();
     _Vd = _First20Patients._Vd.slice();
-    clearance = _First20Patients.clearance.slice();
-    actualKe = _First20Patients.actualKe.slice();
     Dose = DefaultDose;
-    Tau = DefaultTau;
+    Tau = DefaultTau;    
 }
 
 function OptimizeCondition(freq, dose) {
@@ -421,26 +375,21 @@ function OptimizeCondition(freq, dose) {
         alert("No dosage passed by the page!");
         return;
     }
-
+    
     Dose = parseInt(dose);
     Tau = parseInt(freq);
+
     onePopulation = true;
     firstPopulation = true;
-    
-    for(var i = 0; i < 20; i++)
-    {
-        _D[i] = Dose;
-    }
-
     SetGraphData();
 }
 
 function SwitchPatient () {
     if (!firstPopulation) return;
-
+    
     ActivePatient++;
     ActivePatient %= 20;
-    SetGraphData();
+    SetGraphData();					
 }
 
 function BackToFirstPatient() {
@@ -456,7 +405,7 @@ function ShowPatientData() {
 
 function ChangePopulation(){
     firstPopulation = false;
-    Generate20();
+    Generate20();	
     SetGraphData();
 }
 
@@ -467,94 +416,86 @@ function YesButton() {
 
 function Generate20() {
     for (var i = 0; i < 20; i++) {
-        PrepareParameters(i);
+        PrepareParameters(i);            
     }
 }
 
-//Calculation function define below
-function CalculateMean(m, s)
-{
+//Calculators
+function CalculateMean(m, s) {
     var a1 = m * m;
     var a2 = Math.sqrt(m * m + s * s);
     return Math.log(a1/a2);
 }
 
-function CalculateStd(m, s)
-{
+function CalculateStd(m, s) {
     var a1 = m * m;
     var a2 = a1 + s * s;
     return Math.sqrt(Math.log(a2/a1));
 }
 
 function PrepareParameters(i) {
-    var f = jStat.lognormal.inv(Math.random(),
-                                CalculateMean(ExtractionRate.mean, ExtractionRate.std),
-                                CalculateStd(ExtractionRate.mean, ExtractionRate.std));
-    f = Math.min(0.99999999, f);
-    _F[i] = (1 - f);
-    _D[i] = Dose;
+    _F[i] = jStat.lognormal.inv(Math.random(),
+            CalculateMean(F.mean, F.std),
+            CalculateStd(F.mean, F.std));
     _Ka[i] = jStat.lognormal.inv(Math.random(),
-                              CalculateMean(Ka.mean, Ka.std),
-                              CalculateStd(Ka.mean, Ka.std));
-    _Vd[i] = _F[i] * jStat.lognormal.inv(Math.random(),
-                                   CalculateMean(VolumnDistribution.mean, VolumnDistribution.std),
-                                   CalculateStd(VolumnDistribution.mean, VolumnDistribution.std));
-    clearance[i] = jStat.lognormal.inv(Math.random(),
-                                        CalculateMean(Clearance.mean, Clearance.std),
-                                        CalculateStd(Clearance.mean, Clearance.std)) * _F[i];
-    actualKe[i] = Math.min((clearance[i]*60)/(_Vd[i]*1000), 0.9999);
-    _Ke[i] = Math.log(1) - Math.log(1-actualKe[i]);
+            CalculateMean(Ka.mean, Ka.std),
+            CalculateStd(Ka.mean, Ka.std));
+    _Vd[i] = jStat.lognormal.inv(Math.random(),
+            CalculateMean(Vd.mean, Vd.std),
+            CalculateStd(Vd.mean, Vd.std));
 }
 
-function CalculateAmount(t, i) {
-    var a1 = _F[i] * _D[i] * _Ka[i];
-    var a2 = _Vd[i] * (_Ka[i] - _Ke[i]);
-    var a3 = Math.exp(-_Ke[i]*t) - Math.exp(-_Ka[i]*t);
-    return a1*a3/a2;
+function CalculateABS(t, i) {
+    var a1 = _F[i] * Dose;
+    var a2 = 1 - Math.exp(-_Ka[i]*t);
+    return a1*a2/_Vd[i];
 }
 
-function AmountAtTime(t, i) {
-    if (t < Tau)
-        return CalculateAmount(t, i);
-    else
-        return AmountAtTime(t - Tau, i) + CalculateAmount(t, i);
+function CalculateELI(i, p) {
+    var a1 = VMAX * p * 1000;
+    var a2 = (Km + p) * _Vd[i];
+    return TimeInterval*a1/a2;
 }
 
-function Round2Decimal(val) {
-    return Math.round(val*100)/100;
+function CumulativeABS(t, i) {
+    return t < Tau? CalculateABS(t, i) : CalculateABS(t, i) + CumulativeABS(t - Tau, i);
+}
+
+function AmountAtTime(t, i, j) {
+    var abs = CumulativeABS(t,i);
+    T += t%Tau==0? CalculateELI(i, abs):CalculateELI(i, j);
+    return abs - T;
+}
+
+function RoundNDecimal(val, n) {
+    n = Math.pow(10, n);
+    return Math.round(val*n)/n;
 }
 
 function OnePopulation() {
+    T = 0; var t = 0; var cmax = 0;
     var dataArray = new Array();
-    var t = 0;
-    while (t <= hMax)
+    while(t <= MaxTime)
     {
-        var a = AmountAtTime(t, ActivePatient)
-        dataArray.push([t, a]);
-        t += 0.25;
-
-        if (a > vMax) vMax = a;
+        var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1][1]);
+        cmax = a>cmax? a:cmax;
+        dataArray.push([t,a]);
+        t += TimeInterval;
     }
 
-    $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
-    $("#SinglePatient_Cl").text(Round2Decimal(clearance[ActivePatient]).toString());
-    $("#SinglePatient_THalf").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient])).toString());
-    $("#SinglePatient_Ka").text(Round2Decimal(actualKe[ActivePatient]).toString());
-    $("#SinglePatient_CMin").text("0.00");
-    $("#SinglePatient_CMax").text(Round2Decimal(vMax).toString());
-    $("#SinglePatient_F").text(Round2Decimal(_F[ActivePatient]).toString());
-    $("#SinglePatient_Dose").text(Round2Decimal(_D[ActivePatient]).toString());
+    $("#SinglePatient_Dose").text(Dose.toString());
+    $("#SinglePatient_F").text(RoundNDecimal(_F[ActivePatient], 2).toString());
+    $("#SinglePatient_Vd").text(RoundNDecimal(_Vd[ActivePatient]/1000, 2).toString());
+    $("#SinglePatient_Cmax").text(RoundNDecimal(cmax, 5).toString());
 
-    vMax = Math.round(vMax*10)/10;
     return dataArray;
 }
 
 function AllPopulation() {
-    var population = new Array(hMax*4);
-    var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0;
-    var f = 0;
+    var population = new Array(Math.ceil(MaxTime/TimeInterval));
+    var f = 0, vd = 0, cmax = 0, t;
 
-    for(var i = 0; i < hMax*4; i++)
+    for(var i = 0; i < population.length; i++)
     {
         population[i] = new Array(22);
         population[i][21] = 0;
@@ -562,53 +503,41 @@ function AllPopulation() {
 
     for(var j = 0; j < 21; j++)
     {
+        T = 0; t = 0;
         var local_max = 0;
-        vd += _Vd[j%20]/20*(j<20);
-        cl += clearance[j%20]/20*(j<20);
-        thalf += Math.log(2)/_Ke[j%20]/20*(j<20);
-        ke += actualKe[j%20]/20*(j<20);
         f += _F[j%20]/20*(j<20);
-
-        for(var i = 0; i < hMax*4; i++)
+        vd += _Vd[j%20]/20*(j<20);
+        for(var i = 0; i < population.length; i++)
         {
-            var t = i * 0.25;
             if (j == 0) {
                 population[i][j] = t;
-            }
-            else {
-                population[i][j] = AmountAtTime(t, j-1);
-                if (population[i][j] > vMax) vMax = population[i][j];
-                if (population[i][j] > local_max) local_max = population[i][j];
+            } else {
+                population[i][j] = AmountAtTime(t, j-1, i==0? 0:population[i-1][j]);
+                local_max = population[i][j]>local_max? population[i][j]:local_max;
                 population[i][21] += population[i][j]/20;
             }
+            t += TimeInterval;
         }
-
         if (j == 0) continue;
-        if (local_max < cmin) cmin = local_max;
-        if (local_max > cmax) cmax = local_max;
+        cmax += local_max/20;
     }
 
-    $("#AllPatient_Vd").text(Round2Decimal(vd).toString());
-    $("#AllPatient_Cl").text(Round2Decimal(cl).toString());
-    $("#AllPatient_Ka").text(Round2Decimal(ke).toString());
-    $("#AllPatient_THalf").text(Round2Decimal(thalf).toString());
-    $("#AllPatient_CMin").text(Round2Decimal(cmin).toString());
-    $("#AllPatient_CMax").text(Round2Decimal(cmax).toString());
-    $("#AllPatient_F").text(Round2Decimal(f).toString());
-    $("#AllPatient_Dose").text(Round2Decimal(_D[0]).toString());
-
-    vMax = Math.round(vMax*10)/10;
+    $("#AllPatient_Dose").text(Dose.toString());
+    $("#AllPatient_F").text(RoundNDecimal(f, 2).toString());
+    $("#AllPatient_Vd").text(RoundNDecimal(vd/1000, 2).toString());
+    $("#AllPatient_Cmax").text(RoundNDecimal(cmax, 5).toString());
     return population;
 }
 
+//Draw graph
 function SetGraphData() {
     var data = onePopulation? OnePopulation() : AllPopulation();
     DrawGraph(data);
 }
 
 function DrawGraph(data) {
-    var chart_styling =
-    chart_styling =
+    var chart_styling = 
+    chart_styling = 
     {
         legend: {
             textStyle: {
@@ -636,7 +565,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks:[0, 25, 50, 75, 100]
+            ticks:[0, 50, 100, 150, 200, 250, 300]
         },
         vAxis: {
             title: "Concentration (mg/L)",
@@ -657,7 +586,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]
+            ticks: [0.005, 0.01, 0.015, 0.02, 0.025, 0.03]
         },
         chartArea: {
             top: 30,
@@ -682,7 +611,7 @@ function DrawGraph(data) {
         for (var i = 1; i <= 20; i++)
         {
             table.addColumn("number", "Patient-"+i);
-            if (!firstPopulation || i != ActivePatient+1)
+            if (!firstPopulation || i != ActivePatient+1) 
                 chart_styling.series[i-1] = {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],

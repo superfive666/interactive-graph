@@ -1,21 +1,21 @@
-//Global parameters defined here
-var BodyWeight = 47;
-var VolumnDistribution = {mean: 4, std: 1};
-var Dose = 1.5;
-var InfusionRate = 1.0;
-var Clearance = {mean: 40, std: 6};
-var hMax = 20;
-var vMax = 0;
-var clearance, actualKe;
-var ActivePatient, DefaultPatient;
-var firstPopulation = true;
+//Global parameters definition
+var F = {mean: 0.9, std: 0.15};
+var Dose = 250;
+var Ka = {mean: 1, std: 1/6.0};
+var Vd = {mean: 50000, std: 50000/6.0};
+var VMAX = 0.03;
+var Km = 0.009;
+var TimeInterval = 0.1;
+var Tau = 12;
+var MaxTime = 300;
+var T = 0;
+
+//Current or active patient indicators
 var onePopulation = true;
+var firstPopulation = true;
+var ActivePatient;
 
-//Calculation parameters defined here
-var _K0, _Ke, _Vd;
-var _First20Patients = {};
-
-//Message repository variables
+//Message repository parameters
 var messageRepository = {
     SwitchPatient: "switch patient",
     ChangePopulation: "change population",
@@ -24,27 +24,31 @@ var messageRepository = {
     Yes: "yes button clicked",
     FrequencySelection: "selected new frequency",
     DosageInput: "user input new new dosage",
-    OptimizeCondition: "apply changes to infusion rate and frequency"
+    OptimizeCondition: "apply changes to dosage and frequency"
 }
 
-//Page Logic define here
+//Calculation parameters definition
+var _F, _Vd, _Ka;
+
+//Default value store here
+var _First20Patients = {};
+var DefaultDose, DefaultTau, DefaultPatient;
+
+//Document functions
 document.getElementById("close_single").addEventListener("click", function() {
     $("#SinglePatientData")[0].classList.add('w3-animate-show');
     window.parent.postMessage("Close", "*");
 });
-
 document.getElementById("close_all_pop").addEventListener("click", function() {
     $("#PopulationModal")[0].classList.add('w3-animate-show');
     window.parent.postMessage("Close", "*");
 });
-
 document.getElementById("SinglePatientData").addEventListener('animationend', function() {
     if (this.classList.contains('w3-animate-show')) {
-        this.style.display = 'none';
-        this.classList.remove('w3-animate-show')
+          this.style.display = 'none';
+          this.classList.remove('w3-animate-show')
     }
 });
-
 document.getElementById("PopulationModal").addEventListener('animationend', function() {
     if (this.classList.contains('w3-animate-show')) {
           this.style.display = 'none';
@@ -52,20 +56,24 @@ document.getElementById("PopulationModal").addEventListener('animationend', func
     }
 });
 
+//Document init
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
-    SaveDefault();
     google.charts.load('current', {'packages':['line', 'corechart']});
-    google.charts.setOnLoadCallback(SetGraphData);
+    google.charts.setOnLoadCallback(SetGraphData);    
 });
 
-//Behavioural functions define below
+//Behavioural functions
 function ReceiveMessage(e) {
-    var message = e.data.Message;
-    if (message == undefined) 
+    if (e.data == undefined)
     {
-        alert("Unrecognized message received.");
+        alert("No object posted!");
+        return;
+    }
+    if (e.data.Message == undefined)
+    {
+        alert("No message posted!");
         return;
     }
 
@@ -73,20 +81,15 @@ function ReceiveMessage(e) {
     var all = document.getElementById("PopulationModal").style.display == "block";
     if (single || all) return;
 
-    switch(message) {
+    switch(e.data.Message)
+    {
         case messageRepository.SwitchPatient: SwitchPatient(); break;
         case messageRepository.ChangePopulation: ChangePopulation(); break;
         case messageRepository.ShowPatientData: ShowPatientData(); break;
-        case messageRepository.Yes: YesButtonClick(); break;
+        case messageRepository.OptimizeCondition: OptimizeCondition(e.data.Frequency, e.data.Dosage); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
-        case messageRepository.OptimizeCondition: 
-            OptimizeCondition({
-                Dosage: e.data.Dosage,
-                InfusionRate: e.data.InfusionRate
-            }); break;
-        case messageRepository.FrequencySelection: alert("Not in use."); break;
-        case messageRepository.DosageInput: alert("Not in use."); break;
-        default:
+        case messageRepository.Yes: YesButton(); break;
+        default: 
             alert("Invalid message posted, I am not reacting to it!");
             break;
     }
@@ -94,38 +97,64 @@ function ReceiveMessage(e) {
 
 function InitVariables() {
     ActivePatient = Math.floor(Math.random()*20);
-
-    _K0 = new Array(20);
-    _Ke = new Array(20);
+    _F = new Array(20);
+    _Ka = new Array(20);
     _Vd = new Array(20);
-    clearance = new Array(20);
-    actualKe = new Array(20);
 
-    Get20Patients();
+    Generate20();
+    SaveDefault();
 }
 
 function SaveDefault() {
-    _First20Patients["_K0"] = _K0.slice();
-    _First20Patients["_Ke"] = _Ke.slice();
-    _First20Patients["_Vd"] = _Vd.slice();
-    _First20Patients["clearance"] = clearance.slice();
-    _First20Patients["actualKe"] = actualKe.slice();
     DefaultPatient = ActivePatient;
+    _First20Patients["_F"] = _F.slice();
+    _First20Patients["_Ka"] = _Ka.slice();
+    _First20Patients["_Vd"] = _Vd.slice();
+    DefaultDose = Dose;
+    DefaultTau = Tau;
 }
 
-function RestoreDefault() {
-   _K0 = _First20Patients._K0.slice();
-   _Ke = _First20Patients._Ke.slice();
-   _Vd = _First20Patients._Vd.slice();
-   clearance = _First20Patients.clearance.slice();
-   actualKe = _First20Patients.actualKe.slice();
-   ActivePatient = DefaultPatient;
+function RetrieveDefault(){
+    ActivePatient = DefaultPatient;
+    _F = _First20Patients._F.slice();
+    _Ka = _First20Patients._Ka.slice();
+    _Vd = _First20Patients._Vd.slice();
+    Dose = DefaultDose;
+    Tau = DefaultTau;    
 }
 
-function SwitchPatient() {
+function OptimizeCondition(freq, dose) {
+    RetrieveDefault();
+    if(freq == undefined)
+    {
+        alert("No frequency passed by the page!");
+        return;
+    }
+    if(dose == undefined)
+    {
+        alert("No dosage passed by the page!");
+        return;
+    }
+    
+    Dose = parseInt(dose);
+    Tau = parseInt(freq);
+
+    onePopulation = true;
+    firstPopulation = true;
+    SetGraphData();
+}
+
+function SwitchPatient () {
     if (!firstPopulation) return;
+    
     ActivePatient++;
     ActivePatient %= 20;
+    SetGraphData();					
+}
+
+function BackToFirstPatient() {
+    RetrieveDefault();
+    firstPopulation = true;
     SetGraphData();
 }
 
@@ -134,171 +163,135 @@ function ShowPatientData() {
     target.css("display", "block");
 }
 
-function ChangePopulation() {
+function ChangePopulation(){
     firstPopulation = false;
-    Get20Patients();
+    Generate20();	
     SetGraphData();
 }
 
-function YesButtonClick() {
+function YesButton() {
     onePopulation = !onePopulation;
     SetGraphData();
 }
 
-function BackToFirstPatient() {
-    RestoreDefault();
-    firstPopulation = true;
-    SetGraphData();
-}
-
-function OptimizeCondition(e) {
-    RestoreDefault();
-    var dose = e.Dosage;
-    var rate = e.InfusionRate;
-    if (dose == undefined)
-    {
-        alert("No dosage input!");
-        return;
-    }
-    if (rate == undefined) 
-    {
-        alert("No infusion rate input!");
-        return;
-    }
-    Dose = parseFloat(dose);
-    InfusionRate = parseFloat(rate);
-    for(var i = 0; i < 20; i++)
-    {
-        _K0[i] = Dose * InfusionRate;
-    }
-    onePopulation = true;
-    firstPopulation = true;
-    SetGraphData();
-}
-
-function Get20Patients() {
-    for(var i = 0; i < 20; i++)
-    {
-        PrepareParameters(i);
+function Generate20() {
+    for (var i = 0; i < 20; i++) {
+        PrepareParameters(i);            
     }
 }
 
-//Calculation function define below		
-function CalculateMean(m, s)
-{
+//Calculators
+function CalculateMean(m, s) {
     var a1 = m * m;
     var a2 = Math.sqrt(m * m + s * s);
     return Math.log(a1/a2);
 }
 
-function CalculateStd(m, s)
-{
+function CalculateStd(m, s) {
     var a1 = m * m;
     var a2 = a1 + s * s;
     return Math.sqrt(Math.log(a2/a1));
 }
 
 function PrepareParameters(i) {
-    vMax = 0.00;
-    
-    _K0[i] = Dose * InfusionRate;
-    _Vd[i] = jStat.lognormal.inv(Math.random(), 
-                              CalculateMean(VolumnDistribution.mean, VolumnDistribution.std),
-                              CalculateStd(VolumnDistribution.mean, VolumnDistribution.std)) * BodyWeight;
-                              
-    clearance[i] = jStat.lognormal.inv(Math.random(), 
-                                    CalculateMean(Clearance.mean, Clearance.std),
-                                    CalculateStd(Clearance.mean, Clearance.std));
-                                    
-    actualKe[i] = Math.min(0.9999, (clearance[i]*60)/(_Vd[i]*1000)*BodyWeight);
-    _Ke[i] = Math.log(1) - Math.log(1 - actualKe[i]);
+    _F[i] = jStat.lognormal.inv(Math.random(),
+            CalculateMean(F.mean, F.std),
+            CalculateStd(F.mean, F.std));
+    _Ka[i] = jStat.lognormal.inv(Math.random(),
+            CalculateMean(Ka.mean, Ka.std),
+            CalculateStd(Ka.mean, Ka.std));
+    _Vd[i] = jStat.lognormal.inv(Math.random(),
+            CalculateMean(Vd.mean, Vd.std),
+            CalculateStd(Vd.mean, Vd.std));
 }
 
-function AmountAtTime(t, i) {
-    var a1 = _K0[i];
-    var a2 = _Ke[i] * _Vd[i];
-    var a3 = 1 - Math.exp(-_Ke[i]*t);
-    return a1*a3/a2;
+function CalculateABS(t, i) {
+    var a1 = _F[i] * Dose;
+    var a2 = 1 - Math.exp(-_Ka[i]*t);
+    return a1*a2/_Vd[i];
 }
 
-function Round2Decimal(val) {
-    return Math.round(val*100)/100;
+function CalculateELI(i, p) {
+    var a1 = VMAX * p * 1000;
+    var a2 = (Km + p) * _Vd[i];
+    return TimeInterval*a1/a2;
 }
 
-function Round4Decimal(val) {
-    return Math.round(val*10000)/10000;
+function CumulativeABS(t, i) {
+    return t < Tau? CalculateABS(t, i) : CalculateABS(t, i) + CumulativeABS(t - Tau, i);
+}
+
+function AmountAtTime(t, i, j) {
+    var abs = CumulativeABS(t,i);
+    T += t%Tau==0? CalculateELI(i, abs):CalculateELI(i, j);
+    return abs - T;
+}
+
+function RoundNDecimal(val, n) {
+    n = Math.pow(10, n);
+    return Math.round(val*n)/n;
 }
 
 function OnePopulation() {
+    T = 0; var t = 0; var cmax = 0;
     var dataArray = new Array();
-    var t = 0;
-    while (t <= hMax)
+    while(t <= MaxTime)
     {
-        var a = AmountAtTime(t, ActivePatient)
-        dataArray.push([t, a]);
-        t += 0.25;
-
-        if (a > vMax) vMax = a;
+        var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1][1]);
+        cmax = a>cmax? a:cmax;
+        dataArray.push([t,a]);
+        t += TimeInterval;
     }
-                            
-    $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
-    $("#SinglePatient_Cl").text(Round2Decimal(clearance[ActivePatient]).toString());
-    $("#SinglePatient_THalf").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient])).toString());
-    $("#SinglePatient_Ka").text(Round2Decimal(actualKe[ActivePatient]).toString());
-    $("#SinglePatient_CSS").text(Round4Decimal(dataArray[dataArray.length - 1][1]).toString());
-    $("#SinglePatient_SteadyT").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient]*4.5).toString()));
-    
-    vMax = Math.round(vMax*10000)/10000;
+
+    $("#SinglePatient_Dose").text(Dose.toString());
+    $("#SinglePatient_F").text(RoundNDecimal(_F[ActivePatient], 2).toString());
+    $("#SinglePatient_Vd").text(RoundNDecimal(_Vd[ActivePatient]/1000, 2).toString());
+    $("#SinglePatient_Cmax").text(RoundNDecimal(cmax, 5).toString());
+
     return dataArray;
 }
 
-function AllPopulation() {						
-    var population = new Array(hMax*4);
-    var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0;
-    
-    for(var i = 0; i < hMax*4; i++)
+function AllPopulation() {
+    var population = new Array(Math.ceil(MaxTime/TimeInterval));
+    var f = 0, vd = 0, cmax = 0, t;
+
+    for(var i = 0; i < population.length; i++)
     {
         population[i] = new Array(22);
         population[i][21] = 0;
     }
 
     for(var j = 0; j < 21; j++)
-    {	
-        PrepareParameters();
+    {
+        T = 0; t = 0;
+        var local_max = 0;
+        f += _F[j%20]/20*(j<20);
         vd += _Vd[j%20]/20*(j<20);
-        cl += clearance[j%20]/20*(j<20);
-        thalf += Math.log(2)/_Ke[j%20]/20*(j<20);
-        ke += actualKe[j%20]/20*(j<20);
-        for(var i = 0; i < hMax*4; i++)
+        for(var i = 0; i < population.length; i++)
         {
-            var t = i * 0.25;
             if (j == 0) {
                 population[i][j] = t;
-            }
-            else {
-                population[i][j] = AmountAtTime(t, j-1);
+            } else {
+                population[i][j] = AmountAtTime(t, j-1, i==0? 0:population[i-1][j]);
+                local_max = population[i][j]>local_max? population[i][j]:local_max;
                 population[i][21] += population[i][j]/20;
             }
+            t += TimeInterval;
         }
-        
         if (j == 0) continue;
+        cmax += local_max/20;
     }
 
-    $("#AllPatient_Vd").text(Round2Decimal(vd).toString());
-    $("#AllPatient_Cl").text(Round2Decimal(cl).toString());
-    $("#AllPatient_Ka").text(Round2Decimal(ke).toString());
-    $("#AllPatient_THalf").text(Round2Decimal(thalf).toString());
-    $("#AllPatient_CSS").text(Round4Decimal(population[population.length-1][21]).toString());
-    $("#AllPatient_SteadyT").text(Round2Decimal(thalf*4.5).toString());
-    
-    
-    vMax = Math.round(vMax*10)/10;
+    $("#AllPatient_Dose").text(Dose.toString());
+    $("#AllPatient_F").text(RoundNDecimal(f, 2).toString());
+    $("#AllPatient_Vd").text(RoundNDecimal(vd/1000, 2).toString());
+    $("#AllPatient_Cmax").text(RoundNDecimal(cmax, 5).toString());
     return population;
 }
 
+//Draw graph
 function SetGraphData() {
     var data = onePopulation? OnePopulation() : AllPopulation();
-
     DrawGraph(data);
 }
 
@@ -332,7 +325,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks:[0, 5, 10, 15, 20]
+            ticks:[0, 50, 100, 150, 200, 250, 300]
         },
         vAxis: {
             title: "Concentration (mg/L)",
@@ -353,7 +346,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [0.01, 0.02, 0.03, 0.04]
+            ticks: [0.005, 0.01, 0.015, 0.02, 0.025, 0.03]
         },
         chartArea: {
             top: 30,

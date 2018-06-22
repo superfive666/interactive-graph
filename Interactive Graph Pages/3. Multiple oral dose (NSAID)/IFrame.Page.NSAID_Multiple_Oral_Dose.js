@@ -269,6 +269,8 @@ function OnePopulation() {
     $("#SinglePatient_Ka").text(Round2Decimal(actualKe[ActivePatient]).toString());
     $("#SinglePatient_CMin").text("0.00");
     $("#SinglePatient_CMax").text(Round2Decimal(vMax).toString());
+    $("#SinglePatient_F").text(Round2Decimal(_F[ActivePatient]).toString());
+    $("#SinglePatient_Dose").text(Round2Decimal(_D[ActivePatient]).toString());
     
     vMax = Math.round(vMax*10)/10;
     return dataArray;
@@ -277,6 +279,7 @@ function OnePopulation() {
 function AllPopulation() {						
     var population = new Array(hMax*4);
     var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0;
+    var f = 0;
     
     for(var i = 0; i < hMax*4; i++)
     {
@@ -291,6 +294,7 @@ function AllPopulation() {
         cl += clearance[j%20]/20*(j<20);
         thalf += Math.log(2)/_Ke[j%20]/20*(j<20);
         ke += actualKe[j%20]/20*(j<20);
+        f += _F[j%20]/20*(j<20);
         for(var i = 0; i < hMax*4; i++)
         {
             var t = i * 0.25;
@@ -316,6 +320,8 @@ function AllPopulation() {
     $("#AllPatient_THalf").text(Round2Decimal(thalf).toString());
     $("#AllPatient_CMin").text(Round2Decimal(cmin).toString());
     $("#AllPatient_CMax").text(Round2Decimal(cmax).toString());
+    $("#AllPatient_F").text(Round2Decimal(f).toString());
+    $("#AllPatient_Dose").text(Round2Decimal(_D[0]).toString());
     
     vMax = Math.round(vMax*10)/10;
     return population;
@@ -359,7 +365,7 @@ function DrawGraph(data) {
             ticks:[0, 25, 50, 75, 100]
         },
         vAxis: {
-            title: "Antibiotic Concentration (mg/L)",
+            title: "Concentration (mg/L)",
             gridlines: {
                 color: "#3a3a3a"
             },
