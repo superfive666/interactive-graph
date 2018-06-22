@@ -180,7 +180,7 @@ body {
 								<th>Value</th>
                             </tr>
                             <tr class="not_header">
-								<td>Bioavailability</td>
+								<td>F</td>
 								<td ><label id="SinglePatient_F" >test_value_1</label></td>
                             </tr>
                             <tr>
@@ -231,7 +231,7 @@ body {
 								<th>Value</th>
                             </tr>
                             <tr class="not_header">
-								<td>Bioavailability</td>
+								<td>F</td>
 								<td ><label id="AllPatient_Vd" >test_value_1</label></td>
                             </tr>
                             <tr class="not_header">
@@ -426,7 +426,7 @@ function OptimizeCondition(freq, dose) {
     Tau = parseInt(freq);
     onePopulation = true;
     firstPopulation = true;
-    
+
     for(var i = 0; i < 20; i++)
     {
         _D[i] = Dose;
@@ -616,7 +616,7 @@ function DrawGraph(data) {
             }
         },
         hAxis: {
-            title: "Hours",
+            title: "Time (Hrs)",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -637,7 +637,7 @@ function DrawGraph(data) {
             ticks:[0, 25, 50, 75, 100]
         },
         vAxis: {
-            title: "Concentration (mg/L)",
+            title: "Concentration (mg/mL)",
             gridlines: {
                 color: "#3a3a3a"
             },

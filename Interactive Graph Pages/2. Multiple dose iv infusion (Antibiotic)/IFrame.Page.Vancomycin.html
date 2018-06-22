@@ -6,17 +6,17 @@
 		<script	src="https://code.jquery.com/jquery-3.3.1.min.js"
 				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 				crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 			  crossorigin="anonymous"/>
 		 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
-		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>	
-		
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
+
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 			  crossorigin="anonymous"/>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -41,13 +41,13 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1; 
+    z-index: 1;
     padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
+    width: 100%;
+    height: 100%;
+    overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
@@ -86,17 +86,17 @@ body {
 .w3-animate-opacity {
     animation: opac 0.8s;
 }
-    
+
 @keyframes opac {
     0% {opacity: 0;}
     100% {opacity: 1;}
 }
-    
+
 .w3-animate-show {
     animation: show 0.8s;
     animation-fill-mode: forwards;
 }
-    
+
 @keyframes show {
     0% {opacity: 1;}
     100% {opacity: 0;}
@@ -111,7 +111,7 @@ body {
 .patient_data_table tr:nth-child(1) {
     font-size: 14px;
     border-bottom: 2px solid #000000;
-}	
+}
 
 .patient_data_table tr {
     font-size: 12px;
@@ -135,7 +135,7 @@ body {
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;	
+    width: 80%;
 }
 
 .watermark {
@@ -165,7 +165,7 @@ body {
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Modal Area -->
 		<div id="SinglePatientData" class="w3-modal w3-animate-opacity">
 			<div class="w3-modal-content w3-card-4">
@@ -183,6 +183,9 @@ body {
 							<td>Infusion Rate</td>
 							<td ><label id="SinglePatient_IfsRt" >test_value_1</label></td>
 						</tr>
+							<td>Ka (/hr)</td>
+							<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
+						</tr>
 						<tr class="not_header">
 							<td>Vd (L)</td>
 							<td ><label id="SinglePatient_Vd" >test_value_1</label></td>
@@ -196,9 +199,6 @@ body {
 							<td ><label id="SinglePatient_THalf" >test_value_1</label></td>
 						</tr>
 						<tr>
-							<td>Ka (/hr)</td>
-							<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
-						</tr>
 						<tr class="not_header">
 							<td>C_max</td>
 							<td ><label id="SinglePatient_CMax" >test_value_1</label></td>
@@ -223,7 +223,7 @@ body {
 							<td>Time to reach steady state (hr)</td>
 							<td ><label id="SinglePatient_SteadyT" >test_value_1</label></td>
 						</tr>
-					</table>      
+					</table>
 				</div>
 				<footer class="w3-container custom_modal_footer">
 					<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
@@ -246,6 +246,9 @@ body {
 							<td>Infusion Rate</td>
 							<td ><label id="AllPatient_IfsRt" >test_value_1</label></td>
 						</tr>
+							<td>Ka (/hr)</td>
+							<td ><label id="AllPatient_Ka" >test_value_1</label></td>
+						</tr>
 						<tr class="not_header">
 							<td>Vd (L)</td>
 							<td ><label id="AllPatient_Vd" >test_value_1</label></td>
@@ -259,9 +262,6 @@ body {
 							<td ><label id="AllPatient_THalf" >test_value_1</label></td>
 						</tr>
 						<tr>
-							<td>Ka (/hr)</td>
-							<td ><label id="AllPatient_Ka" >test_value_1</label></td>
-						</tr>
 						<tr class="not_header">
 							<td>C_max</td>
 							<td ><label id="AllPatient_CMax" >test_value_1</label></td>
@@ -286,15 +286,15 @@ body {
 							<td>Time to reach steady state (hr)</td>
 							<td ><label id="AllPatient_SteadyT" >test_value_1</label></td>
 						</tr>
-					</table>      
+					</table>
 				</div>
 				<footer class="w3-container custom_modal_footer">
 					<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
 				</footer>
 			</div>
 		</div>
-		
-		<script>	
+
+		<script>
 //Global parameters defined here
 var BodyWeight = 65;
 var VolumnDistribution = {mean: 1.1, std: 0.4};
@@ -327,7 +327,7 @@ var messageRepository = {
 }
 
 //Page Logic define here
-$(document).ready(function () {							
+$(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     Washout = Tau - Infusion;
     ActivePatient = Math.floor(Math.random() * 20);
@@ -362,7 +362,7 @@ document.getElementById("PopulationModal").addEventListener('animationend', func
 
 //Behavior function define below
 function ReceiveMessage(e) {
-    if (e.data.Message == undefined) 
+    if (e.data.Message == undefined)
     {
         alert("Unrecognized message received.");
         return;
@@ -379,10 +379,10 @@ function ReceiveMessage(e) {
         case messageRepository.ShowPatientData: ShowPatientData(); break;
         case messageRepository.BackToFirstPatient: GoBackDefault(); break;
         case messageRepository.Yes: YesOnClick(); break;
-        case messageRepository.OptimizeCondition: 
+        case messageRepository.OptimizeCondition:
             var freq = e.data.Frequency;
             var dose = e.data.Dosage;
-            if (freq == undefined || dose == undefined) 
+            if (freq == undefined || dose == undefined)
             {
                 alert("Incomplete input parameters!");
                 return;
@@ -401,7 +401,7 @@ function YesOnClick() {
 function OptimizeCondition (dose, freq) {
     RetrieveDefault();
     Dose = parseInt(dose);
-    if (isNaN(Dose)) 
+    if (isNaN(Dose))
     {
         alert("Invalid dosage input!");
         return;
@@ -419,10 +419,10 @@ function OptimizeCondition (dose, freq) {
 
 function SwitchPatient () {
     if (!firstPopulation) return;
-    
+
     ActivePatient++;
     ActivePatient %= 20;
-    SetGraphData();					
+    SetGraphData();
 }
 
 function ShowPatientData () {
@@ -434,11 +434,11 @@ function GoBackDefault () {
     RetrieveDefault();
     firstPopulation = true;
     SetGraphData();
-}	
+}
 
 function ChangePopulation () {
     firstPopulation = false;
-    First20Patients();	
+    First20Patients();
     SetGraphData();
 }
 
@@ -465,7 +465,7 @@ function RetrieveDefault () {
     Tau = DefaultTau;
 }
 
-//Calculation function define below		
+//Calculation function define below
 function CalculateMean(m, s){
     var a1 = m * m;
     var a2 = Math.sqrt(m * m + s * s);
@@ -485,16 +485,16 @@ function EmptyParameters() {
     _Ke = [];
 }
 
-function PrepareParameters() {								
+function PrepareParameters() {
     _K0.push(Dose);
-    _Vd.push(jStat.lognormal.inv(Math.random(), 
+    _Vd.push(jStat.lognormal.inv(Math.random(),
                               CalculateMean( VolumnDistribution.mean, VolumnDistribution.std),
                               CalculateStd( VolumnDistribution.mean, VolumnDistribution.std)) * BodyWeight);
-                              
-    clearance.push(jStat.lognormal.inv(Math.random(), 
+
+    clearance.push(jStat.lognormal.inv(Math.random(),
                                     CalculateMean(Clearance.mean, Clearance.std),
                                     CalculateStd(Clearance.mean, Clearance.std)));
-                                    
+
     actualKe.push(Math.min(0.9999, (clearance[clearance.length - 1]*60)/(_Vd[_Vd.length - 1]*1000)));
     _Ke.push(Math.log(1) - Math.log(1 - actualKe[actualKe.length - 1]));
 }
@@ -558,16 +558,16 @@ function OnePopulation() {
         dataArray.push([t, a]);
         t += 0.25;
         if (a > vMax) vMax = a;
-        if (t >= 60 - Tau) 
-        {	
+        if (t >= 60 - Tau)
+        {
             cave += a/24;
             if (a > cmax) cmax = a;
             if (a < cmin) cmin = a;
         }
-    }				
-    
+    }
+
     for(var i = 240 - 24*4; i < 240; i++) auc += dataArray[i][1];
-    
+
     $("#SinglePatient_IfsRt").text(Round2Decimal(Dose).toString());
     $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
     $("#SinglePatient_Cl").text(Round2Decimal(clearance[ActivePatient]).toString());
@@ -579,23 +579,23 @@ function OnePopulation() {
     $("#SinglePatient_AUC24").text(Round2Decimal(auc).toString());
     $("#SinglePatient_AUC24_MIC").text(Round2Decimal(auc/MIC).toString());
     $("#SinglePatient_SteadyT").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient])*4.5).toString());
-    
+
     vMax = Math.round(vMax*10)/10;
     return dataArray;
 }
 
-function AllPopulation() {					
+function AllPopulation() {
     var population = new Array(240);
     var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0, auc = 0;
-    
+
     for(var i = 0; i < 240; i++)
     {
         population[i] = new Array(22);
         population[i][21] = 0;
     }
     for(var j = 0; j < 21; j++)
-    {	
-        var local_max = 0; 
+    {
+        var local_max = 0;
         vd += (_Vd[j%20]/20)*(j<20);
         cl += clearance[j%20]/20*(j<20);
         thalf += Math.log(2)/_Ke[j%20]/20*(j<20);
@@ -613,14 +613,14 @@ function AllPopulation() {
                 population[i][21] += population[i][j]/20;
             }
         }
-        
+
         if (j == 0) continue;
         if (local_max < cmin && i >= 240 - Tau*4) cmin = local_max;
         if (local_max > cmax && i >= 240 - Tau*4) cmax = local_max;
     }
-    
+
     for(var i = 240 - 24*4; i < 240; i++) auc += population[i][21];
-    
+
     $("#AllPatient_IfsRt").text(Round2Decimal(Dose).toString());
     $("#AllPatient_Vd").text(Round2Decimal(vd).toString());
     $("#AllPatient_Cl").text(Round2Decimal(cl).toString());
@@ -631,14 +631,14 @@ function AllPopulation() {
     $("#AllPatient_AUC24").text(Round2Decimal(auc).toString());
     $("#AllPatient_AUC24_MIC").text(Round2Decimal(auc/MIC).toString());
     $("#AllPatient_SteadyT").text(Round2Decimal(thalf*4.5).toString());
-    
+
     vMax = Math.round(vMax*10)/10;
     return population;
 }
 
 function DrawGraph(data) {
-    var chart_styling = 
-    chart_styling = 
+    var chart_styling =
+    chart_styling =
     {
         legend: {
             textStyle: {
@@ -648,7 +648,7 @@ function DrawGraph(data) {
             }
         },
         hAxis: {
-            title: "Hours",
+            title: "Time (Hrs)",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -669,7 +669,7 @@ function DrawGraph(data) {
             ticks:[0, 15, 30, 45, 60]
         },
         vAxis: {
-            title: "Concentration (mg/L)",
+            title: "Concentration (mg/mL)",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -687,7 +687,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [20, 40, 60, 80, 100]
+            ticks: [10, 20, 30, 40, 50, 60]
         },
         chartArea: {
             top: 30,
@@ -712,7 +712,7 @@ function DrawGraph(data) {
         for (var i = 1; i <= 20; i++)
         {
             table.addColumn("number", "Patient-"+i);
-            if (!firstPopulation || i != ActivePatient+1) 
+            if (!firstPopulation || i != ActivePatient+1)
                 chart_styling.series[i-1] = {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],

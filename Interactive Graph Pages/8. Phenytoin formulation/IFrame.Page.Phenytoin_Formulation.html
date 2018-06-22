@@ -6,17 +6,17 @@
 		<script	src="https://code.jquery.com/jquery-3.3.1.min.js"
 				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 				crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 			  crossorigin="anonymous"/>
 		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
-		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>	
-		
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
+
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 			  crossorigin="anonymous">
 		<link href="Backend/CommonStyle.css" rel="stylesheet">
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -42,13 +42,13 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1; 
+    z-index: 1;
     padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
+    width: 100%;
+    height: 100%;
+    overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
@@ -87,17 +87,17 @@ body {
 .w3-animate-opacity {
     animation: opac 0.8s;
 }
-    
+
 @keyframes opac {
     0% {opacity: 0;}
     100% {opacity: 1;}
 }
-    
+
 .w3-animate-show {
     animation: show 0.8s;
     animation-fill-mode: forwards;
 }
-    
+
 @keyframes show {
     0% {opacity: 1;}
     100% {opacity: 0;}
@@ -112,7 +112,7 @@ body {
 .patient_data_table tr:nth-child(1) {
     font-size: 14px;
     border-bottom: 2px solid #000000;
-}	
+}
 
 .patient_data_table tr {
     font-size: 12px;
@@ -136,7 +136,7 @@ body {
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;	
+    width: 80%;
 }
 
 .watermark {
@@ -180,7 +180,7 @@ body {
 								<th>Value</th>
                             </tr>
                             <tr class="not_header">
-								<td>Bioavailability</td>
+								<td>F</td>
 								<td ><label id="SinglePatient_F" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
@@ -188,14 +188,14 @@ body {
 								<td ><label id="SinglePatient_Dose" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
-								<td>Volume distribution (L)</td>
+								<td>Vd (L)</td>
 								<td ><label id="SinglePatient_Vd" >test_value_1</label></td>
                             </tr>
                             <tr class="not_header">
 								<td>C_max (mg/mL)</td>
 								<td ><label id="SinglePatient_Cmax" >test_value_1</label></td>
 							</tr>
-						</table>      
+						</table>
 					</div>
 					<footer class="w3-container custom_modal_footer">
 						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
@@ -215,7 +215,7 @@ body {
 								<th>Value</th>
                             </tr>
                             <tr class="not_header">
-								<td>Bioavailability</td>
+								<td>F</td>
 								<td ><label id="AllPatient_F" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
@@ -223,21 +223,21 @@ body {
 								<td ><label id="AllPatient_Dose" >test_value_1</label></td>
 							</tr>
 							<tr class="not_header">
-								<td>Volume distribution (L)</td>
+								<td>Vd (L)</td>
 								<td ><label id="AllPatient_Vd" >test_value_1</label></td>
                             </tr>
                             <tr class="not_header">
 								<td>C_max (mg/mL)</td>
 								<td ><label id="AllPatient_Cmax" >test_value_1</label></td>
 							</tr>
-						</table>      
+						</table>
 					</div>
 					<footer class="w3-container custom_modal_footer">
 						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
 					</footer>
 				</div>
 		</div>
-        <script>	
+        <script>
 //Global parameters definition
 var F = {mean: 0.9, std: 0.15};
 var Dose = 250;
@@ -301,7 +301,7 @@ $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
     google.charts.load('current', {'packages':['line', 'corechart']});
-    google.charts.setOnLoadCallback(SetGraphData);    
+    google.charts.setOnLoadCallback(SetGraphData);
 });
 
 //Behavioural functions
@@ -329,7 +329,7 @@ function ReceiveMessage(e) {
         case messageRepository.OptimizeCondition: OptimizeCondition(e.data.Frequency, e.data.Dosage); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
         case messageRepository.Yes: YesButton(); break;
-        default: 
+        default:
             alert("Invalid message posted, I am not reacting to it!");
             break;
     }
@@ -360,7 +360,7 @@ function RetrieveDefault(){
     _Ka = _First20Patients._Ka.slice();
     _Vd = _First20Patients._Vd.slice();
     Dose = DefaultDose;
-    Tau = DefaultTau;    
+    Tau = DefaultTau;
 }
 
 function OptimizeCondition(freq, dose) {
@@ -375,7 +375,7 @@ function OptimizeCondition(freq, dose) {
         alert("No dosage passed by the page!");
         return;
     }
-    
+
     Dose = parseInt(dose);
     Tau = parseInt(freq);
 
@@ -386,10 +386,10 @@ function OptimizeCondition(freq, dose) {
 
 function SwitchPatient () {
     if (!firstPopulation) return;
-    
+
     ActivePatient++;
     ActivePatient %= 20;
-    SetGraphData();					
+    SetGraphData();
 }
 
 function BackToFirstPatient() {
@@ -405,7 +405,7 @@ function ShowPatientData() {
 
 function ChangePopulation(){
     firstPopulation = false;
-    Generate20();	
+    Generate20();
     SetGraphData();
 }
 
@@ -416,7 +416,7 @@ function YesButton() {
 
 function Generate20() {
     for (var i = 0; i < 20; i++) {
-        PrepareParameters(i);            
+        PrepareParameters(i);
     }
 }
 
@@ -536,8 +536,8 @@ function SetGraphData() {
 }
 
 function DrawGraph(data) {
-    var chart_styling = 
-    chart_styling = 
+    var chart_styling =
+    chart_styling =
     {
         legend: {
             textStyle: {
@@ -547,7 +547,7 @@ function DrawGraph(data) {
             }
         },
         hAxis: {
-            title: "Hours",
+            title: "Time (Hrs)",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -568,7 +568,7 @@ function DrawGraph(data) {
             ticks:[0, 50, 100, 150, 200, 250, 300]
         },
         vAxis: {
-            title: "Concentration (mg/L)",
+            title: "Concentration (mg/mL)",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -611,7 +611,7 @@ function DrawGraph(data) {
         for (var i = 1; i <= 20; i++)
         {
             table.addColumn("number", "Patient-"+i);
-            if (!firstPopulation || i != ActivePatient+1) 
+            if (!firstPopulation || i != ActivePatient+1)
                 chart_styling.series[i-1] = {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],
