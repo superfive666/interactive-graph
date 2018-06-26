@@ -276,7 +276,7 @@ var Race = "Chinese";
 var Age = 30;
 var BodyWeight = 65;
 var Height = 1.8;
-var Dose = 400;
+var Dose = 150;
 var Tau = 12;
 var VolumnDistribution = {mean: 3120, std: 624};
 var ExtractionRate = {mean: 0.9, std: 0.18};
@@ -639,7 +639,7 @@ function DrawGraph(data) {
             ticks:[0, 25, 50, 75, 100]
         },
         vAxis: {
-            title: "Concentration (mg/mL)",
+            title: "Concentration (mg/L)",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -657,7 +657,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]
+            ticks: [0.05, 0.1, 0.15, 0.2, 0.25]
         },
         chartArea: {
             top: 30,
