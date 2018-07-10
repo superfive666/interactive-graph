@@ -10,6 +10,8 @@ var clearance, actualKe;
 var ActivePatient, DefaultPatient;
 var firstPopulation = true;
 var onePopulation = true;
+var low = 0.005;
+var ht = 0.01;
 
 //Calculation parameters defined here
 var _K0, _Ke, _Vd;
@@ -56,8 +58,9 @@ $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
     SaveDefault();
-    google.charts.load('current', {'packages':['line', 'corechart']});
+    google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(SetGraphData);
+    SetGraphData();
 });
 
 //Behavioural functions define below
@@ -235,7 +238,7 @@ function OnePopulation() {
     while (t <= hMax)
     {
         var a = AmountAtTime(t, ActivePatient)
-        dataArray.push([t, a]);
+        dataArray.push([t, a, low, ht]);
         t += 0.25;
 
         if (a > vMax) vMax = a;
@@ -258,11 +261,11 @@ function AllPopulation() {
     
     for(var i = 0; i < hMax*4; i++)
     {
-        population[i] = new Array(22);
+        population[i] = new Array(24);
         population[i][21] = 0;
     }
 
-    for(var j = 0; j < 21; j++)
+    for(var j = 0; j < 24; j++)
     {	
         PrepareParameters();
         vd += _Vd[j%20]/20*(j<20);
@@ -275,9 +278,12 @@ function AllPopulation() {
             if (j == 0) {
                 population[i][j] = t;
             }
-            else {
+            else if(j < 21){
                 population[i][j] = AmountAtTime(t, j-1);
                 population[i][21] += population[i][j]/20;
+            }
+            else if (j > 21) {
+                population[i][j] = j == 22? low : ht;
             }
         }
         
@@ -364,14 +370,19 @@ function DrawGraph(data) {
         width: 890,
         height: 500,
         backgroundColor: '#000000',
+        isStacked: true,
         series: {}
     }
     var table = new google.visualization.DataTable();
     table.addColumn("number", "Time");
     if (onePopulation) {
         table.addColumn("number", "Patient-"+(ActivePatient+1).toString());
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series = {
-            0: {color: '#00FF00'}
+            0: {color: '#00FF00', type: 'line'},
+            1: {color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0},
+            2: {color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0}
         }
     }
     else {
@@ -383,23 +394,34 @@ function DrawGraph(data) {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],
                     color: "#1EB1EE",
-                    visibleInLegend: false
+                    visibleInLegend: false,
+                    type: 'line',
                 };
             else
                 chart_styling.series[i-1] = {
                     lineWidth: 3,
                     color: "#00FF00",
-                    visibleInLegend: true
+                    visibleInLegend: true,
+                    type: 'line',
                 };
-        }
+        };
         table.addColumn("number", "Average");
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series["20"] = {
             lineWidth: 3,
             color: "#FF0000",
-            visibleInLegend: true
-        }
+            visibleInLegend: true,
+            type: 'line'
+        };
+        chart_styling.series["21"] = {
+            color: 'transparent', type: 'area', areaOpacity: 0.5
+        };
+        chart_styling.series["22"] = {
+            color: '#666600', type: 'area', areaOpacity: 0.5
+        };
     }
     table.addRows(data);
-    var chart = new google.visualization.LineChart(document.getElementById("ChartArea"));
+    var chart = new google.visualization.ComboChart(document.getElementById("ChartArea"));
     chart.draw(table, chart_styling);
 }

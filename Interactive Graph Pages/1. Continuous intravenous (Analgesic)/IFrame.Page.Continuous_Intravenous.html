@@ -265,6 +265,8 @@ var clearance, actualKe;
 var ActivePatient, DefaultPatient;
 var firstPopulation = true;
 var onePopulation = true;
+var low = 0.005;
+var ht = 0.01;
 
 //Calculation parameters defined here
 var _K0, _Ke, _Vd;
@@ -311,14 +313,15 @@ $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
     SaveDefault();
-    google.charts.load('current', {'packages':['line', 'corechart']});
+    google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(SetGraphData);
+    SetGraphData();
 });
 
 //Behavioural functions define below
 function ReceiveMessage(e) {
     var message = e.data.Message;
-    if (message == undefined)
+    if (message == undefined) 
     {
         alert("Unrecognized message received.");
         return;
@@ -334,7 +337,7 @@ function ReceiveMessage(e) {
         case messageRepository.ShowPatientData: ShowPatientData(); break;
         case messageRepository.Yes: YesButtonClick(); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
-        case messageRepository.OptimizeCondition:
+        case messageRepository.OptimizeCondition: 
             OptimizeCondition({
                 Dosage: e.data.Dosage,
                 InfusionRate: e.data.InfusionRate
@@ -415,7 +418,7 @@ function OptimizeCondition(e) {
         alert("No dosage input!");
         return;
     }
-    if (rate == undefined)
+    if (rate == undefined) 
     {
         alert("No infusion rate input!");
         return;
@@ -438,7 +441,7 @@ function Get20Patients() {
     }
 }
 
-//Calculation function define below
+//Calculation function define below		
 function CalculateMean(m, s)
 {
     var a1 = m * m;
@@ -455,16 +458,16 @@ function CalculateStd(m, s)
 
 function PrepareParameters(i) {
     vMax = 0.00;
-
+    
     _K0[i] = Dose * InfusionRate;
-    _Vd[i] = jStat.lognormal.inv(Math.random(),
+    _Vd[i] = jStat.lognormal.inv(Math.random(), 
                               CalculateMean(VolumnDistribution.mean, VolumnDistribution.std),
                               CalculateStd(VolumnDistribution.mean, VolumnDistribution.std)) * BodyWeight;
-
-    clearance[i] = jStat.lognormal.inv(Math.random(),
+                              
+    clearance[i] = jStat.lognormal.inv(Math.random(), 
                                     CalculateMean(Clearance.mean, Clearance.std),
                                     CalculateStd(Clearance.mean, Clearance.std));
-
+                                    
     actualKe[i] = Math.min(0.9999, (clearance[i]*60)/(_Vd[i]*1000)*BodyWeight);
     _Ke[i] = Math.log(1) - Math.log(1 - actualKe[i]);
 }
@@ -490,35 +493,35 @@ function OnePopulation() {
     while (t <= hMax)
     {
         var a = AmountAtTime(t, ActivePatient)
-        dataArray.push([t, a]);
+        dataArray.push([t, a, low, ht]);
         t += 0.25;
 
         if (a > vMax) vMax = a;
     }
-
+                            
     $("#SinglePatient_Vd").text(Round2Decimal(_Vd[ActivePatient]).toString());
     $("#SinglePatient_Cl").text(Round2Decimal(clearance[ActivePatient]).toString());
     $("#SinglePatient_THalf").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient])).toString());
     $("#SinglePatient_Ka").text(Round2Decimal(actualKe[ActivePatient]).toString());
     $("#SinglePatient_CSS").text(Round4Decimal(dataArray[dataArray.length - 1][1]).toString());
     $("#SinglePatient_SteadyT").text(Round2Decimal((Math.log(2)/_Ke[ActivePatient]*4.5).toString()));
-
+    
     vMax = Math.round(vMax*10000)/10000;
     return dataArray;
 }
 
-function AllPopulation() {
+function AllPopulation() {						
     var population = new Array(hMax*4);
     var vd = 0, cl = 0, thalf = 0, ke = 0, cmin = 1000000, cmax = 0;
-
+    
     for(var i = 0; i < hMax*4; i++)
     {
-        population[i] = new Array(22);
+        population[i] = new Array(24);
         population[i][21] = 0;
     }
 
-    for(var j = 0; j < 21; j++)
-    {
+    for(var j = 0; j < 24; j++)
+    {	
         PrepareParameters();
         vd += _Vd[j%20]/20*(j<20);
         cl += clearance[j%20]/20*(j<20);
@@ -530,12 +533,15 @@ function AllPopulation() {
             if (j == 0) {
                 population[i][j] = t;
             }
-            else {
+            else if(j < 21){
                 population[i][j] = AmountAtTime(t, j-1);
                 population[i][21] += population[i][j]/20;
             }
+            else if (j > 21) {
+                population[i][j] = j == 22? low : ht;
+            }
         }
-
+        
         if (j == 0) continue;
     }
 
@@ -545,8 +551,8 @@ function AllPopulation() {
     $("#AllPatient_THalf").text(Round2Decimal(thalf).toString());
     $("#AllPatient_CSS").text(Round4Decimal(population[population.length-1][21]).toString());
     $("#AllPatient_SteadyT").text(Round2Decimal(thalf*4.5).toString());
-
-
+    
+    
     vMax = Math.round(vMax*10)/10;
     return population;
 }
@@ -558,8 +564,8 @@ function SetGraphData() {
 }
 
 function DrawGraph(data) {
-    var chart_styling =
-    chart_styling =
+    var chart_styling = 
+    chart_styling = 
     {
         legend: {
             textStyle: {
@@ -569,7 +575,7 @@ function DrawGraph(data) {
             }
         },
         hAxis: {
-            title: "Time (Hrs)",
+            title: "Hours",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -619,43 +625,59 @@ function DrawGraph(data) {
         width: 890,
         height: 500,
         backgroundColor: '#000000',
+        isStacked: true,
         series: {}
     }
     var table = new google.visualization.DataTable();
     table.addColumn("number", "Time");
     if (onePopulation) {
         table.addColumn("number", "Patient-"+(ActivePatient+1).toString());
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series = {
-            0: {color: '#00FF00'}
+            0: {color: '#00FF00', type: 'line'},
+            1: {color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0},
+            2: {color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0}
         }
     }
     else {
         for (var i = 1; i <= 20; i++)
         {
             table.addColumn("number", "Patient-"+i);
-            if (!firstPopulation || i != ActivePatient+1)
+            if (!firstPopulation || i != ActivePatient+1) 
                 chart_styling.series[i-1] = {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],
                     color: "#1EB1EE",
-                    visibleInLegend: false
+                    visibleInLegend: false,
+                    type: 'line',
                 };
             else
                 chart_styling.series[i-1] = {
                     lineWidth: 3,
                     color: "#00FF00",
-                    visibleInLegend: true
+                    visibleInLegend: true,
+                    type: 'line',
                 };
-        }
+        };
         table.addColumn("number", "Average");
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series["20"] = {
             lineWidth: 3,
             color: "#FF0000",
-            visibleInLegend: true
-        }
+            visibleInLegend: true,
+            type: 'line'
+        };
+        chart_styling.series["21"] = {
+            color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
+        chart_styling.series["22"] = {
+            color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
     }
     table.addRows(data);
-    var chart = new google.visualization.LineChart(document.getElementById("ChartArea"));
+    var chart = new google.visualization.ComboChart(document.getElementById("ChartArea"));
     chart.draw(table, chart_styling);
 }
         </script>
