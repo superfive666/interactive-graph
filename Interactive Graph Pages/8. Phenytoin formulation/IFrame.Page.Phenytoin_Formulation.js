@@ -361,6 +361,7 @@ function DrawGraph(data) {
         width: 890,
         height: 500,
         backgroundColor: '#000000',
+        isStacked: true,
         series: {}
     }
     var table = new google.visualization.DataTable();
