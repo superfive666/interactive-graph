@@ -10,8 +10,8 @@ var clearance, actualKe;
 var ActivePatient, DefaultPatient;
 var firstPopulation = true;
 var onePopulation = true;
-var low = 0.005;
-var ht = 0.01;
+var low = 0.01;
+var ht = 0.04;
 
 //Calculation parameters defined here
 var _K0, _Ke, _Vd;
@@ -359,7 +359,7 @@ function DrawGraph(data) {
                 bold: false,
                 italic: true
             },
-            ticks: [0.01, 0.02, 0.03, 0.04]
+            ticks: [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07]
         },
         chartArea: {
             top: 30,
@@ -415,10 +415,10 @@ function DrawGraph(data) {
             type: 'line'
         };
         chart_styling.series["21"] = {
-            color: 'transparent', type: 'area', areaOpacity: 0.5
+            color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
         };
         chart_styling.series["22"] = {
-            color: '#666600', type: 'area', areaOpacity: 0.5
+            color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
         };
     }
     table.addRows(data);
