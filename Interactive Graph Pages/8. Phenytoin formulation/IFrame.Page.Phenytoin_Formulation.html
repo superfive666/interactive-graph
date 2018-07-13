@@ -240,7 +240,7 @@ body {
         <script>
 //Global parameters definition
 var F = {mean: 0.9, std: 0.15};
-var Dose = 200;
+var Dose = 250;
 var Ka = {mean: 1, std: 1/6.0};
 var Vd = {mean: 50000, std: 50000/6.0};
 var VMAX = 0.03;
@@ -249,6 +249,8 @@ var TimeInterval = 0.1;
 var Tau = 12;
 var MaxTime = 300;
 var T = 0;
+var low = 0.01;
+var ht = 0.01;
 
 //Current or active patient indicators
 var onePopulation = true;
@@ -300,8 +302,8 @@ document.getElementById("PopulationModal").addEventListener('animationend', func
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
-    google.charts.load('current', {'packages':['line', 'corechart']});
-    google.charts.setOnLoadCallback(SetGraphData);
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(SetGraphData);    
 });
 
 //Behavioural functions
@@ -329,7 +331,7 @@ function ReceiveMessage(e) {
         case messageRepository.OptimizeCondition: OptimizeCondition(e.data.Frequency, e.data.Dosage); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
         case messageRepository.Yes: YesButton(); break;
-        default:
+        default: 
             alert("Invalid message posted, I am not reacting to it!");
             break;
     }
@@ -360,7 +362,7 @@ function RetrieveDefault(){
     _Ka = _First20Patients._Ka.slice();
     _Vd = _First20Patients._Vd.slice();
     Dose = DefaultDose;
-    Tau = DefaultTau;
+    Tau = DefaultTau;    
 }
 
 function OptimizeCondition(freq, dose) {
@@ -375,7 +377,7 @@ function OptimizeCondition(freq, dose) {
         alert("No dosage passed by the page!");
         return;
     }
-
+    
     Dose = parseInt(dose);
     Tau = parseInt(freq);
 
@@ -386,10 +388,10 @@ function OptimizeCondition(freq, dose) {
 
 function SwitchPatient () {
     if (!firstPopulation) return;
-
+    
     ActivePatient++;
     ActivePatient %= 20;
-    SetGraphData();
+    SetGraphData();					
 }
 
 function BackToFirstPatient() {
@@ -405,7 +407,7 @@ function ShowPatientData() {
 
 function ChangePopulation(){
     firstPopulation = false;
-    Generate20();
+    Generate20();	
     SetGraphData();
 }
 
@@ -416,7 +418,7 @@ function YesButton() {
 
 function Generate20() {
     for (var i = 0; i < 20; i++) {
-        PrepareParameters(i);
+        PrepareParameters(i);            
     }
 }
 
@@ -479,7 +481,7 @@ function OnePopulation() {
     {
         var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1][1]);
         cmax = a>cmax? a:cmax;
-        dataArray.push([t,a]);
+        dataArray.push([t,a,low,ht]);
         t += TimeInterval;
     }
 
@@ -501,7 +503,7 @@ function AllPopulation() {
         population[i][21] = 0;
     }
 
-    for(var j = 0; j < 21; j++)
+    for(var j = 0; j < 24; j++)
     {
         T = 0; t = 0;
         var local_max = 0;
@@ -511,10 +513,12 @@ function AllPopulation() {
         {
             if (j == 0) {
                 population[i][j] = t;
-            } else {
+            } else if (j < 21){
                 population[i][j] = AmountAtTime(t, j-1, i==0? 0:population[i-1][j]);
                 local_max = population[i][j]>local_max? population[i][j]:local_max;
                 population[i][21] += population[i][j]/20;
+            } else if (j > 21) {
+                population[i][j] = j == 22? low : ht;
             }
             t += TimeInterval;
         }
@@ -536,8 +540,8 @@ function SetGraphData() {
 }
 
 function DrawGraph(data) {
-    var chart_styling =
-    chart_styling =
+    var chart_styling = 
+    chart_styling = 
     {
         legend: {
             textStyle: {
@@ -547,7 +551,7 @@ function DrawGraph(data) {
             }
         },
         hAxis: {
-            title: "Time (Hrs)",
+            title: "Hours",
             gridlines: {
                 color: "#3a3a3a"
             },
@@ -603,37 +607,52 @@ function DrawGraph(data) {
     table.addColumn("number", "Time");
     if (onePopulation) {
         table.addColumn("number", "Patient-"+(ActivePatient+1).toString());
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series = {
-            0: {color: '#00FF00'}
+            0: {color: '#00FF00', type: 'line'},
+            1: {color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0},
+            2: {color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0}
         }
     }
     else {
         for (var i = 1; i <= 20; i++)
         {
             table.addColumn("number", "Patient-"+i);
-            if (!firstPopulation || i != ActivePatient+1)
+            if (!firstPopulation || i != ActivePatient+1) 
                 chart_styling.series[i-1] = {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],
                     color: "#1EB1EE",
-                    visibleInLegend: false
+                    visibleInLegend: false,
+                    type: 'line'
                 };
             else
                 chart_styling.series[i-1] = {
                     lineWidth: 3,
                     color: "#00FF00",
-                    visibleInLegend: true
+                    visibleInLegend: true,
+                    type: 'line'
                 };
         }
         table.addColumn("number", "Average");
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series["20"] = {
             lineWidth: 3,
             color: "#FF0000",
-            visibleInLegend: true
-        }
+            visibleInLegend: true,
+            type: 'line'
+        };
+        chart_styling.series["21"] = {
+            color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
+        chart_styling.series["22"] = {
+            color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
     }
     table.addRows(data);
-    var chart = new google.visualization.LineChart(document.getElementById("ChartArea"));
+    var chart = new google.visualization.ComboChart(document.getElementById("ChartArea"));
     chart.draw(table, chart_styling);
 }
 		</script>

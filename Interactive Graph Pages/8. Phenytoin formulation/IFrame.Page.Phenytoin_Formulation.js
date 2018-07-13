@@ -9,6 +9,8 @@ var TimeInterval = 0.1;
 var Tau = 12;
 var MaxTime = 300;
 var T = 0;
+var low = 0.01;
+var ht = 0.01;
 
 //Current or active patient indicators
 var onePopulation = true;
@@ -60,7 +62,7 @@ document.getElementById("PopulationModal").addEventListener('animationend', func
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
     InitVariables();
-    google.charts.load('current', {'packages':['line', 'corechart']});
+    google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(SetGraphData);    
 });
 
@@ -239,7 +241,7 @@ function OnePopulation() {
     {
         var a = AmountAtTime(t, ActivePatient, t==0? 0:dataArray[dataArray.length-1][1]);
         cmax = a>cmax? a:cmax;
-        dataArray.push([t,a]);
+        dataArray.push([t,a,low,ht]);
         t += TimeInterval;
     }
 
@@ -261,7 +263,7 @@ function AllPopulation() {
         population[i][21] = 0;
     }
 
-    for(var j = 0; j < 21; j++)
+    for(var j = 0; j < 24; j++)
     {
         T = 0; t = 0;
         var local_max = 0;
@@ -271,10 +273,12 @@ function AllPopulation() {
         {
             if (j == 0) {
                 population[i][j] = t;
-            } else {
+            } else if (j < 21){
                 population[i][j] = AmountAtTime(t, j-1, i==0? 0:population[i-1][j]);
                 local_max = population[i][j]>local_max? population[i][j]:local_max;
                 population[i][21] += population[i][j]/20;
+            } else if (j > 21) {
+                population[i][j] = j == 22? low : ht;
             }
             t += TimeInterval;
         }
@@ -363,8 +367,12 @@ function DrawGraph(data) {
     table.addColumn("number", "Time");
     if (onePopulation) {
         table.addColumn("number", "Patient-"+(ActivePatient+1).toString());
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series = {
-            0: {color: '#00FF00'}
+            0: {color: '#00FF00', type: 'line'},
+            1: {color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0},
+            2: {color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0}
         }
     }
     else {
@@ -376,23 +384,34 @@ function DrawGraph(data) {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],
                     color: "#1EB1EE",
-                    visibleInLegend: false
+                    visibleInLegend: false,
+                    type: 'line'
                 };
             else
                 chart_styling.series[i-1] = {
                     lineWidth: 3,
                     color: "#00FF00",
-                    visibleInLegend: true
+                    visibleInLegend: true,
+                    type: 'line'
                 };
         }
         table.addColumn("number", "Average");
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series["20"] = {
             lineWidth: 3,
             color: "#FF0000",
-            visibleInLegend: true
-        }
+            visibleInLegend: true,
+            type: 'line'
+        };
+        chart_styling.series["21"] = {
+            color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
+        chart_styling.series["22"] = {
+            color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
     }
     table.addRows(data);
-    var chart = new google.visualization.LineChart(document.getElementById("ChartArea"));
+    var chart = new google.visualization.ComboChart(document.getElementById("ChartArea"));
     chart.draw(table, chart_styling);
 }
