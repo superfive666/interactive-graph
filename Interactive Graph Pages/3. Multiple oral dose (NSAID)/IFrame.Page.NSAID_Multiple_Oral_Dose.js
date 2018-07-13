@@ -449,6 +449,6 @@ function DrawGraph(data) {
         };
     }
     table.addRows(data);
-    var chart = new google.visualization.LineChart(document.getElementById("ChartArea"));
+    var chart = new google.visualization.ComboChart(document.getElementById("ChartArea"));
     chart.draw(table, chart_styling);
 }
