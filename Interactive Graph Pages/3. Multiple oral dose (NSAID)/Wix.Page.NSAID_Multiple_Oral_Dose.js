@@ -26,6 +26,13 @@ let messageRepository = {
 		Message: "apply changes to dosage and frequency",
 		Frequency: "8",
 		Dosage: "500"
+	},
+	AdjustPercentage: {
+		Message: "adjust percentage of population types",
+		Poor: 0,
+		Intermediate: 0,
+		Extensive: 0, 
+		UltraRapid: 100
 	}
 };
 
@@ -40,7 +47,12 @@ let controllers = {
 	QuestionText: "#QuestionText",
 	Frequency: "#FrequencyGroup",
 	DosageInput: "#DosageInput",
-	Hint: "#HintText"
+	Hint: "#HintText",
+	AdjustPercentage_box1: "#AdjustPercentage1",
+	AdjustPercentage_box2: "#AdjustPercentage2",
+	AdjustPercentage_box3: "#AdjustPercentage3",
+	AdjustPercentage_box4: "#AdjustPercentage4",
+	AdjustPercentage_section: "#AdjustPercentageSection"
 };
 
 let textRepository = {
@@ -77,6 +89,33 @@ let Internal = {
 		var key = target.id;
 		textRepository[key].TextIndex = i == undefined? 1 - textRepository[key].TextIndex : i;
 		target.label = textRepository[key].TextItems[textRepository[key].TextIndex];
+	}, 
+	ChangePercentage:function (targets) {
+		function verify(target, overallpercent) {
+			if (overallpercent > 1) 
+			{
+				showerror(target);
+				return false;
+			}
+			return true;
+		}
+		function showerror(target) {
+			target.value = 0;
+		}
+		
+		var cumulativeperct = 0;
+		messageRepository.ChangePercentage.Poor = targets.Poor.value / 100.0;
+		cumulativeperct += messageRepository.ChangePercentage.Poor;
+		messageRepository.ChangePopulation.Intermediate = targets.Intermediate.value / 100.0;
+		cumulativeperct += messageRepository.ChangePopulation.Intermediate;
+		if (!verify(targets.Intermediate, cumulativeperct)) return false;
+		messageRepository.ChangePopulation.Extensive = targets.Extensive.value / 100.0;
+		cumulativeperct += messageRepository.ChangePopulation.Extensive;
+		if (!verify(targets.Extensive, cumulativeperct)) return false;
+		messageRepository.ChangePopulation.UltraRapid = targets.UltraRapid.value / 100.0;
+		cumulativeperct += messageRepository.ChangePopulation.UltraRapid;
+		if (!verify(targets.UltraRapid, cumulativeperct)) return false;
+		return true;
 	}
 };
 $w.onReady(function () {
@@ -140,8 +179,10 @@ export function YesButton_click(event, $w) {
 	if (textRepository[$w(controllers.QuestionText).id].TextIndex === 0)
 	{
 		$w(controllers.ChangePopulation).disable();
+		$w(controllers.AdjustPercentage_section).show();
 	} else {
 		$w(controllers.ChangePopulation).enable();
+		$w(controllers.AdjustPercentage_section).show();
 	}
 	$w(controllers.GraphArea).postMessage(messageRepository.Yes, "*");
 }
@@ -161,4 +202,17 @@ export function ApplyChangesButton_click(event, $w) {
 	messageRepository.OptimizeCondition.Dosage = dose;
 	messageRepository.OptimizeCondition.Frequency = freq;
 	$w(controllers.GraphArea).postMessage(messageRepository.OptimizeCondition, "*");
+}
+
+export function ChangePercentage_enter(event, $w) {
+	var targets = {
+		Poor: $w(controllers.AdjustPercentage_box1),
+		Intermediate: $w(controllers.AdjustPercentage_box2),
+		Extensive: $w(controllers.AdjustPercentage_box3),
+		UltraRapid: $w(controllers.AdjustPercentage_box4)
+	}
+	if (Internal.ChangePercentage(targets)) 
+	{
+		$w(controllers.GraphArea).postMessage(messageRepository.AdjustPercentage, "*");
+	}
 }

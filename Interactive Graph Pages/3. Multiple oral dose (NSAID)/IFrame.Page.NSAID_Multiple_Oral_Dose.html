@@ -284,6 +284,13 @@ var VolumnDistribution = {mean: 8, std: 1.6};
 var ExtractionRate = {mean: 0.1, std: 0.02};
 var Ka = {mean: 2, std: 0.4};
 var Clearance = {mean: 15, std: 3};
+var Percentage = {
+    Poor: 0,
+	Intermediate: 0,
+	Extensive: 0, 
+	UltraRapid: 100
+}
+var adj = 1;
 var hMax = 100;
 var vMax = 0;
 var clearance, actualKe;
@@ -302,7 +309,8 @@ var messageRepository = {
     Yes: "yes button clicked",
     FrequencySelection: "selected new frequency",
     DosageInput: "user input new new dosage",
-    OptimizeCondition: "apply changes to dosage and frequency"
+    OptimizeCondition: "apply changes to dosage and frequency",
+    ChangePercentage: "adjust percentage of population types"
 }
 
 //Calculation parameters defined here
@@ -360,14 +368,14 @@ function ReceiveMessage(e) {
     switch(e.data.Message)
     {
         case messageRepository.SwitchPatient: SwitchPatient(); break;
-        case messageRepository.ChangePopulation: ChangePopulation(); break;
+        case messageRepository.ChangePopulation: ChangePopulation(true); break;
         case messageRepository.ShowPatientData: ShowPatientData(); break;
         case messageRepository.OptimizeCondition: OptimizeCondition(e.data.Frequency, e.data.Dosage); break;
         case messageRepository.BackToFirstPatient: BackToFirstPatient(); break;
+        case messageRepository.ChangePercentage: ChangePopulation(false, e.data); break;
         case messageRepository.Yes: YesButton(); break;
         default: 
-            alert("Invalid message posted, I am not reacting to it!");
-            break;
+            alert("Invalid message posted, I am not reacting to it!"); break;
     }
 }
 
@@ -457,9 +465,9 @@ function ShowPatientData() {
     target.css("display", "block");
 }
 
-function ChangePopulation(){
+function ChangePopulation(normal, data){
     firstPopulation = false;
-    Generate20();	
+    normal? Generate20() : ChangePercentage(data);
     SetGraphData();
 }
 
@@ -472,6 +480,21 @@ function Generate20() {
     for (var i = 0; i < 20; i++) {
         PrepareParameters(i);            
     }
+}
+
+function ChangePercentage(data) {
+    adj = 0.5;
+    Percentage.Poor = data.Poor;
+    Percentage.Intermediate = data.Intermediate;
+    Percentage.Extensive = data.Extensive;
+    Percentage.UltraRapid = data.UltraRapid;
+    var strata = new Array();
+    strata.push(Math.floor(20 * Percentage.Poor));
+    strata.push(Math.floor(20 * Percentage.Intermediate) + strata[0]);
+    strata.push(Math.floor(20 * Percentage.Extensive) + strata[1]);
+    strata.push(20);
+    var i = 0, j = -1;
+    while(++j < strata.length) { while(i < strata[j]) PrepareParameters(i++); adj += 0.25; } 
 }
 
 //Calculation function define below		
@@ -502,8 +525,8 @@ function PrepareParameters(i) {
                                    CalculateMean(VolumnDistribution.mean, VolumnDistribution.std),
                                    CalculateStd(VolumnDistribution.mean, VolumnDistribution.std));
     clearance[i] = jStat.lognormal.inv(Math.random(), 
-                                        CalculateMean(Clearance.mean, Clearance.std),
-                                        CalculateStd(Clearance.mean, Clearance.std)) * _F[i];
+                                        CalculateMean(Clearance.mean * adj, Clearance.std),
+                                        CalculateStd(Clearance.mean * adj, Clearance.std)) * _F[i];
     actualKe[i] = Math.min((clearance[i]*60)/(_Vd[i]*1000), 0.9999);
     _Ke[i] = Math.log(1) - Math.log(1-actualKe[i]);
 }
