@@ -1,98 +1,10 @@
-let messageRepository = {
-	SwitchPatient: {
-		Message: "switch patient"
-	},
-	ChangePopulation: {
-		Message: "change population"
-	},
-	ShowPatientData: {
-		Message: "show patient data"
-	},
-	BackToFirstPatient: {
-		Message: "back to first patient"
-	},
-	Yes: {
-		Message: "yes button clicked"
-	},
-	FrequencySelection: {
-		Message: "selected new frequency",
-		Value: "8"
-	},
-	DosageInput: {
-		Message: "user input new new dosage",
-		Value: "500"
-	},
-	OptimizeCondition: {
-		Message: "apply changes to dosage and frequency",
-		Frequency: "8",
-		Dosage: "500"
-	},
-	AdjustPercentage: {
-		Message: "adjust percentage of population types",
-		Poor: 0,
-		Intermediate: 0,
-		Extensive: 0, 
-		UltraRapid: 100
-	}
-};
+import {controllers} from 'public/Controller.js';
+import {Internal} from 'public/Controller.js';
+import {messageRepository} from 'public/Message.js';
+import {textRepository} from 'public/Controller.js';
 
-let controllers = {
-	SwitchPatient: "#SwitchPatientButton",
-	ChangePopulation: "#ChangePopulationButton",
-	ShowPatient: "#ShowPatientButton",
-	BackToFirstPatient: "#FirstPatientButton",
-	Yes: "#YesButton",
-	AppyChange: "#ApplyChangeButton",
-	GraphArea: "#GraphArea",
-	QuestionText: "#QuestionText",
-	Frequency: "#FrequencyGroup",
-	DosageInput: "#DosageInput",
-	Hint: "#HintText",
-	AdjustPercentage_box1: "#AdjustPercentage1",
-	AdjustPercentage_box2: "#AdjustPercentage2",
-	AdjustPercentage_box3: "#AdjustPercentage3",
-	AdjustPercentage_box4: "#AdjustPercentage4",
-	AdjustPercentage_section: "#AdjustPercentageSection",
-	DrawGraph: "#DrawGraphButton"
-};
-
-let textRepository = {
-	QuestionText: {
-		TextItems: [
-			"Would you like to see all the 20 patients in the population?",
-			"Would you like to go back to single patient view?"
-		],
-		TextIndex: 0
-	},
-	ShowPatientButton: {
-		TextItems: [
-			"Show patient data",
-			"Show population data"
-		],
-		TextIndex: 0
-	},
-	FirstPatientButton: {
-		TextItems: [
-			"Back to first patient",
-			"Back to first population"
-		],
-		TextIndex: 0
-	}
-};
-
-let Internal = {
-	ToggleText: function (target, i) {
-		var key = target.id;
-		textRepository[key].TextIndex = i === undefined? 1 - textRepository[key].TextIndex : i;
-		target.text = textRepository[key].TextItems[textRepository[key].TextIndex];
-	},
-	ToggleLabel: function (target, i) {
-		var key = target.id;
-		textRepository[key].TextIndex = i === undefined? 1 - textRepository[key].TextIndex : i;
-		target.label = textRepository[key].TextItems[textRepository[key].TextIndex];
-	}, 
-};
 $w.onReady(function () {
+	console.log(controllers.ChangePopulation);
 	$w(controllers.ChangePopulation).disable();
 	textRepository.QuestionText.TextIndex = 0;
 	$w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[textRepository.QuestionText.TextIndex];
@@ -152,6 +64,7 @@ export function FirstPatientButton_click(event, $w) {
 }
 
 export function YesButton_click(event, $w) {
+	console.log(controllers.QuestionText);
 	Internal.ToggleText($w(controllers.QuestionText));
 	Internal.ToggleLabel($w(controllers.BackToFirstPatient));
 	Internal.ToggleLabel($w(controllers.ShowPatient));
@@ -163,6 +76,7 @@ export function YesButton_click(event, $w) {
 		$w(controllers.ChangePopulation).enable();
 		$w(controllers.AdjustPercentage_section).show();
 	}
+	
 	$w(controllers.GraphArea).postMessage(messageRepository.Yes, "*");
 }
 
