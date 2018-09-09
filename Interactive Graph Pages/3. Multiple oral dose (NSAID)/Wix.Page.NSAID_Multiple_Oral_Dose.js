@@ -1,85 +1,10 @@
-let messageRepository = {
-	SwitchPatient: {
-		Message: "switch patient"
-	},
-	ChangePopulation: {
-		Message: "change population"
-	},
-	ShowPatientData: {
-		Message: "show patient data"
-	},
-	BackToFirstPatient: {
-		Message: "back to first patient"
-	},
-	Yes: {
-		Message: "yes button clicked"
-	},
-	FrequencySelection: {
-		Message: "selected new frequency",
-		Value: "8"
-	},
-	DosageInput: {
-		Message: "user input new new dosage",
-		Value: "500"
-	},
-	OptimizeCondition: {
-		Message: "apply changes to dosage and frequency",
-		Frequency: "8",
-		Dosage: "500"
-	}
-};
+import {controllers} from 'public/Controller.js';
+import {Internal} from 'public/Controller.js';
+import {messageRepository} from 'public/Message.js';
+import {textRepository} from 'public/Controller.js';
 
-let controllers = {
-	SwitchPatient: "#SwitchPatientButton",
-	ChangePopulation: "#ChangePopulationButton",
-	ShowPatient: "#ShowPatientButton",
-	BackToFirstPatient: "#FirstPatientButton",
-	Yes: "#YesButton",
-	AppyChange: "#ApplyChangeButton",
-	GraphArea: "#GraphArea",
-	QuestionText: "#QuestionText",
-	Frequency: "#FrequencyGroup",
-	DosageInput: "#DosageInput",
-	Hint: "#HintText"
-};
-
-let textRepository = {
-	QuestionText: {
-		TextItems: [
-			"Would you like to see all the 20 patients in the population?",
-			"Would you like to go back to single patient view?"
-		],
-		TextIndex: 0
-	},
-	ShowPatientButton: {
-		TextItems: [
-			"Show patient data",
-			"Show population data"
-		],
-		TextIndex: 0
-	},
-	FirstPatientButton: {
-		TextItems: [
-			"Back to first patient",
-			"Back to first population"
-		],
-		TextIndex: 0
-	}
-};
-
-let Internal = {
-	ToggleText: function (target, i) {
-		var key = target.id;
-		textRepository[key].TextIndex = i == undefined? 1 - textRepository[key].TextIndex : i;
-		target.text = textRepository[key].TextItems[textRepository[key].TextIndex];
-	},
-	ToggleLabel: function (target, i) {
-		var key = target.id;
-		textRepository[key].TextIndex = i == undefined? 1 - textRepository[key].TextIndex : i;
-		target.label = textRepository[key].TextItems[textRepository[key].TextIndex];
-	}
-};
 $w.onReady(function () {
+	console.log(controllers.ChangePopulation);
 	$w(controllers.ChangePopulation).disable();
 	textRepository.QuestionText.TextIndex = 0;
 	$w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[textRepository.QuestionText.TextIndex];
@@ -131,18 +56,27 @@ export function FirstPatientButton_click(event, $w) {
     $w(controllers.DosageInput).value = "75";
 	$w(controllers.GraphArea).postMessage(messageRepository.BackToFirstPatient, "*");
 	$w(controllers.Hint).hide();
+	$w(controllers.AdjustPercentage_box1).value = 0;
+	$w(controllers.AdjustPercentage_box2).value = 0;
+	$w(controllers.AdjustPercentage_box3).value = 100;
+	$w(controllers.AdjustPercentage_box4).value = 0;
+
 }
 
 export function YesButton_click(event, $w) {
+	console.log(controllers.QuestionText);
 	Internal.ToggleText($w(controllers.QuestionText));
 	Internal.ToggleLabel($w(controllers.BackToFirstPatient));
 	Internal.ToggleLabel($w(controllers.ShowPatient));
 	if (textRepository[$w(controllers.QuestionText).id].TextIndex === 0)
 	{
 		$w(controllers.ChangePopulation).disable();
+		$w(controllers.AdjustPercentage_section).hide();
 	} else {
 		$w(controllers.ChangePopulation).enable();
+		$w(controllers.AdjustPercentage_section).show();
 	}
+	
 	$w(controllers.GraphArea).postMessage(messageRepository.Yes, "*");
 }
 
@@ -161,4 +95,127 @@ export function ApplyChangesButton_click(event, $w) {
 	messageRepository.OptimizeCondition.Dosage = dose;
 	messageRepository.OptimizeCondition.Frequency = freq;
 	$w(controllers.GraphArea).postMessage(messageRepository.OptimizeCondition, "*");
+}
+
+export function ChangePercentage_enter(event, $w) {
+	messageRepository.AdjustPercentage.Poor = parseFloat($w(controllers.AdjustPercentage_box1).value);
+	messageRepository.AdjustPercentage.Intermediate = parseFloat($w(controllers.AdjustPercentage_box2).value);
+	messageRepository.AdjustPercentage.Extensive = parseFloat($w(controllers.AdjustPercentage_box3).value);
+	messageRepository.AdjustPercentage.UltraRapid = parseFloat($w(controllers.AdjustPercentage_box4).value);
+	$w(controllers.GraphArea).postMessage(messageRepository.AdjustPercentage, "*");
+}
+
+export function AdjustPercentage1_change(event) {
+	var previous = 100 - parseFloat($w(controllers.AdjustPercentage_box2).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box3).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box4).value);
+	var current = parseFloat($w(controllers.AdjustPercentage_box1).value);
+	if (current < previous) {
+		$w(controllers.AdjustPercentage_box3).value += (previous - current);
+	}
+	else {
+		var difference = current - previous;
+		if (parseFloat($w(controllers.AdjustPercentage_box2).value) > difference) {
+			$w(controllers.AdjustPercentage_box2).value = parseFloat($w(controllers.AdjustPercentage_box2).value) - difference;
+		} else {
+			difference -= parseFloat($w(controllers.AdjustPercentage_box2).value);
+			$w(controllers.AdjustPercentage_box2).value = 0;
+			if (parseFloat($w(controllers.AdjustPercentage_box4).value) > difference) {
+				$w(controllers.AdjustPercentage_box4).value = parseFloat($w(controllers.AdjustPercentage_box4).value) - difference;
+			} else {
+				difference -= parseFloat($w(controllers.AdjustPercentage_box4).value);
+				$w(controllers.AdjustPercentage_box4).value = 0;
+				$w(controllers.AdjustPercentage_box3).value = parseFloat($w(controllers.AdjustPercentage_box3).value) - difference;
+			}
+		}
+	}
+}
+
+export function AdjustPercentage2_change(event) {
+	var previous = 100 - parseFloat($w(controllers.AdjustPercentage_box1).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box3).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box4).value);
+	var current = parseFloat($w(controllers.AdjustPercentage_box2).value);
+	if (current < previous) {
+		$w(controllers.AdjustPercentage_box3).value += (previous - current);
+	}
+	else {
+		var difference = current - previous;
+		if (parseFloat($w(controllers.AdjustPercentage_box1).value) > difference) {
+			$w(controllers.AdjustPercentage_box1).value = parseFloat($w(controllers.AdjustPercentage_box1).value) - difference;
+		} else {
+			difference -= parseFloat($w(controllers.AdjustPercentage_box1).value);
+			$w(controllers.AdjustPercentage_box1).value = 0;
+			if (parseFloat($w(controllers.AdjustPercentage_box4).value) > difference) {
+				$w(controllers.AdjustPercentage_box4).value = parseFloat($w(controllers.AdjustPercentage_box4).value) - difference;
+			} else {
+				difference -= parseFloat($w(controllers.AdjustPercentage_box4).value);
+				$w(controllers.AdjustPercentage_box4).value = 0;
+				$w(controllers.AdjustPercentage_box3).value = parseFloat($w(controllers.AdjustPercentage_box3).value) - difference;
+			}
+		}
+	}
+}
+
+export function AdjustPercentage3_change(event) {
+	var previous = 100 - parseFloat($w(controllers.AdjustPercentage_box2).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box1).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box4).value);
+	var current = parseFloat($w(controllers.AdjustPercentage_box3).value);
+	if (current < previous) {
+		$w(controllers.AdjustPercentage_box2).value += (previous - current);
+	}
+	else {
+		var difference = current - previous;
+		if (parseFloat($w(controllers.AdjustPercentage_box2).value) > difference) {
+			$w(controllers.AdjustPercentage_box2).value = parseFloat($w(controllers.AdjustPercentage_box2).value) - difference;
+		} else {
+			difference -= parseFloat($w(controllers.AdjustPercentage_box2).value);
+			$w(controllers.AdjustPercentage_box2).value = 0;
+			if (parseFloat($w(controllers.AdjustPercentage_box4).value) > difference) {
+				$w(controllers.AdjustPercentage_box4).value = parseFloat($w(controllers.AdjustPercentage_box4).value) - difference;
+			} else {
+				difference -= parseFloat($w(controllers.AdjustPercentage_box4).value);
+				$w(controllers.AdjustPercentage_box4).value = 0;
+				$w(controllers.AdjustPercentage_box1).value = parseFloat($w(controllers.AdjustPercentage_box1).value) - difference;
+			}
+		}
+	}
+}
+
+export function AdjustPercentage4_change(event) {
+	var previous = 100 - parseFloat($w(controllers.AdjustPercentage_box2).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box3).value)
+					   - parseFloat($w(controllers.AdjustPercentage_box1).value);
+	var current = parseFloat($w(controllers.AdjustPercentage_box4).value);
+	if (current < previous) {
+		$w(controllers.AdjustPercentage_box3).value += (previous - current);
+	}
+	else {
+		var difference = current - previous;
+		if (parseFloat($w(controllers.AdjustPercentage_box2).value) > difference) {
+			$w(controllers.AdjustPercentage_box2).value = parseFloat($w(controllers.AdjustPercentage_box2).value) - difference;
+		} else {
+			difference -= parseFloat($w(controllers.AdjustPercentage_box2).value);
+			$w(controllers.AdjustPercentage_box2).value = 0;
+			if (parseFloat($w(controllers.AdjustPercentage_box1).value) > difference) {
+				$w(controllers.AdjustPercentage_box1).value = parseFloat($w(controllers.AdjustPercentage_box1).value) - difference;
+			} else {
+				difference -= parseFloat($w(controllers.AdjustPercentage_box1).value);
+				$w(controllers.AdjustPercentage_box1).value = 0;
+				$w(controllers.AdjustPercentage_box3).value = parseFloat($w(controllers.AdjustPercentage_box3).value) - difference;
+			}
+		}
+	}
+}
+
+export function DrawGraphButton_click_1(event, $w) {
+	$w(controllers.SwitchPatient).disable();
+    $w(controllers.Yes).disable();
+	$w(controllers.Hint).show();
+	messageRepository.AdjustPercentage.Poor = parseFloat($w(controllers.AdjustPercentage_box1).value);
+	messageRepository.AdjustPercentage.Intermediate = parseFloat($w(controllers.AdjustPercentage_box2).value);
+	messageRepository.AdjustPercentage.Extensive = parseFloat($w(controllers.AdjustPercentage_box3).value);
+	messageRepository.AdjustPercentage.UltraRapid = parseFloat($w(controllers.AdjustPercentage_box4).value);
+	$w(controllers.GraphArea).postMessage(messageRepository.AdjustPercentage, "*");
 }

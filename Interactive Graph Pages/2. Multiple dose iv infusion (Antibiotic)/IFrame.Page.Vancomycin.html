@@ -6,17 +6,17 @@
 		<script	src="https://code.jquery.com/jquery-3.3.1.min.js"
 				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 				crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 			  crossorigin="anonymous"/>
 		 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
-		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>	
-		
-		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" 
-			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
+
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 			  crossorigin="anonymous"/>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -41,13 +41,13 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1; 
+    z-index: 1;
     padding-top: 100px;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
+    width: 100%;
+    height: 100%;
+    overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4);
 }
@@ -86,17 +86,17 @@ body {
 .w3-animate-opacity {
     animation: opac 0.8s;
 }
-    
+
 @keyframes opac {
     0% {opacity: 0;}
     100% {opacity: 1;}
 }
-    
+
 .w3-animate-show {
     animation: show 0.8s;
     animation-fill-mode: forwards;
 }
-    
+
 @keyframes show {
     0% {opacity: 1;}
     100% {opacity: 0;}
@@ -111,7 +111,7 @@ body {
 .patient_data_table tr:nth-child(1) {
     font-size: 14px;
     border-bottom: 2px solid #000000;
-}	
+}
 
 .patient_data_table tr {
     font-size: 12px;
@@ -135,7 +135,7 @@ body {
     margin: auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;	
+    width: 80%;
 }
 
 .watermark {
@@ -165,7 +165,7 @@ body {
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Modal Area -->
 		<div id="SinglePatientData" class="w3-modal w3-animate-opacity">
 			<div class="w3-modal-content w3-card-4">
@@ -183,6 +183,9 @@ body {
 							<td>Infusion Rate</td>
 							<td ><label id="SinglePatient_IfsRt" >test_value_1</label></td>
 						</tr>
+							<td>Ka (/hr)</td>
+							<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
+						</tr>
 						<tr class="not_header">
 							<td>Vd (L)</td>
 							<td ><label id="SinglePatient_Vd" >test_value_1</label></td>
@@ -196,9 +199,6 @@ body {
 							<td ><label id="SinglePatient_THalf" >test_value_1</label></td>
 						</tr>
 						<tr>
-							<td>Ka (/hr)</td>
-							<td ><label id="SinglePatient_Ka" >test_value_1</label></td>
-						</tr>
 						<tr class="not_header">
 							<td>C_max</td>
 							<td ><label id="SinglePatient_CMax" >test_value_1</label></td>
@@ -223,7 +223,7 @@ body {
 							<td>Time to reach steady state (hr)</td>
 							<td ><label id="SinglePatient_SteadyT" >test_value_1</label></td>
 						</tr>
-					</table>      
+					</table>
 				</div>
 				<footer class="w3-container custom_modal_footer">
 					<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
@@ -246,6 +246,9 @@ body {
 							<td>Infusion Rate</td>
 							<td ><label id="AllPatient_IfsRt" >test_value_1</label></td>
 						</tr>
+							<td>Ka (/hr)</td>
+							<td ><label id="AllPatient_Ka" >test_value_1</label></td>
+						</tr>
 						<tr class="not_header">
 							<td>Vd (L)</td>
 							<td ><label id="AllPatient_Vd" >test_value_1</label></td>
@@ -259,9 +262,6 @@ body {
 							<td ><label id="AllPatient_THalf" >test_value_1</label></td>
 						</tr>
 						<tr>
-							<td>Ka (/hr)</td>
-							<td ><label id="AllPatient_Ka" >test_value_1</label></td>
-						</tr>
 						<tr class="not_header">
 							<td>C_max</td>
 							<td ><label id="AllPatient_CMax" >test_value_1</label></td>
@@ -286,15 +286,15 @@ body {
 							<td>Time to reach steady state (hr)</td>
 							<td ><label id="AllPatient_SteadyT" >test_value_1</label></td>
 						</tr>
-					</table>      
+					</table>
 				</div>
 				<footer class="w3-container custom_modal_footer">
 					<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
 				</footer>
 			</div>
 		</div>
-		
-		<script>	
+
+		<script>
 //Global parameters defined here
 var BodyWeight = 65;
 var VolumnDistribution = {mean: 1.1, std: 0.4};
@@ -308,6 +308,8 @@ var vMax = 0;
 var onePopulation = true;
 var firstPopulation = true;
 var DefaultPatient, DefaultTau, DefaultDose, ActivePatient, Washout;
+var low = 10;
+var ht = 15;
 
 //Calculation parameters defined here
 var clearance, actualKe;
@@ -334,7 +336,7 @@ $(document).ready(function () {
     EmptyParameters();
     First20Patients();
     SaveDefault();
-    google.charts.load('current', {'packages':['line', 'corechart']});
+    google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(SetGraphData);
     SetGraphData();
 });
@@ -555,7 +557,7 @@ function OnePopulation() {
     while (t < 60)
     {
         var a = AmountAtTime(t, ActivePatient);
-        dataArray.push([t, a]);
+        dataArray.push([t, a, low, ht]);
         t += 0.25;
         if (a > vMax) vMax = a;
         if (t >= 60 - Tau) 
@@ -593,7 +595,7 @@ function AllPopulation() {
         population[i] = new Array(22);
         population[i][21] = 0;
     }
-    for(var j = 0; j < 21; j++)
+    for(var j = 0; j < 24; j++)
     {	
         var local_max = 0; 
         vd += (_Vd[j%20]/20)*(j<20);
@@ -606,11 +608,13 @@ function AllPopulation() {
             if (j == 0) {
                 population[i][j] = t;
             }
-            else {
+            else if (j < 21){
                 population[i][j] = AmountAtTime(t,j-1);
                 if (population[i][j] > vMax) vMax = population[i][j];
                 if (population[i][j] > local_max) local_max = population[i][j];
                 population[i][21] += population[i][j]/20;
+            } else if (j > 21) {
+                population[i][j] = j == 22? low : ht;
             }
         }
         
@@ -698,14 +702,19 @@ function DrawGraph(data) {
         width: 890,
         height: 500,
         backgroundColor: '#000000',
+        isStacked: true,
         series: {}
     }
     var table = new google.visualization.DataTable();
     table.addColumn("number", "Time");
     if (onePopulation) {
         table.addColumn("number", "Patient-"+(ActivePatient+1).toString());
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series = {
-            0: {color: '#00FF00'}
+            0: {color: '#00FF00', type: 'line'},
+            1: {color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0},
+            2: {color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0}
         }
     }
     else {
@@ -717,24 +726,36 @@ function DrawGraph(data) {
                     lineWidth: 1,
                     lineDashStyle: [4, 4],
                     color: "#1EB1EE",
-                    visibleInLegend: false
+                    visibleInLegend: false,
+                    type: 'line',
                 };
             else
                 chart_styling.series[i-1] = {
                     lineWidth: 3,
                     color: "#00FF00",
-                    visibleInLegend: true
+                    visibleInLegend: true,
+                    type: 'line'
                 };
         }
         table.addColumn("number", "Average");
+        table.addColumn("number", "low");
+        table.addColumn("number", "high");
         chart_styling.series["20"] = {
             lineWidth: 3,
             color: "#FF0000",
-            visibleInLegend: true
-        }
+            visibleInLegend: true,
+            type: 'line'
+        };
+        chart_styling.series["21"] = {
+            color: 'transparent', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
+        chart_styling.series["22"] = {
+            color: '#666600', type: 'area', areaOpacity: 0.5, visibleInLegend: false, lineWidth: 0
+        };
+
     }
     table.addRows(data);
-    var chart = new google.visualization.LineChart(document.getElementById("ChartArea"));
+    var chart = new google.visualization.ComboChart(document.getElementById("ChartArea"));
     chart.draw(table, chart_styling);
 }
 		</script>
