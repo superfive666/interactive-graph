@@ -4,6 +4,7 @@ import {messageRepository} from 'public/Message.js';
 import {textRepository} from 'public/Controller.js';
 import {graphs} from 'public/BackendParameter.js';
 import {chart} from 'public/ChartStyling.js';
+import {displayData} from 'public/DisplayCalculator.js';
 
 import {Calculate} from 'backend/Calculator.jsw';
 import {GeneratePopulation} from 'backend/PopulationGenerator.jsw';
@@ -45,7 +46,9 @@ $w.onReady(function () {
 
 	GraphData.Display = {
 		FirstPopulation: true,
-		ActivePatient: Population.ActivePatient
+		ActivePatient: Population.ActivePatient,
+		PopulationDisplay: displayData.PopulationDisplay(Population.OnLoad, GraphData.Data),
+		SinglePatitentDisplay: displayData.SinglePatitentDisplay(Population.OnLoad, Population.ActivePatient, GraphData.Data)
 	}
 
 	GraphData.ChartStyle = chart.Multiple_Oral_Dose_NSAID;

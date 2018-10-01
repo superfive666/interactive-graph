@@ -46,7 +46,9 @@ function ReceiveMessage(e) {
 }
 
 function ProcessBinding(data) {
-    
+    $("[binding-key]").each(function() {
+        $(this).text(data[$(this).attr("binding-key")]);
+    });
 }
 
 function DrawGraph(Data, Display, GraphStyle) {
