@@ -1,5 +1,3 @@
-import {ReadGraphDataFromDB} from 'backend/DBConnection';
-
 let graphs = {
 	Continuous_Intravenous_Analgesic: "GRAPH_1",
 	Multiple_Dose_IV_Infusion: "GRAPH_2",
@@ -10,58 +8,72 @@ let graphs = {
 	Phenytoin_Formulation: "GRAPH_8"
 }
 
-export function Calculate(graphID) {
+export function Calculate(graphID, data) {
 	var result;
-	
-	ReadGraphDataFromDB(graphID).then(data => {
-		console.group("Calculation Data");
-		console.info("Graph attempting to draw: " + graphID);
-		console.info(data);
-		console.groupEnd();
-		switch (graphID) {
-			case graphs.Continuous_Intravenous_Analgesic:
-				result = Graph_1(data);
-				break;
-			case graphs.Multiple_Dose_IV_Infusion:
-				result = Graph_2(data);
-				break;
-			case graphs.Multiple_Oral_Dose_Antibiotics:
-			case graphs.Multiple_Oral_Dose_Anticoagulant:
-			case graphs.Multiple_Oral_Dose_Antithrombotic:
-			case graphs.Multiple_Oral_Dose_NSAID:
-				result = Graph_3(data);
-				break;
-			case graphs.Phenytoin_Formulation:
-				result = Graph_8(data);
-				break;
-			default:
-				console.error("Calculator: Invalid graph ID");
-				break;
-		}
-	}).catch(err => {
-		console.error(err);
-	});
+	switch (graphID) {
+		case graphs.Continuous_Intravenous_Analgesic:
+			result = Graph_1(data);
+			break;
+		case graphs.Multiple_Dose_IV_Infusion:
+			result = Graph_2(data);
+			break;
+		case graphs.Multiple_Oral_Dose_Antibiotics:
+		case graphs.Multiple_Oral_Dose_Anticoagulant:
+		case graphs.Multiple_Oral_Dose_Antithrombotic:
+		case graphs.Multiple_Oral_Dose_NSAID:
+			result = Graph_3(data);
+			break;
+		case graphs.Phenytoin_Formulation:
+			result = Graph_8(data);
+			break;
+		default:
+			console.error("Calculator: Invalid graph ID");
+			break;
+	}
 
-	return result
+	return result;
 }
 
 function Graph_1(data) {
-	var result = new Array();
-	function Calc(t, i) {
-		var a1 = data[i].Dose * data[i].InfusionRate;
-        var a2 = data[i].Ke * data[i].VolumeDistribution;
-        var a3 = 1 - Math.Exp(-data[i].Ke * t);
-        return a1 * a3 / a2;
-	}
-
+	
 }
 
 function Graph_2(data) {
 
 }
 
-function Graph_3(data) {
 
+function Graph_3(data) {
+	var maxHour = 100;
+	var result = new Array();
+	var calc = function (t, patient) {
+		var a1 = (1 - patient.er) * patient.dose * patient.ka;
+	    var a2 = patient.vd * (patient.ka - patient.ke);
+		var a3 = Math.Exp(-patient.ke * t) - Math.Exp(-patient.ka * t);
+		var result = a1 * a3 / a2;
+	    return t < patient.tau? result : result + calc(t - patient.tau, patient);
+	}
+    var i;
+	
+	if(Array.isArray(data)) {
+		for (i = 0; i < maxHour; i += 0.25) {
+			var rowData = new Array();
+			rowData.push(i);
+			var ave = 0;
+			data.forEach(function (val, index) {
+				var conc = calc(i, val);
+				ave += conc/20;
+				rowData.push(conc);
+			});	
+			rowData.push(ave);
+			rowData.push(data.low);
+			rowData.push(data.ht);
+			result.push(rowData);
+		}
+	} else {
+		console.error("Calculation data is not an array: " + data);
+	}
+	return result;
 }
 
 function Graph_8(daa) {

@@ -2,9 +2,55 @@ import {controllers} from 'public/Controller.js';
 import {Internal} from 'public/Controller.js';
 import {messageRepository} from 'public/Message.js';
 import {textRepository} from 'public/Controller.js';
+import {graphs} from 'public/BackendParameter.js';
+import {chart} from 'public/ChartStyling.js';
+
+import {Calculate} from 'backend/Calculator.jsw';
+import {GeneratePopulation} from 'backend/PopulationGenerator.jsw';
+import {UpdatePopulationCondition} from 'backend/PopulationGenerator.jsw';
+
+let Population = {
+	OnLoad: {},
+	Adjusted: {},
+	Others: {},
+	DefaultPatient: {
+		OnLoad: {},
+		Adjusted: {}
+	},
+	ActivePatient: 0
+}
+
+let GraphData = messageRepository.DrawGraph;
 
 $w.onReady(function () {
-	console.log(controllers.ChangePopulation);
+	Population.ActivePatient = Math.floor(Math.random()*20);
+	Population.DefaultPatient.OnLoad = Population.ActivePatient;
+	GeneratePopulation(graphs.Continuous_Intravenous_Analgesic).then(result =>{
+		console.info("Population generated (Population.OnLoad):" + result);
+		Population.OnLoad = result;
+	}).catch(err=>{
+		console.error("Error calling generating population.");
+		console.error(err);
+		return;
+	});
+	
+	Calculate(graphs.Continuous_Intravenous_Analgesic, Population.OnLoad).then(result =>{
+		console.info("Graph data calculated:" + result);
+		GraphData.Data = result;
+	}).catch(err =>{
+		console.error("Error calling calculating graph data.");
+		console.error(err);
+		return;
+	})
+
+	GraphData.Display = {
+		FirstPopulation: true,
+		ActivePatient: Population.ActivePatient
+	}
+
+	GraphData.ChartStyle = chart.Multiple_Oral_Dose_NSAID;
+	$w(controllers.GraphArea).postMessage(GraphData, "*");
+
 	$w(controllers.ChangePopulation).disable();
 	textRepository.QuestionText.TextIndex = 0;
 	$w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[textRepository.QuestionText.TextIndex];
@@ -29,14 +75,15 @@ $w.onReady(function () {
 });
 
 export function ResamplePatientButton_click(event, $w) {
-	$w(controllers.GraphArea).postMessage(messageRepository.SwitchPatient, "*");
+	
 }
 
 export function ChangePopulationButton_click(event, $w) {
     $w(controllers.SwitchPatient).disable();
     $w(controllers.Yes).disable();
-	$w(controllers.GraphArea).postMessage(messageRepository.ChangePopulation, "*");
 	$w(controllers.Hint).show();
+
+
 }
 
 export function ShowPatientButton_click(event, $w) {
@@ -46,7 +93,8 @@ export function ShowPatientButton_click(event, $w) {
 	$w(controllers.ShowPatient).disable();
 	$w(controllers.BackToFirstPatient).disable();
 	$w(controllers.AppyChange).disable();
-	$w(controllers.GraphArea).postMessage(messageRepository.ShowPatientData, "*");
+	
+	
 }
 
 export function FirstPatientButton_click(event, $w) {
@@ -54,17 +102,13 @@ export function FirstPatientButton_click(event, $w) {
     $w(controllers.Yes).enable();
     $w(controllers.Frequency).value = "12";
     $w(controllers.DosageInput).value = "75";
-	$w(controllers.GraphArea).postMessage(messageRepository.BackToFirstPatient, "*");
 	$w(controllers.Hint).hide();
-	$w(controllers.AdjustPercentage_box1).value = 0;
-	$w(controllers.AdjustPercentage_box2).value = 0;
-	$w(controllers.AdjustPercentage_box3).value = 100;
-	$w(controllers.AdjustPercentage_box4).value = 0;
 
+
+	
 }
 
 export function YesButton_click(event, $w) {
-	console.log(controllers.QuestionText);
 	Internal.ToggleText($w(controllers.QuestionText));
 	Internal.ToggleLabel($w(controllers.BackToFirstPatient));
 	Internal.ToggleLabel($w(controllers.ShowPatient));
@@ -77,12 +121,7 @@ export function YesButton_click(event, $w) {
 		$w(controllers.AdjustPercentage_section).show();
 	}
 	
-	$w(controllers.GraphArea).postMessage(messageRepository.Yes, "*");
-}
-
-export function FrequencyGroup_change(event, $w) {
-	//To-do: further enhancement if separate control...
-
+	
 }
 
 export function ApplyChangesButton_click(event, $w) {
@@ -94,7 +133,9 @@ export function ApplyChangesButton_click(event, $w) {
     Internal.ToggleLabel($w(controllers.BackToFirstPatient), 0);
 	messageRepository.OptimizeCondition.Dosage = dose;
 	messageRepository.OptimizeCondition.Frequency = freq;
-	$w(controllers.GraphArea).postMessage(messageRepository.OptimizeCondition, "*");
+	
+	
+
 }
 
 export function ChangePercentage_enter(event, $w) {
@@ -102,7 +143,9 @@ export function ChangePercentage_enter(event, $w) {
 	messageRepository.AdjustPercentage.Intermediate = parseFloat($w(controllers.AdjustPercentage_box2).value);
 	messageRepository.AdjustPercentage.Extensive = parseFloat($w(controllers.AdjustPercentage_box3).value);
 	messageRepository.AdjustPercentage.UltraRapid = parseFloat($w(controllers.AdjustPercentage_box4).value);
-	$w(controllers.GraphArea).postMessage(messageRepository.AdjustPercentage, "*");
+	
+	
+
 }
 
 export function AdjustPercentage1_change(event) {
@@ -210,12 +253,5 @@ export function AdjustPercentage4_change(event) {
 }
 
 export function DrawGraphButton_click_1(event, $w) {
-	$w(controllers.SwitchPatient).disable();
-    $w(controllers.Yes).disable();
-	$w(controllers.Hint).show();
-	messageRepository.AdjustPercentage.Poor = parseFloat($w(controllers.AdjustPercentage_box1).value);
-	messageRepository.AdjustPercentage.Intermediate = parseFloat($w(controllers.AdjustPercentage_box2).value);
-	messageRepository.AdjustPercentage.Extensive = parseFloat($w(controllers.AdjustPercentage_box3).value);
-	messageRepository.AdjustPercentage.UltraRapid = parseFloat($w(controllers.AdjustPercentage_box4).value);
-	$w(controllers.GraphArea).postMessage(messageRepository.AdjustPercentage, "*");
+	
 }
