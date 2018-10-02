@@ -23,7 +23,11 @@ let Population = {
     GraphId: ""
 }
 
-let GraphData = messageRepository.DrawGraph;
+let GraphData = {
+    Data: {},
+    Display: {},
+    ChartStyling: {}
+};
 
 export let PageLogic = {
     PageLoad: function($w, GraphId) {
@@ -151,9 +155,9 @@ export let PageLogic = {
             Population.Adjusted = result;
 
             Population.State = "Adjusted";
-            Calculate(Population.GraphId, Population[Population.State]).then(result =>{
-                console.info("Graph data calculated:" + result);
-                GraphData.Data = result;
+            Calculate(Population.GraphId, Population[Population.State]).then(res =>{
+                console.info("Graph data calculated:" + res);
+                GraphData.Data = res;
                 $w(controllers.GraphArea).postMessage(GraphData, "*");
             }).catch(err =>{
                 console.error("Error calling calculating graph data.");

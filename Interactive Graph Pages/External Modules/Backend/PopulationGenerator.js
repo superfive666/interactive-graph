@@ -58,9 +58,8 @@ export async function GeneratePopulation(GraphId) {
         patient["ke"] = Math.log(1) - Math.log(1 - temp);
         patient["thalf"] = Math.log(2)/patient.ke;
         patients.push(patient); 
-        console.log("Patient" + i + "generated.");
     }
-     console.log("PopulationGenerator Generate Population: ");
+    console.log("PopulationGenerator Generate Population: ");
     console.log(patients);
     return patients;
 }
