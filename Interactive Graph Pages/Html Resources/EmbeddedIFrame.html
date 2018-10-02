@@ -3,18 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<script	src="https://code.jquery.com/jquery-3.3.1.min.js"
-				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-				crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-			  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-			  crossorigin="anonymous"/>
-		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"/>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-		<script type="text/javascript" src="http://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jstat/1.7.1/jstat.js"></script>
-		<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
-
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 			  rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
 			  crossorigin="anonymous">
@@ -22,13 +11,11 @@
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"
 				integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
                 crossorigin="anonymous"></script>
-        <!--Page Script-->
-
-        <!--Page CSS-->
-
+		<script src="https://cdn.rawgit.com/wuchaosuperfive/interactive-graph/master/Interactive%20Graph%20Pages/Html%20Resources/IFrameLogic.js"
+                crossorigin="anonymous"></script>
 		<title></title>
 	</head>
-	<body>
+	<body style="background: transparent">
 		<div class="row container" id="GraphContainer">
 			<div class="col-lg-12">
 				<h6> <br /></h6>
@@ -39,110 +26,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<!--Modal Area-->
-		<div id="SinglePatientData" class="w3-modal w3-animate-opacity">
-				<div class="w3-modal-content w3-card-4">
-					<header class="w3-container custom_modal_header">
-						<span class="w3-button w3-middle w3-display-topright close modal_close" id="close_single">&times;</span>
-						<h5 class="custom_modal_header_text">Single Patient Data</h5>
-					</header>
-					<div class="w3-container custom_modal_content">
-						<table class="patient_data_table" id="SinglePatientDataTable">
-							<tr>
-								<th>Parameters</th>
-								<th>Value</th>
-							</tr>
-                            <tr class="not_header">
-								<td>F</td>
-								<td ><label id="SinglePatient_F" binding-key="">test_value_1</label></td>
-                            </tr>
-                            <tr>
-								<td>Ka (/hr)</td>
-								<td ><label id="SinglePatient_Ka" binding-key="">test_value_1</label></td>
-                            </tr>
-                            <tr>
-								<td>Dose (mg)</td>
-								<td ><label id="SinglePatient_Dose" binding-key="">test_value_1</label></td>
-                            </tr>
-                            <tr class="not_header">
-								<td>Vd (L)</td>
-								<td ><label id="SinglePatient_Vd" binding-key="">test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>CL (mL/min)</td>
-								<td ><label id="SinglePatient_Cl" binding-key="">test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>Half-life (hr)</td>
-								<td ><label id="SinglePatient_THalf" binding-key="">test_value_1</label></td>
-							</tr>
-
-							<tr class="not_header">
-								<td>C_max</td>
-								<td ><label id="SinglePatient_CMax" binding-key="">test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>C_min</td>
-								<td ><label id="SinglePatient_CMin" binding-key="">test_value_1</label></td>
-							</tr>
-						</table>
-					</div>
-					<footer class="w3-container custom_modal_footer">
-						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
-					</footer>
-				</div>
-		</div>
-		<div id="PopulationModal" class="w3-modal w3-animate-opacity">
-				<div class="w3-modal-content w3-card-4">
-					<header class="w3-container custom_modal_header">
-						<span class="w3-button w3-large w3-display-topright close modal_close" id="close_all_pop">&times;</span>
-						<h5 class="custom_modal_header_text">All Population Average Data</h5>
-					</header>
-					<div class="w3-container custom_modal_content">
-						<table class="patient_data_table" id="AllPopulationDataTable">
-							<tr>
-								<th>Parameters</th>
-								<th>Value</th>
-                            </tr>
-                            <tr class="not_header">
-								<td>F</td>
-								<td ><label id="AllPatient_F" binding-key="">test_value_1</label></td>
-                            </tr>
-                            <tr class="not_header">
-								<td>Ka (/hr)</td>
-								<td ><label id="AllPatient_Ka" binding-key="">test_value_1</label></td>
-                            </tr>
-                            <tr class="not_header">
-								<td>Dose (mg)</td>
-								<td ><label id="AllPatient_Dose" binding-key="">test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>Vd (L)</td>
-								<td ><label id="AllPatient_Vd" binding-key="">test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>CL (mL/min)</td>
-								<td ><label id="AllPatient_Cl" binding-key="">test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>Half-life (hr)</td>
-								<td ><label id="AllPatient_THalf" binding-key="">test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>C_max</td>
-								<td ><label id="AllPatient_CMax" binding-key=""> test_value_1</label></td>
-							</tr>
-							<tr class="not_header">
-								<td>C_min</td>
-								<td><label id="AllPatient_CMin" binding-key="">test_value_1</label></td>
-							</tr>
-						</table>
-					</div>
-					<footer class="w3-container custom_modal_footer">
-						<p class="modal_footer custom_modal_footer_text">&copy; pharmacologytutorials.com</p>
-					</footer>
-				</div>
 		</div>
 	</body>
 </html>

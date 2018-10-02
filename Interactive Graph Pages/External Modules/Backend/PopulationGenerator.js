@@ -46,6 +46,8 @@ function GenerateOnePatient(condition, adj) {
     patient["cl"] = GenerateVariable(condition.cl_mean * adj,condition.cl_std);
     patient["f"] = GenerateVariable(condition.f_mean, condition.f_std);
     patient["actualKe"] = Math.min(0.9999, patient.cl * 60 / patient.vd / 1000);
+    patient["cmin"] = 0;
+    patient["cmax"] = 0;
     patient["last"] = false;
     return patient;
 }
@@ -67,6 +69,7 @@ export function GeneratePopulation(GraphId) {
         patient.actualKe * patient.patient_bodyweight : 
         patient.actualKe;
         patient["ke"] = Math.log(1) - Math.log(1 - temp);
+        patient["thalf"] = Math.log(2)/patient.ke;
         patients.push(patient); 
     }
 
@@ -102,6 +105,7 @@ export function UpdatePopulationCondition(GraphId, Percentage) {
             patient.actualKe * patient.patient_bodyweight : 
             patient.actualKe;
             patient["ke"] = Math.log(1) - Math.log(1 - temp);
+            patient["thalf"] = Math.log(2)/patient.ke;
             patients.push(patient); 
         }
         adj += 0.25; 

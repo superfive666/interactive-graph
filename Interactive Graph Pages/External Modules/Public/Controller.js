@@ -9,6 +9,7 @@ export let controllers = {
 	QuestionText: "#QuestionText",
 	Frequency: "#FrequencyGroup",
 	DosageInput: "#DosageInput",
+	InfusionRate: "#InfusionRate",
 	Hint: "#HintText",
 	AdjustPercentage_box1: "#AdjustPercentage1",
 	AdjustPercentage_box2: "#AdjustPercentage2",
@@ -53,3 +54,25 @@ export let Internal = {
 		target.label = textRepository[key].TextItems[textRepository[key].TextIndex];
 	}, 
 };
+
+export let GraphBinding = {
+	SinglePatient: [
+		{id: "#SinglePatientF", key: ""},
+		{id: "#SinglePatientKa", key: ""},
+		{id: "#SinglePatientDose", key: ""},
+		{id: "#SinglePatientCl", key: ""},
+		{id: "#SinglePatientThalf", key: ""},
+		{id: "#SinglePatientCmax", key: ""},
+		{id: "#SinglePatientCmin", key: ""}
+	],
+	Population: [
+		{id: "#PopulationPatientF", key: ""},
+		{id: "#PopulationPatientKa", key: ""},
+		{id: "#PopulationPatientDose", key: ""},
+		{id: "#PopulationPatientVd", key: ""},
+		{id: "#PopulationPatientCl", key: ""},
+		{id: "#PopulationPatientThalf", key: ""},
+		{id: "#PopulationPatientCmax", key: ""},
+		{id: "#PopulationPatientCmin", key: ""}
+	]
+}
