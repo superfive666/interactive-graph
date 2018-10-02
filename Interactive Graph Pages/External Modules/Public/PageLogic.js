@@ -23,7 +23,11 @@ let Population = {
     GraphId: ""
 }
 
-let GraphData = messageRepository.DrawGraph;
+let GraphData = {
+    Data: {},
+    Display: {},
+    ChartStyling: {}
+};
 
 export let PageLogic = {
     PageLoad: function($w, GraphId) {
@@ -34,33 +38,39 @@ export let PageLogic = {
         GeneratePopulation(Population.GraphId).then(result =>{
             console.info("Population generated (Population.OnLoad):" + result);
             Population.OnLoad = result;
+            Population.State = "OnLoad";
+            Calculate(Population.GraphId, Population[Population.State]).then(result =>{
+                console.info("Graph data calculated:" + result);
+                GraphData.Data = result;
+                GraphData.Display = {
+                    FirstPopulation: true,
+                    ActivePatient: Population.ActivePatient,
+                    OnePopulation: true
+                }            
+                $w(controllers.ChangePopulation).disable();
+                textRepository.QuestionText.TextIndex = 0;
+                $w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[
+                                                    textRepository.QuestionText.TextIndex];
+                textRepository.ShowPatientButton.TextIndex = 0;
+                $w(controllers.ShowPatient).label = textRepository.ShowPatientButton.TextItems[
+                                                    textRepository.ShowPatientButton.TextIndex];
+                textRepository.FirstPatientButton.TextIndex = 0;
+                $w(controllers.BackToFirstPatient).label = textRepository.FirstPatientButton.TextItems[
+                                                           textRepository.FirstPatientButton.TextIndex];        
+                
+                $w(controllers.GraphArea).postMessage(GraphData, "*");
+        
+                BindPatientData();            
+            }).catch(err =>{
+                console.error("Error calling calculating graph data.");
+                console.error(err);
+                return;
+            });
         }).catch(err=>{
             console.error("Error calling generating population.");
             console.error(err);
             return;
         });
-        Population.State = "OnLoad";
-        CallCalculator(Population.GraphId)
-        
-        GraphData.Display = {
-            FirstPopulation: true,
-            ActivePatient: Population.ActivePatient,
-            OnePopulation: true
-        }            
-        $w(controllers.ChangePopulation).disable();
-        textRepository.QuestionText.TextIndex = 0;
-        $w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[
-                                            textRepository.QuestionText.TextIndex];
-        textRepository.ShowPatientButton.TextIndex = 0;
-        $w(controllers.ShowPatient).label = textRepository.ShowPatientButton.TextItems[
-                                            textRepository.ShowPatientButton.TextIndex];
-        textRepository.FirstPatientButton.TextIndex = 0;
-        $w(controllers.BackToFirstPatient).label = textRepository.FirstPatientButton.TextItems[
-                                                   textRepository.FirstPatientButton.TextIndex];        
-        
-        $w(controllers.GraphArea).postMessage(GraphData, "*");
-
-        BindPatientData();
     },
     ResamplePatient: function($w) {
         Population.ActivePatient = (Population.ActivePatient + 1) % 20;
@@ -117,14 +127,21 @@ export let PageLogic = {
         });
         var temp = Population.State;
         Population.State = "Others";
-        CallCalculator();
-        Population.State = temp;
-        Population.ActivePatient = Population.DefaultPatient[Population.State];
-        GraphData.Display = {
-            ActivePatient: Population.ActivePatient,
-            FirstPopulation: true,
-            OnePopulation: true
-        }
+        Calculate(Population.GraphId, Population[Population.State]).then(result =>{
+            console.info("Graph data calculated:" + result);
+            GraphData.Data = result;
+            Population.State = temp;
+            Population.ActivePatient = Population.DefaultPatient[Population.State];
+            GraphData.Display = {
+                ActivePatient: Population.ActivePatient,
+                FirstPopulation: true,
+                OnePopulation: true
+            }
+        }).catch(err =>{
+            console.error("Error calling calculating graph data.");
+            console.error(err);
+            return;
+        });
     },
     ChangePercentage: function($w) {
         var Pecentage = {
@@ -136,15 +153,24 @@ export let PageLogic = {
         UpdatePopulationCondition(Population.GraphId, Pecentage).then(result =>{
             console.info("Population generated (Population.Adjusted):" + result);
             Population.Adjusted = result;
+
+            Population.State = "Adjusted";
+            Calculate(Population.GraphId, Population[Population.State]).then(res =>{
+                console.info("Graph data calculated:" + res);
+                GraphData.Data = res;
+                $w(controllers.GraphArea).postMessage(GraphData, "*");
+            }).catch(err =>{
+                console.error("Error calling calculating graph data.");
+                console.error(err);
+                return;
+            });
+
         }).catch(err=>{
             console.error("Error calling generating population.");
             console.error(err);
             return;
         });
-        Population.State = "Adjusted";
-        CallCalculator();
-
-        $w(controllers.GraphArea).postMessage(GraphData, "*");
+        
     },
     AdjustPercentage: function($w, cur) {
         var sliders = [ 
@@ -180,26 +206,22 @@ export let PageLogic = {
     ResetGraph: function($w) {
         Population.State = "OnLoad";
         Population.ActivePatient = Population.DefaultPatient[Population.State];
-        CallCalculator();
-        GraphData.Display = {
-            FirstPopulation: true,
-            ActivePatient: Population.ActivePatient,
-        }
+        Calculate(Population.GraphId, Population[Population.State]).then(result =>{
+            console.info("Graph data calculated:" + result);
+            GraphData.Data = result;
+
+            GraphData.Display = {
+                FirstPopulation: true,
+                ActivePatient: Population.ActivePatient,
+            }
 
 
-
+        }).catch(err =>{
+            console.error("Error calling calculating graph data.");
+            console.error(err);
+            return;
+        });
     }
-}
-
-function CallCalculator() {
-    Calculate(Population.GraphId, Population[Population.State]).then(result =>{
-        console.info("Graph data calculated:" + result);
-        GraphData.Data = result;
-    }).catch(err =>{
-        console.error("Error calling calculating graph data.");
-        console.error(err);
-        return;
-    });
 }
 
 function BindPatientData() {
@@ -208,13 +230,13 @@ function BindPatientData() {
     
     GraphBinding.SinglePatient.forEach(val => {
         if($w(val.id) !== undefined) {
-            $(val.id).text = singleData[val.key];
+            $w(val.id).text = singleData[val.key];
         }
     });
 
     GraphBinding.Population.forEach(val => {
         if($w(val.id) !== undefined) {
-            $(val.id).text = popData[val.key];
+            $w(val.id).text = popData[val.key];
         }
     });
 }

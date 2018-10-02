@@ -1,5 +1,5 @@
-import {wixData} from 'wix-data';
-import {graphs} from 'public/BackendParameter.js';
+import wixData from 'wix-data';
+import {graphs} from 'backend/BackendParameter.js';
 
 let DBName = "GraphConfiguration";
 
@@ -31,14 +31,6 @@ export function ReadGraphDataFromDB(GraphID) {
   		"suppressAuth": true,
   		"suppressHooks": true
 	};
-	
-	wixData.get(DBName, map(GraphID), options)
-		.then(result => {
-			item = result;
-		}).catch(err => {
-			console.error("DBConnection Error: ");
-			console.error(err);
-		});
 
-	return item;
+	return wixData.get(DBName, map(GraphID), options);
 }

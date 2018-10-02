@@ -49,9 +49,9 @@ function Graph_3(data) {
 	var calc = function (t, patient) {
 		var a1 = (1 - patient.er) * patient.dose * patient.ka;
 	    var a2 = patient.vd * (patient.ka - patient.ke);
-		var a3 = Math.Exp(-patient.ke * t) - Math.Exp(-patient.ka * t);
-		var result = a1 * a3 / a2;
-	    return t < patient.tau? result : result + calc(t - patient.tau, patient);
+		var a3 = Math.exp(-patient.ke * t) - Math.exp(-patient.ka * t);
+		var res = a1 * a3 / a2;
+	    return t < patient.tau? res : res + calc(t - patient.tau, patient);
 	}
     var i;
 	
