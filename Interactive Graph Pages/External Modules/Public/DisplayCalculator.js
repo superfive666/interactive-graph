@@ -1,4 +1,4 @@
-let displayData = {
+export let displayData = {
 	Population: function(patients, data) {
         var patient = patients[0];
         var map = data.map(function(row){ return Math.max(...row)});
@@ -21,11 +21,11 @@ let displayData = {
             mic: patient.mic,
             dose: patient.dose,
             tau: patient.tau,
-            vd: ave.vd,
-            er: ave.er,
-            ka: ave.ka,
-            cl: ave.cl,
-            f: ave.f,
+            vd: RoundNDecimal(ave.vd,2),
+            er: RoundNDecimal(ave.er,2),
+            ka: RoundNDecimal(ave.ka,2),
+            cl: RoundNDecimal(ave.cl,2),
+            f: RoundNDecimal(ave.f,2),
             thalf: ave.thalf,
             cmin: Math.min(...map),
             cmax: Math.max(...map),

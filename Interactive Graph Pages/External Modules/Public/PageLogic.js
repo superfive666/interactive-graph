@@ -1,0 +1,220 @@
+import {controllers} from 'public/Controller.js';
+import {Internal} from 'public/Controller.js';
+import {messageRepository} from 'public/Message.js';
+import {textRepository} from 'public/Controller.js';
+import {chart} from 'public/ChartStyling.js';
+import {displayData} from 'public/DisplayCalculator.js';
+import {GraphBinding} from 'public/Controller.js';
+
+import {Calculate} from 'backend/Calculator.jsw';
+import {GeneratePopulation} from 'backend/PopulationGenerator.jsw';
+import {UpdatePopulationCondition} from 'backend/PopulationGenerator.jsw';
+
+let Population = {
+	OnLoad: {},
+	Adjusted: {},
+	Others: {},
+	DefaultPatient: {
+		OnLoad: undefined,
+		Adjusted: undefined
+	},
+    ActivePatient: 0,
+    State: "OnLoad",
+    GraphId: ""
+}
+
+let GraphData = messageRepository.DrawGraph;
+
+export let PageLogic = {
+    PageLoad: function($w, GraphId) {
+        Population.GraphId = GraphId;
+        Population.DefaultPatient.OnLoad = Math.floor(Math.random()*20);
+        Population.DefaultPatient.Adjusted = Math.floor(Math.random()*20);
+        Population.ActivePatient = Population.DefaultPatient.OnLoad;
+        GeneratePopulation(Population.GraphId).then(result =>{
+            console.info("Population generated (Population.OnLoad):" + result);
+            Population.OnLoad = result;
+        }).catch(err=>{
+            console.error("Error calling generating population.");
+            console.error(err);
+            return;
+        });
+        Population.State = "OnLoad";
+        CallCalculator(Population.GraphId)
+        
+        GraphData.Display = {
+            FirstPopulation: true,
+            ActivePatient: Population.ActivePatient,
+            OnePopulation: true
+        }            
+        $w(controllers.ChangePopulation).disable();
+        textRepository.QuestionText.TextIndex = 0;
+        $w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[
+                                            textRepository.QuestionText.TextIndex];
+        textRepository.ShowPatientButton.TextIndex = 0;
+        $w(controllers.ShowPatient).label = textRepository.ShowPatientButton.TextItems[
+                                            textRepository.ShowPatientButton.TextIndex];
+        textRepository.FirstPatientButton.TextIndex = 0;
+        $w(controllers.BackToFirstPatient).label = textRepository.FirstPatientButton.TextItems[
+                                                   textRepository.FirstPatientButton.TextIndex];        
+        
+        $w(controllers.GraphArea).postMessage(GraphData, "*");
+
+        BindPatientData();
+    },
+    ResamplePatient: function($w) {
+        Population.ActivePatient = (Population.ActivePatient + 1) % 20;
+        GraphData.Display.ActivePatient = Population.ActivePatient;
+
+
+    },
+    ChangePopulation: function($w) {
+        $w(controllers.SwitchPatient).disable();
+        $w(controllers.Yes).disable();
+        $w(controllers.Hint).show();
+
+
+    },
+    DisplayData: function($w) {
+            
+    }, 
+    BackToDefault: function($w) {
+
+    },
+    ChangeViewType: function($w) {
+        Internal.ToggleText($w(controllers.QuestionText));
+        Internal.ToggleLabel($w(controllers.BackToFirstPatient));
+        Internal.ToggleLabel($w(controllers.ShowPatient));
+        if (textRepository[$w(controllers.QuestionText).id].TextIndex === 0)
+        {
+            $w(controllers.ChangePopulation).disable();
+            $w(controllers.AdjustPercentage_section).hide();
+        } else {
+            $w(controllers.ChangePopulation).enable();
+            $w(controllers.AdjustPercentage_section).show();
+        }        
+        
+        
+        GraphData.Display.OnePopulation = !GraphData.Display.OnePopulation;
+
+
+    },
+    OptimizeCondition: function($w) {
+        Internal.ToggleText($w(controllers.QuestionText), 0);
+	    Internal.ToggleLabel($w(controllers.ShowPatient), 0);
+        Internal.ToggleLabel($w(controllers.BackToFirstPatient), 0);
+        
+        Population
+        var freq = $w(controllers.Frequency);
+        var dose = $w(controllers.DosageInput);
+        var infusion = $w(controllers.InfusionRate);
+        
+        Population.Others = Population[Population.State].slice();
+        Population.Others.forEach((val)=>{
+            val.infusion_rate = infusion === undefined? val.infusion_rate : parseFloat(infusion.value);
+            val.dose = dose === undefined? val.dose : parseFloat(dose.value);
+            val.tau = freq === undefined? val.tau : parseFloat(freq.value);
+        });
+        var temp = Population.State;
+        Population.State = "Others";
+        CallCalculator();
+        Population.State = temp;
+        Population.ActivePatient = Population.DefaultPatient[Population.State];
+        GraphData.Display = {
+            ActivePatient: Population.ActivePatient,
+            FirstPopulation: true,
+            OnePopulation: true
+        }
+    },
+    ChangePercentage: function($w) {
+        var Pecentage = {
+            Poor: $w(controllers.AdjustPercentage_box1).value/100.0,
+            Intermediate: $w(controllers.AdjustPercentage_box2).value/100.0, 
+            Extensive: $w(controllers.AdjustPercentage_box3).value/100.0
+        }
+        Population.ActivePatient = Population.DefaultPatient.Adjusted;
+        UpdatePopulationCondition(Population.GraphId, Pecentage).then(result =>{
+            console.info("Population generated (Population.Adjusted):" + result);
+            Population.Adjusted = result;
+        }).catch(err=>{
+            console.error("Error calling generating population.");
+            console.error(err);
+            return;
+        });
+        Population.State = "Adjusted";
+        CallCalculator();
+
+        $w(controllers.GraphArea).postMessage(GraphData, "*");
+    },
+    AdjustPercentage: function($w, cur) {
+        var sliders = [ 
+            $w(controllers.AdjustPercentage_box1),
+            $w(controllers.AdjustPercentage_box2),
+            $w(controllers.AdjustPercentage_box4)
+        ]
+        var a = sliders[(cur++)%3];
+        var b = sliders[(cur++)%3];
+        var c = sliders[(cur++)%3];
+        var d = $w(controllers.AdjustPercentage_box3);
+        var previous = 100 - b.value - c.value - d.value;
+        var current = a.value;
+        if (current < previous){
+            d.value += (previous - current);
+        } else {
+            var difference = current - previous;
+            if(b.value > difference) {
+                b.value -= difference 
+            } else {
+                difference -= b.value;
+                b.value = 0;
+                if (c.value > difference) {
+                    c.value -= difference;
+                } else {
+                    difference -= c.value;
+                    c.value = 0;
+                    d.value -= difference;
+                }
+            }
+        }
+    },
+    ResetGraph: function($w) {
+        Population.State = "OnLoad";
+        Population.ActivePatient = Population.DefaultPatient[Population.State];
+        CallCalculator();
+        GraphData.Display = {
+            FirstPopulation: true,
+            ActivePatient: Population.ActivePatient,
+        }
+
+
+
+    }
+}
+
+function CallCalculator() {
+    Calculate(Population.GraphId, Population[Population.State]).then(result =>{
+        console.info("Graph data calculated:" + result);
+        GraphData.Data = result;
+    }).catch(err =>{
+        console.error("Error calling calculating graph data.");
+        console.error(err);
+        return;
+    });
+}
+
+function BindPatientData() {
+    var singleData = displayData.SinglePatient(Population[Population.State], Population.ActivePatient, GraphData.Data);
+    var popData = displayData.Population(Population[Population.State], GraphData.Data);
+    
+    GraphBinding.SinglePatient.forEach(val => {
+        if($w(val.id) !== undefined) {
+            $(val.id).text = singleData[val.key];
+        }
+    });
+
+    GraphBinding.Population.forEach(val => {
+        if($w(val.id) !== undefined) {
+            $(val.id).text = popData[val.key];
+        }
+    });
+}
