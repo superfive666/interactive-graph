@@ -1,29 +1,24 @@
-import {Lognormal} from 'backend/LognormalDistribution.jsw';
-import {ReadGraphDataFromDB} from 'backend/DBConnection.jsw';
+import {Lognormal} from 'backend/LognormalDistribution.js';
+import {ReadGraphDataFromDB} from 'backend/DBConnection.js';
 import {graphs} from 'public/BackendParameter.js';
 
 let Calculate = {
     AdjustedMean: function AdjustedMean(m, s) {
         var a1 = m * m;
-        var a2 = Math.Sqrt(a1 + s * s);
-        return Math.Log(a1 / a2);
+        var a2 = Math.sqrt(a1 + s * s);
+        return Math.log(a1 / a2);
     },
     AdjustedStd: function AdjustedStd(m, s) {
         var a1 = m * m;
         var a2 = a1 + s * s;
-        return Math.Sqrt(Math.Log(a2 / a1));
+        return Math.sqrt(Math.log(a2 / a1));
     }
 }
 
 function GenerateVariable(m, s) {
     var adjustM = Calculate.AdjustedMean(m, s);
     var adjustS = Calculate.AdjustedStd(m, s);
-    Lognormal.inv(Math.random(), adjustM, adjustS).then(result =>{
-        return result;
-    }).catch(err => {
-        console.error("Error in Calling Lognormal Statistic Function: ");
-        console.error(err);
-    });
+    return Lognormal.inv(Math.random(), adjustM, adjustS);
 }
 
 function GenerateOnePatient(condition, adj) {
@@ -52,18 +47,10 @@ function GenerateOnePatient(condition, adj) {
     return patient;
 }
 
-export function GeneratePopulation(GraphId) {
+export async function GeneratePopulation(GraphId) {
 	var patients = new Array();
-	var condition;
-	ReadGraphDataFromDB(GraphId).then(result =>{
-		condition = result;
-	}).catch(err =>{
-		console.error("Error at PopulationGenerator: ");
-		console.error(err);
-        return patients;
-	});
-    
-	for (var i = 0; i < 20; i++) {
+	var condition = await ReadGraphDataFromDB(GraphId);
+    for (var i = 0; i < 20; i++) {
         var patient = GenerateOnePatient(condition, 1);
         var temp = GraphId === graphs.Continuous_Intravenous_Analgesic? 
         patient.actualKe * patient.patient_bodyweight : 
@@ -71,24 +58,17 @@ export function GeneratePopulation(GraphId) {
         patient["ke"] = Math.log(1) - Math.log(1 - temp);
         patient["thalf"] = Math.log(2)/patient.ke;
         patients.push(patient); 
+        console.log("Patient" + i + "generated.");
     }
-
-    console.log("PopulationGenerator Generate Population: ");
+     console.log("PopulationGenerator Generate Population: ");
     console.log(patients);
     return patients;
 }
 
-export function UpdatePopulationCondition(GraphId, Percentage) {
+export async function UpdatePopulationCondition(GraphId, Percentage) {
     var patients = new Array();
-	var condition;
-	ReadGraphDataFromDB(GraphId).then(result =>{
-		condition = result;
-	}).catch(err =>{
-		console.error("Error at PopulationGenerator: ");
-		console.error(err);
-        return patients;
-	});
-
+    var condition = await ReadGraphDataFromDB(GraphId);
+ 
     var strata = new Array();
     strata.push(Math.ceil(20 * Percentage.Poor));
     strata.push(Math.ceil(20 * Percentage.Intermediate) + strata[0]);
@@ -114,5 +94,5 @@ export function UpdatePopulationCondition(GraphId, Percentage) {
     
     console.log("PopulationGenerator Update Population Condition: ");
     console.log(patients);
-    return patients;
+    return patients;  
 }

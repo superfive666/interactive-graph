@@ -66,14 +66,14 @@ export let Lognormal = {
                         (2 * sigma * sigma));
       },
     
-      cdf: function cdf(x, mu, sigma) {
+    cdf: function cdf(x, mu, sigma) {
         if (x < 0)
           return 0;
         return 0.5 +
             (0.5 * Calculate.erf((Math.log(x) - mu) / Math.sqrt(2 * sigma * sigma)));
-      },
+    },
     
-      inv: function(p, mu, sigma) {
+    inv: function(p, mu, sigma) {
         return Math.exp(-1.41421356237309505 * sigma * Calculate.erfcinv(2 * p) + mu);
-      }
+    }
 }
