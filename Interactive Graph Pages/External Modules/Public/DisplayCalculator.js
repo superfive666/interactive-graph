@@ -1,7 +1,6 @@
 export let displayData = {
 	Population: function(patients, data) {
         var patient = patients[0];
-        var map = data.map(function(row){ return Math.max(...row)});
         var ave = patients.reduce((a, b, index, self) => {
             const keys = Object.keys(a)
             let c = {};
@@ -13,6 +12,16 @@ export let displayData = {
             })
             return c;
         });
+        var cmin = 10000000;
+        var cmax = 0;
+        for(var j = 1; j <= 20; j++) {
+            var localmax = 0;
+            for(var i = 0; i < data.length; i++) {
+                localmax = Math.max(localmax, data[i][j]);
+            }
+            cmin = Math.min(localmax, cmin);
+            cmax = Math.max(localmax, cmax);
+        }
         var result = {
             vmax: patient.vmax,
             km: patient.km,
@@ -26,15 +35,21 @@ export let displayData = {
             ka: RoundNDecimal(ave.ka,2),
             cl: RoundNDecimal(ave.cl,2),
             f: RoundNDecimal(ave.f,2),
-            thalf: ave.thalf,
-            cmin: Math.min(...map),
-            cmax: Math.max(...map),
-            _f: 1 - this.er
+            thalf: RoundNDecimal(ave.thalf,2),
+            cmin: RoundNDecimal(cmin,2),
+            cmax: RoundNDecimal(cmax,2),
+            _f: 1 - RoundNDecimal(ave.er,2)
         }
+        console.log("DisplayCalculator: Population result --->");
+        console.log(result);
         return result;
 	},
-	SinglePatient: function(patients, i , data) {
-        var patient = patients[i];
+	SinglePatient: function(patients, j , data) {
+        var patient = patients[j];
+        var cmax = 0;
+        for (var i = 0; i < data.length; i++) {
+            cmax = Math.max(cmax, data[i][j+1]);
+        }
         var result = {
             vmax: patient.vmax,
             km: patient.km,
@@ -43,16 +58,18 @@ export let displayData = {
             mic: patient.mic,
             dose: patient.dose,
             tau: patient.tau,
-            vd: patient.vd,
-            er: patient.er,
-            ka: patient.ka,
-            cl: patient.cl,
-            f: patient.f,
-            thalf: patient.thalf,
+            vd: RoundNDecimal(patient.vd,2),
+            er: RoundNDecimal(patient.er,2),
+            ka: RoundNDecimal(patient.ka,2),
+            cl: RoundNDecimal(patient.cl,2),
+            f: RoundNDecimal(patient.f,2),
+            thalf: RoundNDecimal(patient.thalf,2),
             cmin: patient.cmin,
-            cmax: Math.max(...data[i+1]),
-            _f: 1 - this.er
+            cmax: RoundNDecimal(cmax,2),
+            _f: 1 - RoundNDecimal(patient.er,2)
         };
+        console.log("DisplayCalculator: Single Patient result --->");
+        console.log(result);
         return result;
 	}
 }

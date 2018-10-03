@@ -57,22 +57,22 @@ export let Internal = {
 
 export let GraphBinding = {
 	SinglePatient: [
-		{id: "#SinglePatientF", key: ""},
-		{id: "#SinglePatientKa", key: ""},
-		{id: "#SinglePatientDose", key: ""},
-		{id: "#SinglePatientCl", key: ""},
-		{id: "#SinglePatientThalf", key: ""},
-		{id: "#SinglePatientCmax", key: ""},
-		{id: "#SinglePatientCmin", key: ""}
+		{id: "#SinglePatientF", key: "_f"},
+		{id: "#SinglePatientKa", key: "ka"},
+		{id: "#SinglePatientDose", key: "dose"},
+		{id: "#SinglePatientCl", key: "cl"},
+		{id: "#SinglePatientThalf", key: "thalf"},
+		{id: "#SinglePatientCmax", key: "cmax"},
+		{id: "#SinglePatientCmin", key: "cmin"}
 	],
 	Population: [
-		{id: "#PopulationPatientF", key: ""},
-		{id: "#PopulationPatientKa", key: ""},
-		{id: "#PopulationPatientDose", key: ""},
-		{id: "#PopulationPatientVd", key: ""},
-		{id: "#PopulationPatientCl", key: ""},
-		{id: "#PopulationPatientThalf", key: ""},
-		{id: "#PopulationPatientCmax", key: ""},
-		{id: "#PopulationPatientCmin", key: ""}
+		{id: "#PopulationPatientF", key: "_f"},
+		{id: "#PopulationPatientKa", key: "ka"},
+		{id: "#PopulationPatientDose", key: "dose"},
+		{id: "#PopulationPatientVd", key: "vd"},
+		{id: "#PopulationPatientCl", key: "cl"},
+		{id: "#PopulationPatientThalf", key: "thalf"},
+		{id: "#PopulationPatientCmax", key: "cmax"},
+		{id: "#PopulationPatientCmin", key: "cmin"}
 	]
 }

@@ -10,6 +10,8 @@ import {Calculate} from 'backend/Calculator.jsw';
 import {GeneratePopulation} from 'backend/PopulationGenerator.jsw';
 import {UpdatePopulationCondition} from 'backend/PopulationGenerator.jsw';
 
+import wixWindow from 'wix-window';
+
 let Population = {
 	OnLoad: {},
 	Adjusted: {},
@@ -188,17 +190,17 @@ export let PageLogic = {
             d.value += (previous - current);
         } else {
             var difference = current - previous;
-            if(b.value > difference) {
-                b.value -= difference 
+            if(d.value > difference) {
+                d.value -= difference 
             } else {
-                difference -= b.value;
-                b.value = 0;
-                if (c.value > difference) {
-                    c.value -= difference;
+                difference -= d.value;
+                d.valaue = 0;
+                if (b.value > difference) {
+                    b.value -= difference;
                 } else {
-                    difference -= c.value;
-                    c.value = 0;
-                    d.value -= difference;
+                    difference -= b.value;
+                    b.value = 0;
+                    c.value -= difference;
                 }
             }
         }
@@ -225,18 +227,26 @@ export let PageLogic = {
 }
 
 function BindPatientData() {
+    console.log("BindPatientData: Population State --->" + Population.State);
+    console.log("BindPatientData: Population --->");
+    console.log(Population[Population.State]);
+    console.log("BindPatientData: GraphData.Data --->");
+    console.log(GraphData.Data);
+    console.log("BindPatientData: Active Patient --->" + Population.ActivePatient);
     var singleData = displayData.SinglePatient(Population[Population.State], Population.ActivePatient, GraphData.Data);
     var popData = displayData.Population(Population[Population.State], GraphData.Data);
     
     GraphBinding.SinglePatient.forEach(val => {
         if($w(val.id) !== undefined) {
             $w(val.id).text = singleData[val.key];
+            console.log(val.id + "  " + $w(val.id).text);
         }
     });
 
     GraphBinding.Population.forEach(val => {
         if($w(val.id) !== undefined) {
             $w(val.id).text = popData[val.key];
+            console.log(val.id + "  " + $w(val.id).text);
         }
     });
 }

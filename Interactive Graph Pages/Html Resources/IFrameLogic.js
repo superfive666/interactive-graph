@@ -1,7 +1,6 @@
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(DrawGraph);    
+    google.charts.load('current', {'packages':['corechart']});  
 });
 
 function ReceiveMessage(e) {
