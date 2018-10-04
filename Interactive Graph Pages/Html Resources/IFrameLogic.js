@@ -34,7 +34,7 @@ function DrawGraph(Data, Display, GraphStyle) {
         table.addColumn("number", "high");
         var singleData = new Array();
         Data.forEach((val)=>{
-            singleData.push([val[0], val[ActivePatient], val[22], val[23]])
+            singleData.push([val[0], val[Display.ActivePatient], val[22], val[23]])
         });
     } else {
         for (var i = 1; i <= 20; i++)
