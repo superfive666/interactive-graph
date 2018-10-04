@@ -40,8 +40,8 @@ export let PageLogic = {
         GeneratePopulation(Population.GraphId).then(result =>{
             console.log("Population generated (Population.OnLoad): --->");
             console.log(result);
-            Population.OnLoad = result;
             Population.State = "OnLoad";
+            Population[Population.State] = result;
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
                 console.log("Graph data calculated: --->");
                 console.log(res);
@@ -50,7 +50,18 @@ export let PageLogic = {
                     FirstPopulation: true,
                     ActivePatient: Population.ActivePatient,
                     OnePopulation: true
-                }            
+                }
+                GraphData.ChartStyling = chart(
+                    Population[Population.State][0].h_max, 
+                    Population[Population.State],
+                    {
+                        id: 3,
+                        single: true,
+                        adjusted: false,
+                        firstPopulation: true,
+                        activePatient: Population.ActivePatient
+                    }
+                );           
                 $w(controllers.ChangePopulation).disable();
                 textRepository.QuestionText.TextIndex = 0;
                 $w(controllers.QuestionText).text = textRepository.QuestionText.TextItems[

@@ -18,6 +18,8 @@ function ReceiveMessage(e) {
         return;
     }
 
+    console.log("Data received: --->");
+    console.log(message);
     DrawGraph(message.Data, message.Display, message.ChartStyle);
 }
 
@@ -44,6 +46,10 @@ function DrawGraph(Data, Display, GraphStyle) {
         table.addRows(Data);
     }
 
+    console.log("Start to draw graph:  table --->");
+    console.log(table);
+    console.log("Start to draw graph: GraphStyle --->");
+    console.log(GraphStyle);
     var chart = new google.visualization.ComboChart(document.getElementById("ChartArea"));
     chart.draw(table, GraphStyle);
 }
