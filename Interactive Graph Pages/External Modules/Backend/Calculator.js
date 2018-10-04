@@ -44,7 +44,7 @@ function Graph_2(data) {
 
 
 function Graph_3(data) {
-	var maxHour = 100;
+	var maxHour = data[0].h_max;
 	var result = new Array();
 	var calc = function (t, patient) {
 		var a1 = (1 - patient.er) * patient.dose * patient.ka;
@@ -66,8 +66,8 @@ function Graph_3(data) {
 				rowData.push(conc);
 			});	
 			rowData.push(ave);
-			rowData.push(data.low);
-			rowData.push(data.ht);
+			rowData.push(data[0].low);
+			rowData.push(data[0].ht);
 			result.push(rowData);
 		}
 	} else {

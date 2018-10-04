@@ -38,12 +38,14 @@ export let PageLogic = {
         Population.DefaultPatient.Adjusted = Math.floor(Math.random()*20);
         Population.ActivePatient = Population.DefaultPatient.OnLoad;
         GeneratePopulation(Population.GraphId).then(result =>{
-            console.info("Population generated (Population.OnLoad):" + result);
+            console.log("Population generated (Population.OnLoad): --->");
+            console.log(result);
             Population.OnLoad = result;
             Population.State = "OnLoad";
-            Calculate(Population.GraphId, Population[Population.State]).then(result =>{
-                console.info("Graph data calculated:" + result);
-                GraphData.Data = result;
+            Calculate(Population.GraphId, Population[Population.State]).then(res =>{
+                console.log("Graph data calculated: --->");
+                console.log(res);
+                GraphData.Data = res;
                 GraphData.Display = {
                     FirstPopulation: true,
                     ActivePatient: Population.ActivePatient,
@@ -61,8 +63,8 @@ export let PageLogic = {
                                                            textRepository.FirstPatientButton.TextIndex];        
                 
                 $w(controllers.GraphArea).postMessage(GraphData, "*");
-        
-                BindPatientData();            
+                console.log("Graph data posted: All Data --->");
+                console.log(GraphData);
             }).catch(err =>{
                 console.error("Error calling calculating graph data.");
                 console.error(err);
@@ -88,7 +90,11 @@ export let PageLogic = {
 
     },
     DisplayData: function($w) {
-            
+        wixWindow.openLightbox("Graph3Single", displayData.SinglePatient(
+            Population[Population.State],
+            Population.ActivePatient,
+            GraphData.Data
+        ));    
     }, 
     BackToDefault: function($w) {
 
@@ -224,29 +230,4 @@ export let PageLogic = {
             return;
         });
     }
-}
-
-function BindPatientData() {
-    console.log("BindPatientData: Population State --->" + Population.State);
-    console.log("BindPatientData: Population --->");
-    console.log(Population[Population.State]);
-    console.log("BindPatientData: GraphData.Data --->");
-    console.log(GraphData.Data);
-    console.log("BindPatientData: Active Patient --->" + Population.ActivePatient);
-    var singleData = displayData.SinglePatient(Population[Population.State], Population.ActivePatient, GraphData.Data);
-    var popData = displayData.Population(Population[Population.State], GraphData.Data);
-    
-    GraphBinding.SinglePatient.forEach(val => {
-        if($w(val.id) !== undefined) {
-            $w(val.id).text = singleData[val.key];
-            console.log(val.id + "  " + $w(val.id).text);
-        }
-    });
-
-    GraphBinding.Population.forEach(val => {
-        if($w(val.id) !== undefined) {
-            $w(val.id).text = popData[val.key];
-            console.log(val.id + "  " + $w(val.id).text);
-        }
-    });
 }

@@ -40,6 +40,9 @@ function GenerateOnePatient(condition, adj) {
     patient["ka"] = GenerateVariable(condition.ka_mean, condition.ka_std);
     patient["cl"] = GenerateVariable(condition.cl_mean * adj,condition.cl_std);
     patient["f"] = GenerateVariable(condition.f_mean, condition.f_std);
+    patient["h_max"] = condition.horizontal_max;
+    patient["low"] = condition.low;
+    patient["ht"] = condition.ht;
     patient["actualKe"] = Math.min(0.9999, patient.cl * 60 / patient.vd / 1000);
     patient["cmin"] = 0;
     patient["cmax"] = 0;

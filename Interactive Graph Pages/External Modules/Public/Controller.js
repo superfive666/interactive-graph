@@ -60,6 +60,7 @@ export let GraphBinding = {
 		{id: "#SinglePatientF", key: "_f"},
 		{id: "#SinglePatientKa", key: "ka"},
 		{id: "#SinglePatientDose", key: "dose"},
+		{id: "#SinglePatientVd", key: "vd"},
 		{id: "#SinglePatientCl", key: "cl"},
 		{id: "#SinglePatientThalf", key: "thalf"},
 		{id: "#SinglePatientCmax", key: "cmax"},
