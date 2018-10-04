@@ -1,6 +1,7 @@
 $(document).ready(function () {
     window.addEventListener("message", ReceiveMessage, false);
-    google.charts.load('current', {'packages':['corechart']});  
+    google.charts.load('current', {'packages':['corechart']});
+    window.parent.postMessage("Ready", "*");  
 });
 
 function ReceiveMessage(e) {
