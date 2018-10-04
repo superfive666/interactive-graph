@@ -33,7 +33,7 @@ function DrawGraph(Data, Display, GraphStyle) {
         table.addColumn("number", "low");
         table.addColumn("number", "high");
         var singleData = new Array();
-        Data.foeEach((val)=>{
+        Data.forEach((val)=>{
             singleData.push([val[0], val[ActivePatient], val[22], val[23]])
         });
     } else {

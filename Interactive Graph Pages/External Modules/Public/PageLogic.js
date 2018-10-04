@@ -28,7 +28,7 @@ let Population = {
 let GraphData = {
     Data: {},
     Display: {},
-    ChartStyling: {}
+    ChartStyle: {}
 };
 
 export let PageLogic = {
@@ -51,7 +51,7 @@ export let PageLogic = {
                     ActivePatient: Population.ActivePatient,
                     OnePopulation: true
                 }
-                GraphData.ChartStyling = chart(
+                GraphData.ChartStyle = chart(
                     Population[Population.State][0].h_max, 
                     Population[Population.State],
                     {
@@ -90,8 +90,9 @@ export let PageLogic = {
     ResamplePatient: function($w) {
         Population.ActivePatient = (Population.ActivePatient + 1) % 20;
         GraphData.Display.ActivePatient = Population.ActivePatient;
-
-
+        $w(controllers.GraphArea).postMessage(GraphData, "*");
+        console.log("Graph data posted: All Data --->");
+        console.log(GraphData);
     },
     ChangePopulation: function($w) {
         $w(controllers.SwitchPatient).disable();
