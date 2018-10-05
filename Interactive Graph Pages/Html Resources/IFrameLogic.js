@@ -35,7 +35,8 @@ function DrawGraph(Data, Display, GraphStyle) {
         var singleData = new Array();
         Data.forEach((val)=>{
             singleData.push([val[0], val[Display.ActivePatient], val[22], val[23]])
-        });
+		});
+		table.addRows(singleData);
     } else {
         for (var i = 1; i <= 20; i++)
         {

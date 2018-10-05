@@ -21,7 +21,7 @@ let _legend = {
 }
 
 let _chartArea = {
-	top: 30,
+	top: 40,
 	left: 80,
 	width: '76%',
 	height: '80%'	
