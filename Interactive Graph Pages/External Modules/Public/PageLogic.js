@@ -97,7 +97,7 @@ export let PageLogic = {
             {
                 id: parseInt(Population.GraphId.slice(-1), 10),
                 single: textRepository.ShowPatientButton.TextIndex === 0,
-                adjusted: Population.State === "Adjusted",
+                adjusted: Population.Adjust,
                 firstPopulation: true,
                 activePatient: Population.ActivePatient
             }
@@ -109,7 +109,46 @@ export let PageLogic = {
     },
     ChangePopulation: function($w) {
         $w(controllers.SwitchPatient).disable();
-
+        $w(controllers.Yes).disable();  
+        GeneratePopulation(Population.GraphId).then(result =>{
+            console.log("Population generated (Population.OnLoad): --->");
+            console.log(result);
+            Population.State = "Others";
+            Population[Population.State] = result;
+            Calculate(Population.GraphId, Population[Population.State]).then(res =>{
+                console.log("Graph data calculated: --->");
+                console.log(res);
+                GraphData.Data = res;
+                GraphData.Display = {
+                    FirstPopulation: false,
+                    ActivePatient: Population.ActivePatient,
+                    OnePopulation: false
+                }
+                GraphData.ChartStyle = chart(
+                    Population[Population.State][0].h_max, 
+                    Population[Population.State],
+                    {
+                        id: parseInt(Population.GraphId.slice(-1), 10),
+                        single: false,
+                        adjusted: Population.State === "Adjusted",
+                        firstPopulation: false,
+                        activePatient: Population.ActivePatient
+                    }
+                );
+                         
+                $w(controllers.GraphArea).postMessage(GraphData, "*");
+                console.log("Graph data posted: All Data --->");
+                console.log(GraphData);
+            }).catch(err =>{
+                console.error("Error calling calculating graph data.");
+                console.error(err);
+                return;
+            });
+        }).catch(err=>{
+            console.error("Error calling generating population.");
+            console.error(err);
+            return;
+        });
 
     },
     DisplayData: function($w) {
@@ -129,17 +168,13 @@ export let PageLogic = {
         wixWindow.openLightbox(target, data);    
     }, 
     BackToDefault: function($w) {
-        var target = Population.Adjust? "OnLoad" : "Adjusted";
+        var target = Population.Adjust? "Adjusted" : "OnLoad";
+        $w(controllers.SwitchPatient).enable();
+        $w(controllers.Yes).enable();
         if(Population.State === "Others") {
-            Calculate(Population.GraphId, Population[target]).then(res=>{
-                console.log("Graph data calculated: --->");
-                console.log(res);
-                GraphData.Data = res;
-            }).catch(err =>{
-                console.error("Error calling calculating graph data.");
-                console.error(err);
-                return;
-            });
+            GraphData.Data = await Calculate(Population.GraphId, Population[target]);
+            console.log("Graph data calculated: --->");
+            console.log(GraphData.Data);
         }
         Population.State = target;
         Population.ActivePatient = Population.DefaultPatient[target];
@@ -151,11 +186,12 @@ export let PageLogic = {
             {
                 id: parseInt(Population.GraphId.slice(-1), 10),
                 single: textRepository.ShowPatientButton.TextIndex === 0,
-                adjusted: Population.State === "Adjusted",
+                adjusted: Population.Adjust,
                 firstPopulation: true,
                 activePatient: Population.ActivePatient
             }
         );
+        $w(controllers.GraphArea).postMessage(GraphData, "*");
     },
     ChangeViewType: function($w) {
         Internal.ToggleLabel($w(controllers.BackToFirstPatient));
