@@ -22,7 +22,8 @@ let Population = {
 	},
     ActivePatient: 0,
     State: "OnLoad",
-    GraphId: ""
+    GraphId: "",
+    Adjust: false
 }
 
 let GraphData = {
@@ -55,7 +56,7 @@ export let PageLogic = {
                     Population[Population.State][0].h_max, 
                     Population[Population.State],
                     {
-                        id: 3,
+                        id: parseInt(Population.GraphId.slice(-1), 10),
                         single: true,
                         adjusted: false,
                         firstPopulation: true,
@@ -90,44 +91,96 @@ export let PageLogic = {
     ResamplePatient: function($w) {
         Population.ActivePatient = (Population.ActivePatient + 1) % 20;
         GraphData.Display.ActivePatient = Population.ActivePatient;
+        GraphData.ChartStyle = chart(
+            Population[Population.State][0].h_max, 
+            Population[Population.State],
+            {
+                id: parseInt(Population.GraphId.slice(-1), 10),
+                single: textRepository.ShowPatientButton.TextIndex === 0,
+                adjusted: Population.State === "Adjusted",
+                firstPopulation: true,
+                activePatient: Population.ActivePatient
+            }
+        );        
+
         $w(controllers.GraphArea).postMessage(GraphData, "*");
         console.log("Graph data posted: All Data --->");
         console.log(GraphData);
     },
     ChangePopulation: function($w) {
         $w(controllers.SwitchPatient).disable();
-        $w(controllers.Yes).disable();
-        $w(controllers.Hint).show();
 
 
     },
     DisplayData: function($w) {
-        wixWindow.openLightbox("Graph3Single", displayData.SinglePatient(
-            Population[Population.State],
-            Population.ActivePatient,
-            GraphData.Data
-        ));    
+        var type = textRepository.ShowPatientButton.TextIndex === 0? "Single":"Population";
+        var target = Population.GraphId + type;
+        var data = type === "Single"? 
+            displayData.SinglePatient(
+                Population[Population.State],
+                Population.ActivePatient,
+                GraphData.Data
+            ) : 
+            displayData.Population(
+                Population[Population.State],
+                GraphData.Data
+            )
+
+        wixWindow.openLightbox(target, data);    
     }, 
     BackToDefault: function($w) {
-
+        var target = Population.Adjust? "OnLoad" : "Adjusted";
+        if(Population.State === "Others") {
+            Calculate(Population.GraphId, Population[target]).then(res=>{
+                console.log("Graph data calculated: --->");
+                console.log(res);
+                GraphData.Data = res;
+            }).catch(err =>{
+                console.error("Error calling calculating graph data.");
+                console.error(err);
+                return;
+            });
+        }
+        Population.State = target;
+        Population.ActivePatient = Population.DefaultPatient[target];
+        GraphData.Display.ActivePatient = Population.ActivePatient;
+        GraphData.Display.FirstPopulation = true;
+        GraphData.ChartStyle = chart(
+            Population[Population.State][0].h_max, 
+            Population[Population.State],
+            {
+                id: parseInt(Population.GraphId.slice(-1), 10),
+                single: textRepository.ShowPatientButton.TextIndex === 0,
+                adjusted: Population.State === "Adjusted",
+                firstPopulation: true,
+                activePatient: Population.ActivePatient
+            }
+        );
     },
     ChangeViewType: function($w) {
-        Internal.ToggleText($w(controllers.QuestionText));
         Internal.ToggleLabel($w(controllers.BackToFirstPatient));
         Internal.ToggleLabel($w(controllers.ShowPatient));
-        if (textRepository[$w(controllers.QuestionText).id].TextIndex === 0)
+        if (textRepository.ShowPatientButton.TextIndex === 0)
         {
             $w(controllers.ChangePopulation).disable();
-            $w(controllers.AdjustPercentage_section).hide();
         } else {
             $w(controllers.ChangePopulation).enable();
-            $w(controllers.AdjustPercentage_section).show();
         }        
-        
-        
         GraphData.Display.OnePopulation = !GraphData.Display.OnePopulation;
 
+        GraphData.ChartStyle = chart(
+            Population[Population.State][0].h_max, 
+            Population[Population.State],
+            {
+                id: parseInt(Population.GraphId.slice(-1), 10),
+                single: textRepository.ShowPatientButton.TextIndex === 0,
+                adjusted: Population.Adjusted === "Adjusted",
+                firstPopulation: true,
+                activePatient: Population.ActivePatient
+            }
+        );
 
+        $w(controllers.GraphArea).postMessage(GraphData, "*");
     },
     OptimizeCondition: function($w) {
         Internal.ToggleText($w(controllers.QuestionText), 0);
