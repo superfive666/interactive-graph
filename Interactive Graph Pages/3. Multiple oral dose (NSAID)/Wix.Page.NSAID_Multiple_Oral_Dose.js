@@ -44,3 +44,11 @@ export function AdjustPercentage2_change(event) {
 export function AdjustPercentage4_change(event) {
 	PageLogic.AdjustPercentage($w, 2);
 }
+
+export function DrawGraphButton_click(event) {
+	PageLogic.ChangePercentage($w);
+}
+
+export function ResetButton_click(event) {
+	PageLogic.ResetGraph($w);
+}

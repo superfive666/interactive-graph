@@ -115,7 +115,7 @@ function _series(patients, settings) {
 	if (settings.adjusted) {
 		var colors = ["#3869FF", "#FFFB37", "#FF3200", "#FF00E1"];
 		var ind = 0;
-		patients.forEach(element => {
+		patients.forEach((element, i) => {
 			res[i] = settings.firstPopulation && 
 					 i === settings.activePatient? {
 				lineWidth: 3,
@@ -124,10 +124,10 @@ function _series(patients, settings) {
 				type: 'line'
 			} : {
 				lineWidth: 1,
-                   lineDashStyle: [4, 4],
-                   color: colors[ind],
-                   visibleInLegend: false,
-                   type: 'line'
+                lineDashStyle: [4, 4],
+                color: colors[ind],
+                visibleInLegend: false,
+                type: 'line'
 			}
 			if (element.last) ind++;
 		});
@@ -136,15 +136,15 @@ function _series(patients, settings) {
 			res[i] = settings.firstPopulation && 
 			         i === settings.activePatient? {
 				lineWidth: 3,
-                   color: "#00FF00",
-                   visibleInLegend: true,
-                   type: 'line'
+                color: "#00FF00",
+                visibleInLegend: true,
+                type: 'line'
 			} : {
 				lineWidth: 1,
-                   lineDashStyle: [4, 4],
-                   color: "#1EB1EE",
-                   visibleInLegend: false,
-                   type: 'line'
+                lineDashStyle: [4, 4],
+                color: "#1EB1EE",
+                visibleInLegend: false,
+                type: 'line'
 			}
 		}
 	}

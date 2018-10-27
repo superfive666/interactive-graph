@@ -66,7 +66,7 @@ export let displayData = {
             thalf: RoundNDecimal(patient.thalf,2),
             cmin: patient.cmin,
             cmax: RoundNDecimal(cmax,2),
-            _f: 1 - RoundNDecimal(patient.er,2)
+            _f: RoundNDecimal(1 - patient.er,2)
         };
         console.log("DisplayCalculator: Single Patient result --->");
         console.log(result);

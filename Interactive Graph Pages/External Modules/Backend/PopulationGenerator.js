@@ -80,9 +80,9 @@ export async function UpdatePopulationCondition(GraphId, Percentage) {
     var i = 0, j = -1;
     while(++j < strata.length) 
     { 
-        while(i < strata[j]) 
+        while(i++ < strata[j]) 
         {
-            var patient = GenerateOnePatient(condition, 1);
+            var patient = GenerateOnePatient(condition, adj);
             var temp = GraphId === graphs.Continuous_Intravenous_Analgesic? 
             patient.actualKe * patient.patient_bodyweight : 
             patient.actualKe;
@@ -90,7 +90,7 @@ export async function UpdatePopulationCondition(GraphId, Percentage) {
             patient["thalf"] = Math.log(2)/patient.ke;
             patients.push(patient); 
         }
-        adj += 0.25; 
+        adj += 0.25; i--; 
         patients[patients.length-1].last = true;
     }
     
