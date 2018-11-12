@@ -6,16 +6,20 @@ export let controllers = {
 	Yes: "#YesButton",
 	AppyChange: "#ApplyChangeButton",
 	GraphArea: "#GraphArea",
-	QuestionText: "#QuestionText",
 	Frequency: "#FrequencyGroup",
 	DosageInput: "#DosageInput",
 	InfusionRate: "#InfusionRate",
-	Hint: "#HintText",
 	AdjustPercentage_box1: "#AdjustPercentage1",
 	AdjustPercentage_box2: "#AdjustPercentage2",
 	AdjustPercentage_box3: "#AdjustPercentage3",
 	AdjustPercentage_box4: "#AdjustPercentage4",
-	AdjustPercentage_section: "#AdjustPercentageSection"
+	AdjustPercentage_section: "#AdjustPercentageSection",
+	DisplayPercentage_text1: "#DisplayPercentage1",
+	DisplayPercentage_text2: "#DisplayPercentage2",
+	DisplayPercentage_text3: "#DisplayPercentage3",
+	DisplayPercentage_text4: "#DisplayPercentage4",
+	DisplayPercentage_section: "#DisplayPercentageSection",
+	DisplayLegend_section: "#DisplayLegendSection"
 }
 
 export let textRepository = {

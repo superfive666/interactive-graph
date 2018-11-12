@@ -113,7 +113,11 @@ function _series(patients, settings) {
 		}
 	};
 	if (settings.adjusted) {
-		var colors = ["#3869FF", "#FFFB37", "#FF3200", "#FF00E1"];
+		var colors = new Map(); 
+		colors.set(0, "#3869FF");
+		colors.set(1, "#FFFB37");
+		colors.set(2, "#FF3200");
+		colors.set(3, "#FF00E1");
 		var ind = 0;
 		patients.forEach((element, i) => {
 			res[i] = settings.firstPopulation && 
@@ -125,11 +129,10 @@ function _series(patients, settings) {
 			} : {
 				lineWidth: 1,
                 lineDashStyle: [4, 4],
-                color: colors[ind],
+                color: colors.get(element.last),
                 visibleInLegend: false,
                 type: 'line'
 			}
-			if (element.last) ind++;
 		});
 	} else {
 		for(var i = 0; i < patients.length; i++) {

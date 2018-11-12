@@ -3,7 +3,6 @@ import {Internal} from 'public/Controller.js';
 import {textRepository} from 'public/Controller.js';
 import {chart} from 'public/ChartStyling.js';
 import {displayData} from 'public/DisplayCalculator.js';
-
 import {Calculate} from 'backend/Calculator.jsw';
 import {GeneratePopulation} from 'backend/PopulationGenerator.jsw';
 import {UpdatePopulationCondition} from 'backend/PopulationGenerator.jsw';
@@ -21,7 +20,8 @@ let Population = {
     ActivePatient: 0,
     State: "OnLoad",
     GraphId: "",
-    Adjust: false
+    Adjust: false,
+    OnePopulation: true
 }
 
 let GraphData = {
@@ -131,16 +131,15 @@ export let PageLogic = {
             $w(controllers.ChangePopulation).disable();
         } else {
             $w(controllers.ChangePopulation).enable();
+            $w(controllers.AppyChange).disable();
         }
         SetGraphConfig(true, !GraphData.Display.OnePopulation);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
     },
     OptimizeCondition: function($w) {
-        Internal.ToggleText($w(controllers.QuestionText), 0);
 	    Internal.ToggleLabel($w(controllers.ShowPatient), 0);
         Internal.ToggleLabel($w(controllers.BackToFirstPatient), 0);
         
-        Population
         var freq = $w(controllers.Frequency);
         var dose = $w(controllers.DosageInput);
         var infusion = $w(controllers.InfusionRate);
@@ -151,19 +150,13 @@ export let PageLogic = {
             val.dose = dose === undefined? val.dose : parseFloat(dose.value);
             val.tau = freq === undefined? val.tau : parseFloat(freq.value);
         });
-        var temp = Population.State;
         Population.State = "Others";
         Calculate(Population.GraphId, Population[Population.State]).then(result =>{
             console.info("Graph data calculated: --->");
             console.info(result)
             GraphData.Data = result;
-            Population.State = temp;
-            Population.ActivePatient = Population.DefaultPatient[Population.State];
-            GraphData.Display = {
-                ActivePatient: Population.ActivePatient,
-                FirstPopulation: true,
-                OnePopulation: true
-            }
+            SetGraphConfig(true, true);
+            $w(controllers.GraphArea).postMessage(GraphData, "*");
         }).catch(err =>{
             console.error("Error calling calculating graph data.");
             console.error(err);
@@ -178,20 +171,23 @@ export let PageLogic = {
         }
         Population.ActivePatient = Population.DefaultPatient.Adjusted;
         $w(controllers.AdjustPercentage_section).hide("fade");
+        SetChangePercentText();
+        AfterChangePercent();
         console.info("Adjusted Percentage: --->");
         console.info(Pecentage);
         UpdatePopulationCondition(Population.GraphId, Pecentage).then(result =>{
             console.info("Population generated (Population.Adjusted): --->");
             console.info(result);
             Population.Adjusted = result;
-
             Population.State = "Adjusted";
             Population.Adjust = true;
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
                 console.info("Graph data calculated: --->");
                 console.info(res);
                 GraphData.Data = res;
-                SetGraphConfig(true, true);
+                SetGraphConfig(true, GraphData.Display.OnePopulation);
+                console.info("Graph data posted: --->");
+                console.info(GraphData);
                 $w(controllers.GraphArea).postMessage(GraphData, "*");
             }).catch(err =>{
                 console.error("Error calling calculating graph data.");
@@ -238,6 +234,7 @@ export let PageLogic = {
     },
     ResetGraph: function($w) {
         $w(controllers.AdjustPercentage_section).show("fade");
+        BeforeChangePercent();
         $w(controllers.ChangePopulation).disable();
         $w(controllers.Yes).enable();
         $w(controllers.SwitchPatient).enable();
@@ -286,4 +283,16 @@ function DefaultText() {
     textRepository.FirstPatientButton.TextIndex = 0;
     $w(controllers.BackToFirstPatient).label = textRepository.FirstPatientButton.TextItems[
                                                textRepository.FirstPatientButton.TextIndex];     
+}
+
+function SetChangePercentText() {
+
+}
+
+function AfterChangePercent() {
+
+}
+
+function BeforeChangePercent() {
+
 }

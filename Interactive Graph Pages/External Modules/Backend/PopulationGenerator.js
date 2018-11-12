@@ -46,7 +46,6 @@ function GenerateOnePatient(condition, adj) {
     patient["actualKe"] = Math.min(0.9999, patient.cl * 60 / patient.vd / 1000);
     patient["cmin"] = 0;
     patient["cmax"] = 0;
-    patient["last"] = false;
     return patient;
 }
 
@@ -88,10 +87,10 @@ export async function UpdatePopulationCondition(GraphId, Percentage) {
             patient.actualKe;
             patient["ke"] = Math.log(1) - Math.log(1 - temp);
             patient["thalf"] = Math.log(2)/patient.ke;
+            patient["last"] = j;
             patients.push(patient); 
         }
         adj += 0.25; i--; 
-        patients[patients.length-1].last = true;
     }
     
     console.log("PopulationGenerator Update Population Condition: ");
