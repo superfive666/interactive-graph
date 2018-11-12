@@ -41,18 +41,12 @@ export let PageLogic = {
         $w(controllers.ChangePopulation).disable();
         DefaultText();     
         GeneratePopulation(Population.GraphId).then(result =>{
-            console.log("Population generated (Population.OnLoad): --->");
-            console.log(result);
             Population.State = "OnLoad";
             Population[Population.State] = result;
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
-                console.log("Graph data calculated: --->");
-                console.log(res);
                 GraphData.Data = res;
                 SetGraphConfig(true, true);
                 $w(controllers.GraphArea).postMessage(GraphData, "*");
-                console.log("Graph data posted: All Data --->");
-                console.log(GraphData);
             }).catch(err =>{
                 console.error("Error calling calculating graph data.");
                 console.error(err);
@@ -65,11 +59,12 @@ export let PageLogic = {
         });
     },
     ResamplePatient: function($w) {
+        var target = Population.Adjust? "Adjusted" : "OnLoad";
         Population.ActivePatient = (Population.ActivePatient + 1) % 20;
+        Population.ActivePatient === Population.DefaultPatient[target]?
+        $w(controllers.AppyChange).enable() : $w(controllers.AppyChange).disable();
         SetGraphConfig(true, GraphData.Display.OnePopulation);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
-        console.log("Graph data posted: All Data --->");
-        console.log(GraphData);
     },
     ChangePopulation:  async function($w) {
         $w(controllers.SwitchPatient).disable();
@@ -78,15 +73,10 @@ export let PageLogic = {
         Population[Population.State] = Population.Adjust?
             await UpdatePopulationCondition(Population.GraphId, Pecentage) : 
             await GeneratePopulation(Population.GraphId);
-
         Calculate(Population.GraphId, Population[Population.State]).then(res =>{
-            console.log("Graph data calculated: --->");
-            console.log(res);
             GraphData.Data = res;
             SetGraphConfig(false, false);
             $w(controllers.GraphArea).postMessage(GraphData, "*");
-            console.log("Graph data posted: All Data --->");
-            console.log(GraphData);
         }).catch(err =>{
             console.error("Error calling calculating graph data.");
             console.error(err);
@@ -106,17 +96,15 @@ export let PageLogic = {
                 Population[Population.State],
                 GraphData.Data
             )
-
         wixWindow.openLightbox(target, data);    
     }, 
     BackToDefault: async function($w) {
         var target = Population.Adjust? "Adjusted" : "OnLoad";
         $w(controllers.SwitchPatient).enable();
+        $w(controllers.AppyChange).enable();
         $w(controllers.Yes).enable();
         if(Population.State === "Others") {
             GraphData.Data = await Calculate(Population.GraphId, Population[target]);
-            console.log("Graph data calculated: --->");
-            console.log(GraphData.Data);
         }
         Population.State = target;
         Population.ActivePatient = Population.DefaultPatient[target];
@@ -128,9 +116,15 @@ export let PageLogic = {
         Internal.ToggleLabel($w(controllers.ShowPatient));
         if (textRepository.ShowPatientButton.TextIndex === 0)
         {
+            var target = Population.Adjust? "Adjusted" : "OnLoad";
             $w(controllers.ChangePopulation).disable();
+            if(Population.ActivePatient === Population.DefaultPatient[target]) {
+                $w(controllers.AppyChange).enable();
+            }
+            $w(controllers.DisplayLegend_section).hide("fade");
         } else {
             $w(controllers.ChangePopulation).enable();
+            $w(controllers.DisplayLegend_section).show("fade");
             $w(controllers.AppyChange).disable();
         }
         SetGraphConfig(true, !GraphData.Display.OnePopulation);
@@ -152,8 +146,6 @@ export let PageLogic = {
         });
         Population.State = "Others";
         Calculate(Population.GraphId, Population[Population.State]).then(result =>{
-            console.info("Graph data calculated: --->");
-            console.info(result)
             GraphData.Data = result;
             SetGraphConfig(true, true);
             $w(controllers.GraphArea).postMessage(GraphData, "*");
@@ -171,30 +163,20 @@ export let PageLogic = {
         }
         Population.ActivePatient = Population.DefaultPatient.Adjusted;
         $w(controllers.AdjustPercentage_section).hide("fade");
-        SetChangePercentText();
         AfterChangePercent();
-        console.info("Adjusted Percentage: --->");
-        console.info(Pecentage);
         UpdatePopulationCondition(Population.GraphId, Pecentage).then(result =>{
-            console.info("Population generated (Population.Adjusted): --->");
-            console.info(result);
             Population.Adjusted = result;
             Population.State = "Adjusted";
             Population.Adjust = true;
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
-                console.info("Graph data calculated: --->");
-                console.info(res);
                 GraphData.Data = res;
                 SetGraphConfig(true, GraphData.Display.OnePopulation);
-                console.info("Graph data posted: --->");
-                console.info(GraphData);
                 $w(controllers.GraphArea).postMessage(GraphData, "*");
             }).catch(err =>{
                 console.error("Error calling calculating graph data.");
                 console.error(err);
                 return;
             });
-
         }).catch(err=>{
             console.error("Error calling generating population.");
             console.error(err);
@@ -221,7 +203,7 @@ export let PageLogic = {
                 d.value -= difference 
             } else {
                 difference -= d.value;
-                d.valaue = 0;
+                d.value = 0;
                 if (b.value > difference) {
                     b.value -= difference;
                 } else {
@@ -237,14 +219,14 @@ export let PageLogic = {
         BeforeChangePercent();
         $w(controllers.ChangePopulation).disable();
         $w(controllers.Yes).enable();
+        $w(controllers.AppyChange).enable();
         $w(controllers.SwitchPatient).enable();
+        $w(controllers.DisplayLegend_section).hide("fade");
         DefaultText();
         Population.State = "OnLoad";
         Population.Adjust = false;
         Population.ActivePatient = Population.DefaultPatient[Population.State];
         Calculate(Population.GraphId, Population[Population.State]).then(result =>{
-            console.info("Graph data calculated: --->");
-            console.info(result);
             GraphData.Data = result;
             SetGraphConfig(true, true);    
             $w(controllers.GraphArea).postMessage(GraphData, "*");
@@ -286,13 +268,19 @@ function DefaultText() {
 }
 
 function SetChangePercentText() {
-
+    $w(controllers.DisplayPercentage_text1).text = ($w(controllers.AdjustPercentage_box1).value * 20 / 100).toString();
+    $w(controllers.DisplayPercentage_text2).text = ($w(controllers.AdjustPercentage_box2).value * 20 / 100).toString();
+    $w(controllers.DisplayPercentage_text3).text = ($w(controllers.AdjustPercentage_box3).value * 20 / 100).toString();
+    $w(controllers.DisplayPercentage_text4).text = ($w(controllers.AdjustPercentage_box4).value * 20 / 100).toString();
 }
 
 function AfterChangePercent() {
-
+    SetChangePercentText();
+    $w(controllers.AdjustPercentage_section).hide("fade");
+    $w(controllers.DisplayPercentage_section).show("fade");
 }
 
 function BeforeChangePercent() {
-
+    $w(controllers.DisplayPercentage_section).hide("fade");
+    $w(controllers.AdjustPercentage_section).show("fade");
 }

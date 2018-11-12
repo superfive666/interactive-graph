@@ -19,7 +19,8 @@ export let controllers = {
 	DisplayPercentage_text3: "#DisplayPercentage3",
 	DisplayPercentage_text4: "#DisplayPercentage4",
 	DisplayPercentage_section: "#DisplayPercentageSection",
-	DisplayLegend_section: "#DisplayLegendSection"
+	DisplayLegend_section: "#DisplayLegendSection",
+	Optimization_section: "#OptimizationSection"
 }
 
 export let textRepository = {
