@@ -16,7 +16,18 @@ let Population = {
 	DefaultPatient: {
 		OnLoad: undefined,
 		Adjusted: undefined
-	},
+    },
+    DefaultParameters: {
+        Frequency: undefined,
+        DosageInput: undefined,
+        InfusionRate: undefined
+    },
+    Filter: {
+        0: true,
+        1: true,
+        2: true,
+        3: true
+    },
     ActivePatient: 0,
     State: "OnLoad",
     GraphId: "",
@@ -40,12 +51,12 @@ export let PageLogic = {
         Population.ActivePatient = Population.DefaultPatient.OnLoad;
         $w(controllers.ChangePopulation).disable();
         DefaultText();     
-        GeneratePopulation(Population.GraphId).then(result =>{
+        GeneratePopulation(Population.GraphId, GetCondition()).then(result =>{
             Population.State = "OnLoad";
             Population[Population.State] = result;
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
                 GraphData.Data = res;
-                SetGraphConfig(true, true);
+                SetGraphConfig(true, true, Population.Filter);
                 $w(controllers.GraphArea).postMessage(GraphData, "*");
             }).catch(err =>{
                 console.error("Error calling calculating graph data.");
@@ -57,13 +68,14 @@ export let PageLogic = {
             console.error(err);
             return;
         });
+        SaveDefaultCondition();
     },
     ResamplePatient: function($w) {
-        var target = Population.Adjust? "Adjusted" : "OnLoad";
         Population.ActivePatient = (Population.ActivePatient + 1) % 20;
-        Population.ActivePatient === Population.DefaultPatient[target]?
-        $w(controllers.AppyChange).enable() : $w(controllers.AppyChange).disable();
-        SetGraphConfig(true, GraphData.Display.OnePopulation);
+        while(GraphData.ChartStyle.series[Population.ActivePatient].color === "transparent") {
+            Population.ActivePatient = (Population.ActivePatient + 1) % 20;
+        }
+        SetGraphConfig(true, GraphData.Display.OnePopulation, Population.Filter);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
     },
     ChangePopulation:  async function($w) {
@@ -71,11 +83,11 @@ export let PageLogic = {
         $w(controllers.Yes).disable();
         Population.State = "Others";
         Population[Population.State] = Population.Adjust?
-            await UpdatePopulationCondition(Population.GraphId, Pecentage) : 
-            await GeneratePopulation(Population.GraphId);
+            await UpdatePopulationCondition(Population.GraphId, Pecentage, GetCondition()) : 
+            await GeneratePopulation(Population.GraphId, GetCondition());
         Calculate(Population.GraphId, Population[Population.State]).then(res =>{
             GraphData.Data = res;
-            SetGraphConfig(false, false);
+            SetGraphConfig(false, false, Population.Filter);
             $w(controllers.GraphArea).postMessage(GraphData, "*");
         }).catch(err =>{
             console.error("Error calling calculating graph data.");
@@ -100,6 +112,8 @@ export let PageLogic = {
     }, 
     BackToDefault: async function($w) {
         var target = Population.Adjust? "Adjusted" : "OnLoad";
+        GetDefaultCondition();
+        ResetFilter();
         $w(controllers.SwitchPatient).enable();
         $w(controllers.AppyChange).enable();
         $w(controllers.Yes).enable();
@@ -108,7 +122,7 @@ export let PageLogic = {
         }
         Population.State = target;
         Population.ActivePatient = Population.DefaultPatient[target];
-        SetGraphConfig(true, GraphData.Display.OnePopulation);
+        SetGraphConfig(true, GraphData.Display.OnePopulation, Population.Filter);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
     },
     ChangeViewType: function($w) {
@@ -124,10 +138,10 @@ export let PageLogic = {
             $w(controllers.DisplayLegend_section).hide("fade");
         } else {
             $w(controllers.ChangePopulation).enable();
-            $w(controllers.DisplayLegend_section).show("fade");
+            if(Population.Adjust) $w(controllers.DisplayLegend_section).show("fade");
             $w(controllers.AppyChange).disable();
         }
-        SetGraphConfig(true, !GraphData.Display.OnePopulation);
+        SetGraphConfig(true, !GraphData.Display.OnePopulation, Population.Filter);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
     },
     OptimizeCondition: function($w) {
@@ -147,7 +161,7 @@ export let PageLogic = {
         Population.State = "Others";
         Calculate(Population.GraphId, Population[Population.State]).then(result =>{
             GraphData.Data = result;
-            SetGraphConfig(true, true);
+            SetGraphConfig(true, true, Population.Filter);
             $w(controllers.GraphArea).postMessage(GraphData, "*");
         }).catch(err =>{
             console.error("Error calling calculating graph data.");
@@ -163,14 +177,15 @@ export let PageLogic = {
         }
         Population.ActivePatient = Population.DefaultPatient.Adjusted;
         $w(controllers.AdjustPercentage_section).hide("fade");
+        if(!Population.OnePopulation) $w(controllers.DisplayPercentage_section).show("fade");
         AfterChangePercent();
-        UpdatePopulationCondition(Population.GraphId, Pecentage).then(result =>{
+        UpdatePopulationCondition(Population.GraphId, Pecentage, GetCondition()).then(result =>{
             Population.Adjusted = result;
             Population.State = "Adjusted";
             Population.Adjust = true;
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
                 GraphData.Data = res;
-                SetGraphConfig(true, GraphData.Display.OnePopulation);
+                SetGraphConfig(true, GraphData.Display.OnePopulation, Population.Filter);
                 $w(controllers.GraphArea).postMessage(GraphData, "*");
             }).catch(err =>{
                 console.error("Error calling calculating graph data.");
@@ -217,34 +232,49 @@ export let PageLogic = {
     ResetGraph: function($w) {
         $w(controllers.AdjustPercentage_section).show("fade");
         BeforeChangePercent();
+        ResetFilter();
+        DefaultText();
         $w(controllers.ChangePopulation).disable();
         $w(controllers.Yes).enable();
         $w(controllers.AppyChange).enable();
         $w(controllers.SwitchPatient).enable();
         $w(controllers.DisplayLegend_section).hide("fade");
-        DefaultText();
         Population.State = "OnLoad";
         Population.Adjust = false;
         Population.ActivePatient = Population.DefaultPatient[Population.State];
         Calculate(Population.GraphId, Population[Population.State]).then(result =>{
             GraphData.Data = result;
-            SetGraphConfig(true, true);    
+            SetGraphConfig(true, true, Population.Filter);    
             $w(controllers.GraphArea).postMessage(GraphData, "*");
         }).catch(err =>{
             console.error("Error calling calculating graph data.");
             console.error(err);
             return;
         });
+    },
+    FilterGraph: function(target) {
+        Internal.ToggleButton(target);
+        var i = target.id.slice(-1)-1;
+        Population.Filter[i] = !Population.Filter[i];
+        if(!Population.Filter[0]&&!Population.Filter[1]&&!Population.Filter[2]&&!Population.Filter[3]) {
+            $w(controllers.SwitchPatient).disable();
+        } else {
+            if (Population.State !== "Others") $w(controllers.SwitchPatient).enable();
+            while(!Population.Filter[GraphData.ChartStyle.series[Population.ActivePatient].phenotype]) {
+                Population.ActivePatient = (Population.ActivePatient + 1) % 20;
+            }
+        }
+        SetGraphConfig(Population.State !== "Others", false, Population.Filter);
+        $w(controllers.GraphArea).postMessage(GraphData, "*");
     }
 }
 
-function SetGraphConfig(first, one) {
+function SetGraphConfig(first, one, filter) {
     GraphData.Display = {
         FirstPopulation: first,
         ActivePatient: Population.ActivePatient,
         OnePopulation: one
     }
-
     GraphData.ChartStyle = chart(
         Population[Population.State][0].h_max, 
         Population[Population.State],
@@ -253,7 +283,8 @@ function SetGraphConfig(first, one) {
             single: textRepository.ShowPatientButton.TextIndex === 0,
             adjusted: Population.Adjust,
             firstPopulation: first,
-            activePatient: Population.ActivePatient
+            activePatient: Population.ActivePatient,
+            filter: filter
         }
     );
 }
@@ -283,4 +314,34 @@ function AfterChangePercent() {
 function BeforeChangePercent() {
     $w(controllers.DisplayPercentage_section).hide("fade");
     $w(controllers.AdjustPercentage_section).show("fade");
+}
+
+function GetCondition() {
+    return {
+        Frequency: $w(controllers.Frequency).value,
+        DosageInput: $w(controllers.DosageInput).value,
+        InfusionRate: $w(controllers.InfusionRate).value
+    }
+}
+
+function SaveDefaultCondition() {
+    Population.DefaultParameters.DosageInput = $w(controllers.DosageInput).value;
+    Population.DefaultParameters.Frequency = $w(controllers.Frequency)?$w(controllers.Frequency).value:0;
+    Population.DefaultParameters.InfusionRate = $w(controllers.InfusionRate)?$w(controllers.InfusionRate).value:0;
+}
+
+function GetDefaultCondition() {
+    $w(controllers.DosageInput).value = Population.DefaultParameters.DosageInput;
+    if($w(controllers.Frequency)) $w(controllers.Frequency).value = Population.DefaultParameters.Frequency;
+    if($w(controllers.InfusionRate)) $w(controllers.InfusionRate).value = Population.DefaultParameters.InfusionRate;
+}
+
+function ResetFilter() {
+    for(var i = 0; i < 4; i++) {
+        Population.Filter[i] = true;
+    }
+    Internal.ToggleButton($w(controllers.Legend1), true);
+    Internal.ToggleButton($w(controllers.Legend2), true);
+    Internal.ToggleButton($w(controllers.Legend3), true);
+    Internal.ToggleButton($w(controllers.Legend4), true);
 }

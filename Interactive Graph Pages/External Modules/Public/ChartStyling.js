@@ -114,22 +114,23 @@ function _series(patients, settings) {
 	};
 	if (settings.adjusted) {
 		var colors = new Map(); 
-		colors.set(0, "#3869FF");
-		colors.set(1, "#FFFB37");
-		colors.set(2, "#FF3200");
-		colors.set(3, "#FF00E1");
-		var ind = 0;
+		colors.set(0, "#0000FF");
+		colors.set(1, "#0080FF");
+		colors.set(2, "#00BFFF");
+		colors.set(3, "#2EFEF7");
 		patients.forEach((element, i) => {
 			res[i] = settings.firstPopulation && 
 					 i === settings.activePatient? {
 				lineWidth: 3,
-				color: "#00FF00",
-				visibleInLegend: true,
+				color: settings.filter[element.last]? "#00FF00" : "transparent",
+				visibleInLegend: true && settings.filter[element.last],
+				phenotype: element.last,
 				type: 'line'
 			} : {
 				lineWidth: 1,
                 lineDashStyle: [4, 4],
-                color: colors.get(element.last),
+				color: settings.filter[element.last]? colors.get(element.last) : "transparent",
+				phenotype: element.last,
                 visibleInLegend: false,
                 type: 'line'
 			}
@@ -145,7 +146,7 @@ function _series(patients, settings) {
 			} : {
 				lineWidth: 1,
                 lineDashStyle: [4, 4],
-                color: "#1EB1EE",
+				color: "#1EB1EE",
                 visibleInLegend: false,
                 type: 'line'
 			}

@@ -49,7 +49,7 @@ function GenerateOnePatient(condition, adj) {
     return patient;
 }
 
-export async function GeneratePopulation(GraphId) {
+export async function GeneratePopulation(GraphId, Condition) {
 	var patients = new Array();
 	var condition = await ReadGraphDataFromDB(GraphId);
     for (var i = 0; i < 20; i++) {
@@ -59,6 +59,9 @@ export async function GeneratePopulation(GraphId) {
         patient.actualKe;
         patient["ke"] = Math.log(1) - Math.log(1 - temp);
         patient["thalf"] = Math.log(2)/patient.ke;
+        patient.tau = Condition.Frequency;
+        patient.dose = Condition.DosageInput;
+        patient.infusion_rate = Condition.InfusionRate;
         patients.push(patient); 
     }
     console.log("PopulationGenerator Generate Population: ");
@@ -66,7 +69,7 @@ export async function GeneratePopulation(GraphId) {
     return patients;
 }
 
-export async function UpdatePopulationCondition(GraphId, Percentage) {
+export async function UpdatePopulationCondition(GraphId, Percentage, Condition) {
     var patients = new Array();
     var condition = await ReadGraphDataFromDB(GraphId);
  
@@ -88,6 +91,9 @@ export async function UpdatePopulationCondition(GraphId, Percentage) {
             patient["ke"] = Math.log(1) - Math.log(1 - temp);
             patient["thalf"] = Math.log(2)/patient.ke;
             patient["last"] = j;
+            patient.tau = Condition.Frequency;
+            patient.dose = Condition.DosageInput;
+            patient.infusion_rate = Condition.InfusionRate;
             patients.push(patient); 
         }
         adj += 0.25; i--; 

@@ -20,7 +20,11 @@ export let controllers = {
 	DisplayPercentage_text4: "#DisplayPercentage4",
 	DisplayPercentage_section: "#DisplayPercentageSection",
 	DisplayLegend_section: "#DisplayLegendSection",
-	Optimization_section: "#OptimizationSection"
+	Optimization_section: "#OptimizationSection",
+	Legend1: "#button1",
+	Legend2: "#button2",
+	Legend3: "#button3",
+	Legend4: "#button4",
 }
 
 export let textRepository = {
@@ -58,6 +62,14 @@ export let Internal = {
 		textRepository[key].TextIndex = i === undefined? 1 - textRepository[key].TextIndex : i;
 		target.label = textRepository[key].TextItems[textRepository[key].TextIndex];
 	}, 
+	ToggleButton: function (target, reset) {
+		var colors = {
+            selected: "#00BFFF",
+            unselected: "#808080"
+        };
+		target.style.color = target.style.color == colors.selected? colors.unselected : colors.selected;
+		if(reset) target.style.color = colors.selected;
+	}
 };
 
 export let GraphBinding = {
