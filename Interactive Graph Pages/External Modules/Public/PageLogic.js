@@ -72,8 +72,10 @@ export let PageLogic = {
     },
     ResamplePatient: function($w) {
         Population.ActivePatient = (Population.ActivePatient + 1) % 20;
-        while(GraphData.ChartStyle.series[Population.ActivePatient].color === "transparent") {
-            Population.ActivePatient = (Population.ActivePatient + 1) % 20;
+        if(Population.Adjust && !Population.OnePopulation) {
+            while(!Population.Filter[GraphData.ChartStyle.series[Population.ActivePatient].phenotype]) {
+                Population.ActivePatient = (Population.ActivePatient + 1) % 20;
+            }
         }
         SetGraphConfig(true, GraphData.Display.OnePopulation, Population.Filter);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
@@ -130,16 +132,12 @@ export let PageLogic = {
         Internal.ToggleLabel($w(controllers.ShowPatient));
         if (textRepository.ShowPatientButton.TextIndex === 0)
         {
-            var target = Population.Adjust? "Adjusted" : "OnLoad";
             $w(controllers.ChangePopulation).disable();
-            if(Population.ActivePatient === Population.DefaultPatient[target]) {
-                $w(controllers.AppyChange).enable();
-            }
+            ResetFilter();
             $w(controllers.DisplayLegend_section).hide("fade");
         } else {
             $w(controllers.ChangePopulation).enable();
             if(Population.Adjust) $w(controllers.DisplayLegend_section).show("fade");
-            $w(controllers.AppyChange).disable();
         }
         SetGraphConfig(true, !GraphData.Display.OnePopulation, Population.Filter);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
@@ -177,7 +175,7 @@ export let PageLogic = {
         }
         Population.ActivePatient = Population.DefaultPatient.Adjusted;
         $w(controllers.AdjustPercentage_section).hide("fade");
-        if(!Population.OnePopulation) $w(controllers.DisplayPercentage_section).show("fade");
+        if(!Population.OnePopulation) $w(controllers.DisplayLegend_section).show("fade");
         AfterChangePercent();
         UpdatePopulationCondition(Population.GraphId, Pecentage, GetCondition()).then(result =>{
             Population.Adjusted = result;
@@ -232,6 +230,7 @@ export let PageLogic = {
     ResetGraph: function($w) {
         $w(controllers.AdjustPercentage_section).show("fade");
         BeforeChangePercent();
+        GetDefaultCondition();
         ResetFilter();
         DefaultText();
         $w(controllers.ChangePopulation).disable();
