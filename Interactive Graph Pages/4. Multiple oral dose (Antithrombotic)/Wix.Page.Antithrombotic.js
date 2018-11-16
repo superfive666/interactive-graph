@@ -52,3 +52,19 @@ export function DrawGraphButton_click(event) {
 export function ResetButton_click(event) {
 	PageLogic.ResetGraph($w);
 }
+
+export function button1_click(event) {
+	PageLogic.FilterGraph(event.target);
+}
+
+export function button2_click(event) {
+	PageLogic.FilterGraph(event.target);
+}
+
+export function button3_click(event) {
+	PageLogic.FilterGraph(event.target);
+}
+
+export function button4_click(event) {
+	PageLogic.FilterGraph(event.target); 
+}
