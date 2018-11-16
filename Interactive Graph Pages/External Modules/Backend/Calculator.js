@@ -49,10 +49,9 @@ function Graph_2(data) {
 	return getResult(data, function(t, patient) {
 		var a1 = patient.dose;
 		var a2 = patient.ke * patient.vd;
-		var a3 = 1 - Math.Exp(-patient.ke * patient.infusion_rate);
-		var a4 = t > patient.infusion_rate ?
-				 Math.Exp(-patient.ke * (t - patient.infusion_rate)) :
-				 1.0;
+		var a3 = 1 - Math.exp(-patient.ke * patient.infusion_rate);
+		var a4 = t > patient.infusion_rate? 
+		         Math.exp(-patient.ke * (t - patient.infusion_rate)) : 1.0;
 		return a1 * a3 * a4 / a2;
 	});
 }
@@ -72,10 +71,9 @@ function Graph_8(data) {
 	return getResult(data, function(t, patient, prev) {
 		function calculateABS(ti) {
 			var a1 = patient.f * patient.dose;
-			var a2 = 1 - Math.Exp(-patient.ka * ti);
+			var a2 = 1 - Math.exp(-patient.ka * ti);
 			var a3 = a1 * a2 / patient.vd;
-			return ti < patient.tau? 
-				   a3 : a3 + CalculateABS(ti - patient.tau);
+			return ti < patient.tau? a3 : a3 + CalculateABS(ti - patient.tau);
 		}
 		function calculateELI(p) {
 			var a1 = patient.vmax * p * 1000;
