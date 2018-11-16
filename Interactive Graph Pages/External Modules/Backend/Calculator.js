@@ -71,7 +71,7 @@ function Graph_3(data) {
 function Graph_8(data) {
 	return getResult(data, function(t, patient, prev) {
 		function calculateABS(ti) {
-			var a1 = patient.Bioavailability * patient.dose;
+			var a1 = patient.f * patient.dose;
 			var a2 = 1 - Math.Exp(-patient.ka * ti);
 			var a3 = a1 * a2 / patient.vd;
 			return ti < patient.tau? 
