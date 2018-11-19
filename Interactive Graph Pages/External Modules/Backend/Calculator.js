@@ -1,13 +1,6 @@
+import {graphs} from 'public/BackendParameter.js';
+
 const TimeInterval = 0.25;
-let graphs = {
-	Continuous_Intravenous_Analgesic: "GRAPH_1",
-	Multiple_Dose_IV_Infusion: "GRAPH_2",
-	Multiple_Oral_Dose_NSAID: "GRAPH_3",
-	Multiple_Oral_Dose_Antithrombotic: "GRAPH_4",
-	Multiple_Oral_Dose_Anticoagulant: "GRAPH_5",
-	Multiple_Oral_Dose_Antibiotics: "GRAPH_6",
-	Phenytoin_Formulation: "GRAPH_8"
-}
 let T = 0;
 
 export function Calculate(graphID, data) {
@@ -81,7 +74,7 @@ function Graph_8(data) {
 			return TimeInterval * a1 / a2;
 		}
 		var abs = CalculateABS(t);
-		T += t%patient.Tau == 0? CalculateELI(abs) : CalculateELI(prev);
+		T += t%patient.tau == 0? CalculateELI(abs) : CalculateELI(prev);
     	return abs - T;
 	});
 }
