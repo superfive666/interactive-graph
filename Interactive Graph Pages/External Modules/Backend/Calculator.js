@@ -39,13 +39,13 @@ function Graph_1(data) {
 }
 
 function Graph_2(data) {
-	return getResult(data, function(t, patient) {
+	return getResult(data, function calc(t, patient) {
 		var a1 = patient.dose;
 		var a2 = patient.ke * patient.vd;
-		var a3 = 1 - Math.exp(-patient.ke * patient.infusion_rate);
-		var a4 = t > patient.infusion_rate? 
-		         Math.exp(-patient.ke * (t - patient.infusion_rate)) : 1.0;
-		return a1 * a3 * a4 / a2;
+		var a3 = 1 - Math.exp(-patient.ke * (t > patient.infusion_rate? patient.infusion_rate : t));
+		var a4 = t > patient.infusion_rate? Math.exp(-patient.ke * (t - patient.infusion_rate)) : 1.0;
+		var res = a1 * a3 * a4 / a2; 
+		return t < patient.tau? res : res + calc(t - patient.tau, patient);
 	});
 }
 

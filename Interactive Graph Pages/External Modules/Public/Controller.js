@@ -67,7 +67,7 @@ export let Internal = {
             selected: "#00BFFF",
             unselected: "#808080"
         };
-		target.style.color = target.style.color == colors.selected? colors.unselected : colors.selected;
+		target.style.color = target.style.color === colors.selected? colors.unselected : colors.selected;
 		if(reset) target.style.color = colors.selected;
 	}
 };
@@ -82,8 +82,12 @@ export let GraphBinding = {
 		{id: "#SinglePatientThalf", key: "thalf"},
 		{id: "#SinglePatientCmax", key: "cmax"},
 		{id: "#SinglePatientCmin", key: "cmin"},
+		{id: "#SinglePatientCave", key: "cave"},
 		{id: "#SinglePatientCss", key: "css"},
-		{id: "#SinglePatientTcss", key: "tcss"}
+		{id: "#SinglePatientTcss", key: "tcss"},
+		{id: "#SinglePatientIfsRt", key: "infusion_rate"},
+		{id: "#SinglePatientAuc24", key: "auc24"},
+		{id: "#SinglePatientAuc24mic", key: "auc24mic"}
 	],
 	Population: [
 		{id: "#PopulationPatientF", key: "_f"},
@@ -94,7 +98,11 @@ export let GraphBinding = {
 		{id: "#PopulationPatientThalf", key: "thalf"},
 		{id: "#PopulationPatientCmax", key: "cmax"},
 		{id: "#PopulationPatientCmin", key: "cmin"},
+		{id: "#PopulationPatientCave", key: "cave"},
 		{id: "#PopulationPatientCss", key: "css"},
-		{id: "#PopulationPatientTcss", key: "tcss"}
+		{id: "#PopulationPatientTcss", key: "tcss"},
+		{id: "#PopulationPatientIfsRt", key: "infusion_rate"},
+		{id: "#PopulationPatientAuc24", key: "auc24"},
+		{id: "#PopulationPatientAuc24mic", key: "auc24mic"}
 	]
 }
