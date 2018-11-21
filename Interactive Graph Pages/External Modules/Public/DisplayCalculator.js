@@ -32,13 +32,15 @@ export let displayData = {
             tau: patient.tau,
             vd: RoundNDecimal(ave.vd,2),
             er: RoundNDecimal(ave.er,2),
-            ka: RoundNDecimal(ave.ka,2),
+            ka: RoundNDecimal(ave.actualKe,2),
             cl: RoundNDecimal(ave.cl,2),
             f: RoundNDecimal(ave.f,2),
             thalf: RoundNDecimal(ave.thalf,2),
             cmin: RoundNDecimal(cmin,2),
             cmax: RoundNDecimal(cmax,2),
-            _f: 1 - RoundNDecimal(ave.er,2)
+            _f: 1 - RoundNDecimal(ave.er,2),
+            css: RoundNDecimal(data[data.length-1][21],2),
+            tcss: RoundNDecimal(ave.thalf,2)
         }
         console.log("DisplayCalculator: Population result --->");
         console.log(result);
@@ -60,13 +62,15 @@ export let displayData = {
             tau: patient.tau,
             vd: RoundNDecimal(patient.vd,2),
             er: RoundNDecimal(patient.er,2),
-            ka: RoundNDecimal(patient.ka,2),
+            ka: RoundNDecimal(patient.actualKe,2),
             cl: RoundNDecimal(patient.cl,2),
             f: RoundNDecimal(patient.f,2),
             thalf: RoundNDecimal(patient.thalf,2),
             cmin: patient.cmin,
             cmax: RoundNDecimal(cmax,2),
-            _f: RoundNDecimal(1 - patient.er,2)
+            _f: RoundNDecimal(1 - patient.er,2),
+            css: RoundNDecimal(data[data.length-1][1],2),
+            tcss: RoundNDecimal(patient.thalf*4.5,2)
         };
         console.log("DisplayCalculator: Single Patient result --->");
         console.log(result);
