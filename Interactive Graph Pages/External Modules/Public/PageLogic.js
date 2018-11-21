@@ -51,7 +51,7 @@ export let PageLogic = {
         Population.ActivePatient = Population.DefaultPatient.OnLoad;
         $w(controllers.ChangePopulation).disable();
         DefaultText();     
-        GeneratePopulation(Population.GraphId, GetCondition()).then(result =>{
+        GeneratePopulation(Population.GraphId).then(result =>{
             Population.State = "OnLoad";
             Population[Population.State] = result;
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
@@ -315,7 +315,10 @@ function BeforeChangePercent() {
     $w(controllers.AdjustPercentage_section).show("fade");
 }
 
-function GetCondition() {
+function GetCondition() {    
+    if(($w(controllers.InfusionRate) && $w(controllers.InfusionRate).value === '')||
+       ($w(controllers.InfusionRate) && $w(controllers.InfusionRate).value === ''))
+        return undefined;
     return {
         Frequency: $w(controllers.Frequency).value,
         DosageInput: $w(controllers.DosageInput).value,

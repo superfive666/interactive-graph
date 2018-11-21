@@ -51,7 +51,7 @@ function Graph_2(data) {
 
 
 function Graph_3(data) {
-	return getResult(data, function(t, patient) {
+	return getResult(data, function calc(t, patient) {
 		var a1 = (1 - patient.er) * patient.dose * patient.ka;
 	    var a2 = patient.vd * (patient.ka - patient.ke);
 		var a3 = Math.exp(-patient.ke * t) - Math.exp(-patient.ka * t);
@@ -62,19 +62,19 @@ function Graph_3(data) {
 
 function Graph_8(data) {
 	return getResult(data, function(t, patient, prev) {
-		function calculateABS(ti) {
+		var CalculateABS = function calculateABS(ti) {
 			var a1 = patient.f * patient.dose;
 			var a2 = 1 - Math.exp(-patient.ka * ti);
 			var a3 = a1 * a2 / patient.vd;
 			return ti < patient.tau? a3 : a3 + CalculateABS(ti - patient.tau);
 		}
-		function calculateELI(p) {
+		var CalculateELI = function calculateELI(p) {
 			var a1 = patient.vmax * p * 1000;
 			var a2 = (patient.km + p) * patient.vd;
 			return TimeInterval * a1 / a2;
 		}
 		var abs = CalculateABS(t);
-		T += t%patient.tau == 0? CalculateELI(abs) : CalculateELI(prev);
+		T += t%patient.tau === 0? CalculateELI(abs) : CalculateELI(prev);
     	return abs - T;
 	});
 }

@@ -57,11 +57,13 @@ export async function GeneratePopulation(GraphId, Condition) {
         var temp = GraphId === graphs.Continuous_Intravenous_Analgesic? 
         patient.actualKe * patient.patient_bodyweight : 
         patient.actualKe;
-        patient["ke"] = Math.log(1) - Math.log(1 - temp);
+        patient["ke"] = Math.log(1) - Math.log(1 - Math.min(0.99999, temp));
         patient["thalf"] = Math.log(2)/patient.ke;
-        patient.tau = Condition.Frequency;
-        patient.dose = Condition.DosageInput;
-        patient.infusion_rate = Condition.InfusionRate;
+        if (Condition) {
+            patient.tau = Condition.Frequency;
+            patient.dose = Condition.DosageInput;
+            patient.infusion_rate = Condition.InfusionRate;
+        }
         patients.push(patient); 
     }
     console.log("PopulationGenerator Generate Population: ");
@@ -88,12 +90,14 @@ export async function UpdatePopulationCondition(GraphId, Percentage, Condition) 
             var temp = GraphId === graphs.Continuous_Intravenous_Analgesic? 
             patient.actualKe * patient.patient_bodyweight : 
             patient.actualKe;
-            patient["ke"] = Math.log(1) - Math.log(1 - temp);
+            patient["ke"] = Math.log(1) - Math.log(1 - Math.min(0.99999, temp));
             patient["thalf"] = Math.log(2)/patient.ke;
             patient["last"] = j;
-            patient.tau = Condition.Frequency;
-            patient.dose = Condition.DosageInput;
-            patient.infusion_rate = Condition.InfusionRate;
+            if (Condition) {
+                patient.tau = Condition.Frequency;
+                patient.dose = Condition.DosageInput;
+                patient.infusion_rate = Condition.InfusionRate;
+            }
             patients.push(patient); 
         }
         adj += 0.25; i--; 

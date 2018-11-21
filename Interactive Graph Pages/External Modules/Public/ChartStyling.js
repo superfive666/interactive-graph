@@ -77,7 +77,13 @@ function _vAxis(id) {
 
 function v_ticks(id) {
 	switch(id) {
+		case 1: return [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07];
+		case 2: return [20, 40, 60, 80, 100];
 		case 3: return [2, 4, 6, 8, 10, 12, 14];
+		case 4: return [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5];
+		case 5: return [0.05, 0.1, 0.15, 0.2, 0.25];
+		case 6: return [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6];
+		case 8: return [0.005, 0.01, 0.015, 0.02, 0.025, 0.03];
 		default: console.error("Invalid ID for graph: " + id);
 	}	
 }
