@@ -81,7 +81,9 @@ export let GraphBinding = {
 		{id: "#SinglePatientCl", key: "cl"},
 		{id: "#SinglePatientThalf", key: "thalf"},
 		{id: "#SinglePatientCmax", key: "cmax"},
-		{id: "#SinglePatientCmin", key: "cmin"}
+		{id: "#SinglePatientCmin", key: "cmin"},
+		{id: "#SinglePatientCss", key: "css"},
+		{id: "#SinglePatientTcss", key: "tcss"}
 	],
 	Population: [
 		{id: "#PopulationPatientF", key: "_f"},
@@ -91,6 +93,8 @@ export let GraphBinding = {
 		{id: "#PopulationPatientCl", key: "cl"},
 		{id: "#PopulationPatientThalf", key: "thalf"},
 		{id: "#PopulationPatientCmax", key: "cmax"},
-		{id: "#PopulationPatientCmin", key: "cmin"}
+		{id: "#PopulationPatientCmin", key: "cmin"},
+		{id: "#PopulationPatientCss", key: "css"},
+		{id: "#PopulationPatientTcss", key: "tcss"}
 	]
 }
