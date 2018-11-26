@@ -53,14 +53,20 @@ export async function GeneratePopulation(GraphId, Condition) {
 	var condition = await ReadGraphDataFromDB(GraphId);
     for (var i = 0; i < 20; i++) {
         var patient = GenerateOnePatient(condition, 1);
-        patient["actualKe"] = Math.min(0.9999, (patient.cl * 60 / patient.vd / 1000)*(
-            GraphId === graphs.Continuous_Intravenous_Analgesic?
-            patient.patient_bodyweight : 1.0
-        ));
         if (GraphId === graphs.Continuous_Intravenous_Analgesic || 
             GraphId === graphs.Multiple_Dose_IV_Infusion) {
             patient.vd = patient.vd * patient.patient_bodyweight;
         }
+        if (GraphId === graphs.Multiple_Oral_Dose_NSAID ||
+            GraphId === graphs.Multiple_Oral_Dose_NSAID ||
+            GraphId === graphs.Multiple_Oral_Dose_NSAID ||
+            GraphId === graphs.Multiple_Oral_Dose_NSAID) {
+            patient.cl = patient.cl * (1 - patient.er);
+        }
+        patient["actualKe"] = Math.min(0.9999, (patient.cl * 60 / patient.vd / 1000)*(
+            GraphId === graphs.Continuous_Intravenous_Analgesic?
+            patient.patient_bodyweight : 1.0
+        ));
         patient["ke"] = Math.log(1) - Math.log(1 - patient.actualKe);
         patient["thalf"] = Math.log(2)/patient.ke;
 
@@ -92,11 +98,16 @@ export async function UpdatePopulationCondition(GraphId, Percentage, Condition) 
         while(i++ < strata[j]) 
         {
             var patient = GenerateOnePatient(condition, adj);
-            var temp = GraphId === graphs.Continuous_Intravenous_Analgesic? 
-            patient.actualKe * patient.patient_bodyweight : 
-            patient.actualKe;
-            patient["ke"] = Math.log(1) - Math.log(1 - Math.min(0.99999, temp));
-            patient["thalf"] = Math.log(2)/patient.ke;
+            if (GraphId === graphs.Continuous_Intravenous_Analgesic || 
+                GraphId === graphs.Multiple_Dose_IV_Infusion) {
+                patient.vd = patient.vd * patient.patient_bodyweight;
+            }
+            patient["actualKe"] = Math.min(0.9999, (patient.cl * 60 / patient.vd / 1000)*(
+                GraphId === graphs.Continuous_Intravenous_Analgesic?
+                patient.patient_bodyweight : 1.0
+            ));
+            patient["ke"] = Math.log(1) - Math.log(1 - patient.actualKe);
+            patient["thalf"] = Math.log(2)/patient.ke;    
             patient["last"] = j;
             if (Condition) {
                 patient.tau = Condition.Frequency;

@@ -26,7 +26,6 @@ function map(GraphID) {
 }
 
 export function ReadGraphDataFromDB(GraphID) {
-    var item = {};
 	let options = {
   		"suppressAuth": true,
   		"suppressHooks": true

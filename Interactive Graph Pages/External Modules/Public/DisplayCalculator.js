@@ -14,6 +14,7 @@ export let displayData = {
         });
         var cmin = 10000000;
         var cmax = 0;
+        var auc = 0;
         for(var j = 1; j <= 20; j++) {
             var localmax = 0;
             for(var i = 0; i < data.length; i++) {
@@ -22,6 +23,8 @@ export let displayData = {
             cmin = Math.min(localmax, cmin);
             cmax = Math.max(localmax, cmax);
         }
+        var k = -1;
+        while(data[++k][0] < 24) auc += data[k][21];
         var result = {
             vmax: patient.vmax,
             km: patient.km,
@@ -40,17 +43,20 @@ export let displayData = {
             cmax: RoundNDecimal(cmax,2),
             _f: 1 - RoundNDecimal(ave.er,2),
             css: RoundNDecimal(data[data.length-1][21],2),
-            tcss: RoundNDecimal(ave.thalf,2)
+            tcss: RoundNDecimal(ave.thalf*4.5,2),
+            auc24: RoundNDecimal(auc, 2),
+            auc24mic: RoundNDecimal(auc/ave.mic, 2),
+            cave: RoundNDecimal(0, 2)
         }
-        console.log("DisplayCalculator: Population result --->");
-        console.log(result);
         return result;
 	},
 	SinglePatient: function(patients, j , data) {
         var patient = patients[j];
         var cmax = 0;
+        var auc = 0;
         for (var i = 0; i < data.length; i++) {
             cmax = Math.max(cmax, data[i][j+1]);
+            auc += data[i][0] < 24? data[i][j+1] : 0;
         }
         var result = {
             vmax: patient.vmax,
@@ -70,10 +76,11 @@ export let displayData = {
             cmax: RoundNDecimal(cmax,2),
             _f: RoundNDecimal(1 - patient.er,2),
             css: RoundNDecimal(data[data.length-1][1],2),
-            tcss: RoundNDecimal(patient.thalf*4.5,2)
+            tcss: RoundNDecimal(patient.thalf*4.5,2),
+            auc24: RoundNDecimal(auc, 2),
+            auc24mic: RoundNDecimal(auc/patient.mic,2),
+            cave: RoundNDecimal(0, 2)
         };
-        console.log("DisplayCalculator: Single Patient result --->");
-        console.log(result);
         return result;
 	}
 }
