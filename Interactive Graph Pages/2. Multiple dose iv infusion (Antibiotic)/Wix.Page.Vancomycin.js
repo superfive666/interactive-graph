@@ -1,8 +1,13 @@
 import {PageLogic} from 'public/PageLogic.js';
 import {graphs} from 'public/BackendParameter.js';
+import {controllers} from 'public/Controller.js';
 
 $w.onReady(function () {
-	PageLogic.PageLoad($w, graphs.Multiple_Dose_IV_Infusion);
+	$w(controllers.GraphArea).onMessage((event) => {
+		if (event.data === "Ready") {
+			PageLogic.PageLoad($w, graphs.Multiple_Dose_IV_Infusion);
+		}
+	});
 });
 
 export function ResamplePatientButton_click(event, $w) {
