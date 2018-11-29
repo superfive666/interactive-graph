@@ -1,7 +1,7 @@
 import {graphs} from 'public/BackendParameter.js';
 
 const TimeInterval = 0.25;
-let T = 0;
+let T = new Array(20);
 
 export function Calculate(graphID, data) {
 	var result;
@@ -61,7 +61,7 @@ function Graph_3(data) {
 }
 
 function Graph_8(data) {
-	return getResult(data, function(t, patient, prev) {
+	return getResult(data, function(t, patient, prev, j) {
 		var CalculateABS = function calculateABS(ti) {
 			var a1 = patient.f * patient.dose;
 			var a2 = 1 - Math.exp(-patient.ka * ti);
@@ -74,24 +74,22 @@ function Graph_8(data) {
 			return TimeInterval * a1 / a2;
 		}
 		var abs = CalculateABS(t);
-		T += t%patient.tau === 0? CalculateELI(abs) : CalculateELI(prev);
-    	return abs - T;
+		T[j] += t%patient.tau === 0? CalculateELI(abs) : CalculateELI(prev);
+    	return abs - T[j];
 	});
 }
 
 function getResult(data, calc) {
 	var maxHour = data[0].h_max;
 	var result = new Array();
-	var prev = 0; 
-	T = 0;
+	T.fill(0);
 	if(Array.isArray(data)) {
 		for (var i = 0; i < maxHour; i += TimeInterval) {
 			var rowData = new Array();
 			rowData.push(i);
 			var ave = 0;
-			data.forEach((val) => {
-				var conc = calc(i, val, prev);
-				prev = conc;
+			data.forEach((val, j) => {
+				var conc = calc(i, val, i===0?0:result[result.length-1][j+1], j);
 				ave += conc/20;
 				rowData.push(conc);
 			});	

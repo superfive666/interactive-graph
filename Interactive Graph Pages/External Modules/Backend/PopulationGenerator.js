@@ -53,6 +53,7 @@ export async function GeneratePopulation(GraphId, Condition) {
 	var condition = await ReadGraphDataFromDB(GraphId);
     for (var i = 0; i < 20; i++) {
         var patient = GenerateOnePatient(condition, 1);
+        patient.er = Math.min(patient.er, 0.9999);
         if (GraphId === graphs.Continuous_Intravenous_Analgesic || 
             GraphId === graphs.Multiple_Dose_IV_Infusion) {
             patient.vd = patient.vd * patient.patient_bodyweight;
