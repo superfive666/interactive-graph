@@ -48,6 +48,10 @@ export let textRepository = {
 			"Back to first population"
 		],
 		TextIndex: 0
+	},
+	ButtonText: {
+		Single: "Population view",
+		Population: "Single patient view"
 	}
 };
 
@@ -87,7 +91,8 @@ export let GraphBinding = {
 		{id: "#SinglePatientTcss", key: "tcss"},
 		{id: "#SinglePatientIfsRt", key: "infusion_rate"},
 		{id: "#SinglePatientAuc24", key: "auc24"},
-		{id: "#SinglePatientAuc24mic", key: "auc24mic"}
+		{id: "#SinglePatientAuc24mic", key: "auc24mic"},
+		{id: "#SinglePatientFF", key: "f"}
 	],
 	Population: [
 		{id: "#PopulationPatientF", key: "_f"},
@@ -103,6 +108,7 @@ export let GraphBinding = {
 		{id: "#PopulationPatientTcss", key: "tcss"},
 		{id: "#PopulationPatientIfsRt", key: "infusion_rate"},
 		{id: "#PopulationPatientAuc24", key: "auc24"},
-		{id: "#PopulationPatientAuc24mic", key: "auc24mic"}
+		{id: "#PopulationPatientAuc24mic", key: "auc24mic"},
+		{id: "#PopulationPatientFF", key: "f"}
 	]
 }

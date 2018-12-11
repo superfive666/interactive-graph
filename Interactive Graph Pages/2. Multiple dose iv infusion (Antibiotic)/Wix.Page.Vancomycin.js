@@ -8,6 +8,7 @@ $w.onReady(function () {
 			PageLogic.PageLoad($w, graphs.Multiple_Dose_IV_Infusion);
 		}
 	});
+	$w("#DosageInput").value = 500;
 });
 
 export function ResamplePatientButton_click(event, $w) {

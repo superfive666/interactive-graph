@@ -84,7 +84,7 @@ function getResult(data, calc) {
 	var result = new Array();
 	T.fill(0);
 	if(Array.isArray(data)) {
-		for (var i = 0; i < maxHour; i += TimeInterval) {
+		for (var i = 0; i <= maxHour; i += TimeInterval) {
 			var rowData = new Array();
 			rowData.push(i);
 			var ave = 0;

@@ -49,6 +49,7 @@ export let PageLogic = {
         Population.DefaultPatient.OnLoad = Math.floor(Math.random()*20);
         Population.DefaultPatient.Adjusted = Math.floor(Math.random()*20);
         Population.ActivePatient = Population.DefaultPatient.OnLoad;
+        $w(controllers.Yes).label = textRepository.ButtonText.Single;
         $w(controllers.ChangePopulation).disable();
         DefaultText();     
         GeneratePopulation(Population.GraphId).then(result =>{
@@ -140,15 +141,19 @@ export let PageLogic = {
             if(Population.Adjust) $w(controllers.DisplayLegend_section).show("fade");
         }
         SetGraphConfig(true, !GraphData.Display.OnePopulation, Population.Filter);
+        $w(controllers.Yes).label = GraphData.Display.OnePopulation? 
+            textRepository.ButtonText.Single : textRepository.ButtonText.Population;
         $w(controllers.GraphArea).postMessage(GraphData, "*");
     },
     OptimizeCondition: function($w) {
+        $w(controllers.Yes).label = textRepository.ButtonText.Population;
 	    Internal.ToggleLabel($w(controllers.ShowPatient), 0);
         Internal.ToggleLabel($w(controllers.BackToFirstPatient), 0);
-        
+
         var freq = $w(controllers.Frequency);
         var dose = $w(controllers.DosageInput);
         var infusion = $w(controllers.InfusionRate);
+        if (infusion.lenth === 0) infusion = undefined;
         
         Population.Others = Population[Population.State].slice();
         Population.Others.forEach((val)=>{
@@ -166,6 +171,8 @@ export let PageLogic = {
             console.error(err);
             return;
         });
+        $w(controllers.Yes).label = GraphData.Display.OnePopulation? 
+            textRepository.ButtonText.Single : textRepository.ButtonText.Population;
     },
     ChangePercentage: function($w) {
         Pecentage = {
@@ -175,7 +182,7 @@ export let PageLogic = {
         }
         Population.ActivePatient = Population.DefaultPatient.Adjusted;
         $w(controllers.AdjustPercentage_section).hide("fade");
-        if(!Population.OnePopulation) $w(controllers.DisplayLegend_section).show("fade");
+        if(!GraphData.Display.OnePopulation) $w(controllers.DisplayLegend_section).show("fade");
         AfterChangePercent();
         UpdatePopulationCondition(Population.GraphId, Pecentage, GetCondition()).then(result =>{
             Population.Adjusted = result;
@@ -250,6 +257,8 @@ export let PageLogic = {
             console.error(err);
             return;
         });
+        $w(controllers.Yes).label = GraphData.Display.OnePopulation? 
+            textRepository.ButtonText.Single : textRepository.ButtonText.Population;
     },
     FilterGraph: function(target) {
         Internal.ToggleButton(target);

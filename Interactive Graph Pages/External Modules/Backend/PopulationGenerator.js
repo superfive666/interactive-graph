@@ -59,11 +59,12 @@ export async function GeneratePopulation(GraphId, Condition) {
             patient.vd = patient.vd * patient.patient_bodyweight;
         }
         if (GraphId === graphs.Multiple_Oral_Dose_NSAID ||
-            GraphId === graphs.Multiple_Oral_Dose_NSAID ||
-            GraphId === graphs.Multiple_Oral_Dose_NSAID ||
-            GraphId === graphs.Multiple_Oral_Dose_NSAID) {
-            patient.cl = patient.cl * (1 - patient.er);
-        }
+                GraphId === graphs.Multiple_Oral_Dose_Antithrombotic ||
+                GraphId === graphs.Multiple_Oral_Dose_Anticoagulant ||
+                GraphId === graphs.Multiple_Oral_Dose_Antibiotics) {
+                patient.cl = patient.cl * (1 - patient.er);
+                patient.vd = patient.vd * (1 - patient.er);
+            }
         patient["actualKe"] = Math.min(0.9999, (patient.cl * 60 / patient.vd / 1000)*(
             GraphId === graphs.Continuous_Intravenous_Analgesic?
             patient.patient_bodyweight : 1.0
@@ -72,9 +73,9 @@ export async function GeneratePopulation(GraphId, Condition) {
         patient["thalf"] = Math.log(2)/patient.ke;
 
         if (Condition) {
-            patient.tau = Condition.Frequency;
-            patient.dose = Condition.DosageInput;
-            patient.infusion_rate = Condition.InfusionRate;
+            patient.tau = parseFloat(Condition.Frequency);
+            patient.dose = parseFloat(Condition.DosageInput);
+            patient.infusion_rate = parseFloat(Condition.InfusionRate);
         }
         patients.push(patient); 
     }
@@ -105,10 +106,11 @@ export async function UpdatePopulationCondition(GraphId, Percentage, Condition) 
                 patient.vd = patient.vd * patient.patient_bodyweight;
             }
             if (GraphId === graphs.Multiple_Oral_Dose_NSAID ||
-                GraphId === graphs.Multiple_Oral_Dose_NSAID ||
-                GraphId === graphs.Multiple_Oral_Dose_NSAID ||
-                GraphId === graphs.Multiple_Oral_Dose_NSAID) {
+                GraphId === graphs.Multiple_Oral_Dose_Antithrombotic ||
+                GraphId === graphs.Multiple_Oral_Dose_Anticoagulant ||
+                GraphId === graphs.Multiple_Oral_Dose_Antibiotics) {
                 patient.cl = patient.cl * (1 - patient.er);
+                patient.vd = patient.vd * (1 - patient.er);
             }
             patient["actualKe"] = Math.min(0.9999, (patient.cl * 60 / patient.vd / 1000)*(
                 GraphId === graphs.Continuous_Intravenous_Analgesic?
@@ -118,9 +120,9 @@ export async function UpdatePopulationCondition(GraphId, Percentage, Condition) 
             patient["thalf"] = Math.log(2)/patient.ke;               
             patient["last"] = j;
             if (Condition) {
-                patient.tau = Condition.Frequency;
-                patient.dose = Condition.DosageInput;
-                patient.infusion_rate = Condition.InfusionRate;
+                patient.tau = parseFloat(Condition.Frequency);
+                patient.dose = parseFloat(Condition.DosageInput);
+                patient.infusion_rate = parseFloat(Condition.InfusionRate);
             }
             patients.push(patient); 
         }
