@@ -55,6 +55,7 @@ export let PageLogic = {
         GeneratePopulation(Population.GraphId).then(result =>{
             Population.State = "OnLoad";
             Population[Population.State] = result;
+            SaveDefaultCondition();
             Calculate(Population.GraphId, Population[Population.State]).then(res =>{
                 GraphData.Data = res;
                 SetGraphConfig(true, true, Population.Filter);
@@ -69,7 +70,6 @@ export let PageLogic = {
             console.error(err);
             return;
         });
-        SaveDefaultCondition();
     },
     ResamplePatient: function($w) {
         Population.ActivePatient = (Population.ActivePatient + 1) % 20;
@@ -153,7 +153,7 @@ export let PageLogic = {
         var freq = $w(controllers.Frequency);
         var dose = $w(controllers.DosageInput);
         var infusion = $w(controllers.InfusionRate);
-        if (infusion.lenth === 0) infusion = undefined;
+        if (infusion.length === 0) infusion = undefined;
         
         Population.Others = Population[Population.State].slice();
         Population.Others.forEach((val)=>{
@@ -237,7 +237,7 @@ export let PageLogic = {
     ResetGraph: function($w) {
         $w(controllers.AdjustPercentage_section).show("fade");
         BeforeChangePercent();
-        GetDefaultCondition();
+        //GetDefaultCondition();
         ResetFilter();
         DefaultText();
         $w(controllers.ChangePopulation).disable();
@@ -325,26 +325,26 @@ function BeforeChangePercent() {
 }
 
 function GetCondition() {    
-    if(($w(controllers.InfusionRate) && $w(controllers.InfusionRate).value === '')||
-       ($w(controllers.InfusionRate) && $w(controllers.InfusionRate).value === ''))
+    if(($w(controllers.InfusionRate).length !== 0 && $w(controllers.InfusionRate).value === '')||
+       ($w(controllers.Frequency).length !== 0 && $w(controllers.Frequency).value === ''))
         return undefined;
     return {
-        Frequency: $w(controllers.Frequency).value,
+        Frequency: $w(controllers.Frequency).length !== 0? $w(controllers.Frequency).value : Population.DefaultParameters.Frequency,
         DosageInput: $w(controllers.DosageInput).value,
-        InfusionRate: $w(controllers.InfusionRate).value
+        InfusionRate: $w(controllers.InfusionRate).length !== 0? $w(controllers.InfusionRate).value : Population.DefaultParameters.InfusionRate
     }
 }
 
 function SaveDefaultCondition() {
     Population.DefaultParameters.DosageInput = $w(controllers.DosageInput).value;
-    Population.DefaultParameters.Frequency = $w(controllers.Frequency)?$w(controllers.Frequency).value:0;
-    Population.DefaultParameters.InfusionRate = $w(controllers.InfusionRate)?$w(controllers.InfusionRate).value:0;
+    Population.DefaultParameters.Frequency = $w(controllers.Frequency).length !== 0?$w(controllers.Frequency).value:Population[Population.State][0].tau;
+    Population.DefaultParameters.InfusionRate = $w(controllers.InfusionRate).length !== 0?$w(controllers.InfusionRate).value:Population[Population.State][0].infusion_rate;
 }
 
 function GetDefaultCondition() {
     $w(controllers.DosageInput).value = Population.DefaultParameters.DosageInput;
-    if($w(controllers.Frequency)) $w(controllers.Frequency).value = Population.DefaultParameters.Frequency;
-    if($w(controllers.InfusionRate)) $w(controllers.InfusionRate).value = Population.DefaultParameters.InfusionRate;
+    if($w(controllers.Frequency).length !== 0) $w(controllers.Frequency).value = Population.DefaultParameters.Frequency;
+    if($w(controllers.InfusionRate).length !== 0) $w(controllers.InfusionRate).value = Population.DefaultParameters.InfusionRate;
 }
 
 function ResetFilter() {
