@@ -1,4 +1,5 @@
 import {graphs} from 'public/BackendParameter.js';
+import {graphs_phase2} from 'public/BackendParameter.js';
 
 const TimeInterval = 0.25;
 let T = new Array(20);
@@ -20,6 +21,9 @@ export function Calculate(graphID, data) {
 			break;
 		case graphs.Phenytoin_Formulation:
 			result = Graph_8(data);
+			break;
+		case graphs_phase2.Multiple_Oral_Dose_Compliance:
+			result = Graph_9(data);
 			break;
 		default:
 			console.error("Calculator: Invalid graph ID");
@@ -57,6 +61,24 @@ function Graph_3(data) {
 		var a3 = Math.exp(-patient.ke * t) - Math.exp(-patient.ka * t);
 		var res = a1 * a3 / a2;
 	    return t < patient.tau? res : res + calc(t - patient.tau, patient);
+	});
+}
+
+function Graph_9(data) {
+	data.forEach(p => {
+		p.dose_no = 0;
+	});
+	return getResult(data, function calc(t, patient) {
+		var tt = t - patient.startTime[patient.dose_no];
+		var a1 = patient.f * patient.dose * patient.ka;
+		var a2 = patient.vd * (patient.ka - patient.ke);
+		var a3 = Math.exp(-patient.ke * tt) - Math.exp(-patient.ka * tt);
+		var res = patient.tauTime[patient.dose_no] === 0? 0 : a1 * a3 / a2;
+		if(t > patient.startTime[patient.dose_no]) {
+			patient.dose_no++;
+			return res + calc(t, patient);
+		}
+		return res;
 	});
 }
 

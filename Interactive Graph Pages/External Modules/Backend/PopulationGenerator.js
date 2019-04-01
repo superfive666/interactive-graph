@@ -1,4 +1,4 @@
-import {Lognormal} from 'backend/LognormalDistribution.js';
+import {Lognormal} from 'backend/StatsDistribution.js';
 import {ReadGraphDataFromDB} from 'backend/DBConnection.js';
 import {graphs} from 'public/BackendParameter.js';
 

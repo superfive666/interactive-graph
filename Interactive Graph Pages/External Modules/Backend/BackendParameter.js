@@ -7,3 +7,7 @@ export let graphs = {
 	Multiple_Oral_Dose_Antibiotics: "GRAPH_6",
 	Phenytoin_Formulation: "GRAPH_8"
 }
+
+export let graphs_phase2 = {
+	Multiple_Oral_Dose_Compliance: "GRAPH_9"
+}

@@ -1,7 +1,9 @@
 import wixData from 'wix-data';
 import {graphs} from 'backend/BackendParameter.js';
+import {graphs_phase2} from 'backend/BackendParameter.js';
 
 let DBName = "GraphConfiguration";
+let ComplianceDB = "ComplianceDatabase";
 
 function map(GraphID) {
 	switch (GraphID) {
@@ -19,6 +21,8 @@ function map(GraphID) {
 			return "4d63b5c9-3128-4230-b2cf-5dacbfc6e2ea";
 		case graphs.Phenytoin_Formulation: 
 			return "0bd46e15-2a36-4909-a812-a0b40b309df3";
+		case graphs_phase2.Multiple_Oral_Dose_Compliance:
+			return "";
 		default:
 			console.error("DBConnection: Invalid graph ID");
 			break;
@@ -32,4 +36,13 @@ export function ReadGraphDataFromDB(GraphID) {
 	};
 
 	return wixData.get(DBName, map(GraphID), options);
+}
+
+export function ReadCompliance(GraphID) {
+	let options = {
+		"suppressAuth": true,
+		"suppressHooks": true
+  	};
+	
+	  return wixData.get(ComplianceDB, map(GraphID), options);
 }

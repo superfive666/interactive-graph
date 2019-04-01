@@ -57,6 +57,10 @@ let Calculate = {
     }
 }
 
+let Constants = {
+  negSqrt2: -1.41421356237309505
+}
+
 export let Lognormal = {
     pdf: function pdf(x, mu, sigma) {
         if (x <= 0)
@@ -74,6 +78,21 @@ export let Lognormal = {
     },
     
     inv: function(p, mu, sigma) {
-        return Math.exp(-1.41421356237309505 * sigma * Calculate.erfcinv(2 * p) + mu);
+        return Math.exp(Constants.negSqrt2 * sigma * Calculate.erfcinv(2 * p) + mu);
+    }
+}
+
+export let Normal = {
+    pdf: function pdf(x, mu, sigma) {
+        return Math.exp(-0.5 * Math.log(2 * Math.PI) - Math.log(sigma) 
+          - Math.pow(x - mu, 2) / (2 * sigma * sigma)); 
+    },
+
+    cdf: function cdf(x, mu , sigma) {
+        return 0.5 * (1 + Calculate.erf((x - mu)/Math.sqrt(2 * sigma * sigma)));
+    },
+
+    inv: function inv(p, mu, sigma) {
+        return Constants.negSqrt2 * sigma * Calculate.erfcinv(2 * p) + mu;
     }
 }
