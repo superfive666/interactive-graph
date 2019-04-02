@@ -44,7 +44,6 @@ export let PageLogic = {
         DefaultText();
         Population.State = "OnLoad";
         Population[Population.State] = await GenerateCompliance(Population.GraphId);
-        SaveDefaultCondition();
         GraphData.Data = await Calculate(Population.GraphId, Population[Population.State]);
         SetGraphConfig(true, true, Population.Filter);
         $w(controllers.GraphArea).postMessage(GraphData, "*");
@@ -170,10 +169,4 @@ function GetCondition() {
         Frequency: Population.DefaultParameters.Frequency,
         DosageInput: $w(controllers.DosageInput).value
     }
-}
-
-function SaveDefaultCondition() {
-    Population.DefaultParameters.DosageInput = $w(controllers.DosageInput).value;
-    Population.DefaultParameters.Frequency = $w(controllers.Frequency).length !== 0?$w(controllers.Frequency).value:Population[Population.State][0].tau;
-    Population.DefaultParameters.InfusionRate = $w(controllers.InfusionRate).length !== 0?$w(controllers.InfusionRate).value:Population[Population.State][0].infusion_rate;
 }

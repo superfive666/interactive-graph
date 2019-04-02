@@ -1,3 +1,17 @@
+export function compliance(h_max) {
+	return {
+		legent: _legend,
+		hAxis: _hAxis(h_max),
+		vAxis: _vAxis(9),
+		width: 890,
+		height: 500,
+		backgroundColor: "#000000",
+		isStacked: true,
+		chartArea: _chartArea,
+		series: _series(new Array(), {single: true})
+	}
+}
+
 export function chart(h_max, patients, settings) {
 	return {
 		legend: _legend,

@@ -13,6 +13,7 @@ function GenerateOnePatient(condition, adj) {
     patient["max_dose"] = condition.max_dose;
     patient["thalf"] = Normal.inv(Math.random(), condition.thalf_mean, condition.thalf_std);
     patient["ke"] = Math.log(2)/patient.thalf;
+    patient["cl"] = patient.ke * patient.vd;
     patient["dose_non_compliance"] = condition.dose_non_compliance;
     patient["time_non_compliance"] = condition.time_non_compliance;
     patient["tau_std"] = patient.tau_mean * patient.time_non_compliance * 0.03;
@@ -20,6 +21,7 @@ function GenerateOnePatient(condition, adj) {
     patient["ht"] = condition.ht;
     patient["dose_no"] = 0; // Calculation parameter, to be reset upon each cycles
     patient["h_max"] = condition.horizontal_max;
+    patient["cmin"] = 0; // Calculation for the minimum concentration of the patient
     return UpdatePatientStartTime(patient, patient.max_dose);
 }
 
