@@ -8,14 +8,18 @@ function GenerateOnePatient(condition, adj) {
     patient["f"] = condition.f;
     patient["dose"] = condition.dose;
     patient["tau_mean"] = condition.tau_mean;
-    patient["tau_std"] = condition.tau_std;
-    pateint["vd"] = condition.vd_mean;
+    patient["vd"] = condition.vd_mean;
     patient["ka"] = condition.ka_mean;
     patient["max_dose"] = condition.max_dose;
     patient["thalf"] = Normal.inv(Math.random(), condition.thalf_mean, condition.thalf_std);
     patient["ke"] = Math.log(2)/patient.thalf;
     patient["dose_non_compliance"] = condition.dose_non_compliance;
+    patient["time_non_compliance"] = condition.time_non_compliance;
+    patient["tau_std"] = patient.tau_mean * patient.time_non_compliance * 0.03;
+    patient["low"] = condition.low;
+    patient["ht"] = condition.ht;
     patient["dose_no"] = 0; // Calculation parameter, to be reset upon each cycles
+    patient["h_max"] = condition.horizontal_max;
     return UpdatePatientStartTime(patient, patient.max_dose);
 }
 
@@ -23,8 +27,14 @@ export async function GenerateCompliance(GraphId, Condition) {
     var patients = new Array();
     var condition = await ReadCompliance(GraphId);
     for(var i = 0; i < 20; i++) {
-        patients.push(GenerateOnePatient(condition, 1));
+        var patient = GenerateOnePatient(condition, 1);
+        if (Condition) {
+            patient.tau = parseFloat(Condition.Frequency);
+            patient.dose = parseFloat(Condition.DosageInput);
+        }
+        patients.push(patient);
     }
+    
     return patients;
 }
 

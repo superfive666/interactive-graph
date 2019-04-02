@@ -84,6 +84,7 @@ function v_ticks(id) {
 		case 5: return [0.05, 0.1, 0.15, 0.2, 0.25];
 		case 6: return [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6];
 		case 8: return [0.005, 0.01, 0.015, 0.02, 0.025, 0.03];
+		case 9: return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 		default: console.error("Invalid ID for graph: " + id);
 	}	
 }
