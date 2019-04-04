@@ -24,11 +24,7 @@ export let controllers = {
 	Legend1: "#button1",
 	Legend2: "#button2",
 	Legend3: "#button3",
-	Legend4: "#button4",
-	TimeNoneComply: "#TimeNoneComply",
-	DoseNoneComply: "#DoseNoneComply",
-	MinSlider: "#MinSlider",
-	MaxSlider: "#MaxSlider"
+	Legend4: "#button4"
 }
 
 export let textRepository = {

@@ -96,3 +96,9 @@ export let Normal = {
         return Constants.negSqrt2 * sigma * Calculate.erfcinv(2 * p) + mu;
     }
 }
+
+export let StepFunction = {
+    inv: function inv(p, probability) {
+        return p < probability[0].prob? 1 : 2;
+    }
+}
