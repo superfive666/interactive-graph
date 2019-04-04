@@ -9,7 +9,7 @@ import {generateIdString} from 'public/IdGenerator.js';
 // ----------------------------------------------------------------------
 // GLOBAL CONTROL VARIALBES
 // ----------------------------------------------------------------------
-let graphs = new Array(); // Fields to track: Tau, Dose, Max_Dose, DoseN, TimeN, 
+let graphs = new Array();
 let curGraph = 0;
 let curGraphId = "";
 let timeInterval = 0.25;
@@ -50,30 +50,38 @@ const graphPrefix = "Graph-";
 // ----------------------------------------------------------------------
 $w.onReady(function () {
     initTable();
-    initControl();
-    onLoad();
+    $w(controllers.GraphArea).onMessage((event) => {
+		if (event.data === "Ready") {
+            onLoad();
+            console.log("After On Load: ");
+            console.log($w(controllers.GraphHistory).data);
+		}
+    });
 });
+
+export function RandomButton_click(event) {
+	randomize();
+}
+
+export function AddGraphButton_click(event) {
+	addGraph();
+}
+
+export function MinSlider_change(event) {
+	slider();
+}
+
+export function MaxSlider_change(event) {
+	slider();
+}
 
 // ----------------------------------------------------------------------
 // PAGE LOGIC FUNCTIONS BELOW
 // ----------------------------------------------------------------------
-function initControl() {
-    // Handle Add Graph Button Click
-    $w(controllers.AddGraphButton).onClick(() => {addGraph();});
-
-    // Handle Randomize Button Click
-    $w(controllers.RandomButton).onClick(() => {randomize();});
-
-    // Handle Min Slider Change
-    $w(controllers.MinSlider).onChange(() => {slider();});
-
-    // Handle Max Slider Change
-    $w(controllers.MaxSlider).onChange(() => {slider();});
-}
-
 function initTable() {
     // Handle item addition, handle item view and delete event 
     $w(controllers.GraphHistory).onItemReady(($item, data, index) => {
+        console.log("Item aded, the id of the item is:" + data._id);
         $item(controllers.RowDescription).text = rowDescriptioon;
         $item(controllers.TauTitle).text = tauTitle;
         $item(controllers.DoseTitle).text = doseTitle;
@@ -89,7 +97,7 @@ function initTable() {
         $item(controllers.TimeNoneComplianceValue).text = data.timeNoneComplianceValue.toString();
 
         $item(controllers.ViewGraphButton).onClick(()=>{removeGraph($item, data._id, index);});
-        $item(controllers.RemoveGraphButton).onClick(()=>{viewGraph($item, data._id, index);});
+        $item(controllers.RemoveGraphButton).onClick(()=>{viewGraph($item, data._id, index);}); 
     });
 
     // Handle item removal
@@ -99,9 +107,8 @@ function initTable() {
     });
 }
 
-
 function onLoad() {
-    var base = Parameters;
+    var base = JSON.parse(JSON.stringify(Parameters));
     base._id = generateIdString();
     curGraphId = base._id;
     base.patient = generatePatient(base);
@@ -135,19 +142,30 @@ function randomize() {
     graphs[curGraph].vd_mean = LogNormal.inv(Math.random(), 
         Calculate.AdjustedMean(vd_mean, vd_std), Calculate.AdjustedStd(vd_mean, vd_std));
     graphs[curGraph].patient = generatePatient(graphs[curGraph]);
+    $w(controllers.FCurrentValue).text = graphs[curGraph].f_mean.toString();
+    $w(controllers.KaCurrentValue).text = graphs[curGraph].ka_mean.toString();
+    $w(controllers.VdCurrentValue).text = graphs[curGraph].vd_mean.toString();
     drawGraph(graphs[curGraph].patient);
 }
 
 function addGraph() {
-    var graph = Parameters;
-    $w(controllers.FCurrentValue).text = graph.f_mean;
-    $w(controllers.KaCurrentValue).text = graph.ka_mean;
-    $w(controllers.VdCurrentValue).text = graph.vd_mean;
+    var graph = JSON.parse(JSON.stringify(Parameters));
+    $w(controllers.FCurrentValue).text = graph.f_mean.toString();
+    $w(controllers.KaCurrentValue).text = graph.ka_mean.toString();
+    $w(controllers.VdCurrentValue).text = graph.vd_mean.toString();
+
+    // Update the input parameters.
+    
+
     graph.patient = generatePatient(graph);
     graph._id = generateIdString();
     curGraphId = graph._id;
     graphs.push(graph);
     $w(controllers.GraphHistory).data = graphs;
+    console.log("Graph History Data: ===============");
+    console.log($w(controllers.GraphHistory).data);
+    console.log("Graphs repository: ================")
+    console.log(graphs);
     drawGraph(graph.patient);
 }
 
@@ -183,12 +201,6 @@ function viewGraph($item, id, index) {
 // ----------------------------------------------------------------------
 function drawGraph(patient) {
     message.Data = getData(patient);
-    console.log("Data calculated:");
-    console.log(message.Data);
-    console.log("Display calculated:");
-    console.log(message.Display);
-    console.log("ChartStyle calculated:");
-    console.log(message.ChartStyle);
     postMessage();
 }
 
@@ -264,7 +276,7 @@ function updatePatientStartTime(patient, n) {
 
 function postMessage() {
     // Update the graph legend to the graph title
-
+    console.log("Message posted.");
     $w(controllers.GraphArea).postMessage(message, "*");
 }
 
