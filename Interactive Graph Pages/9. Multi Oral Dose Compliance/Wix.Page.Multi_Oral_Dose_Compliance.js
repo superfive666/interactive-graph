@@ -45,6 +45,9 @@ const rowDescriptioon = "click view to view this graph, click delete to remove t
 const lastGraphWarning = "You are not allowed to remove the last graph from history";
 
 const graphPrefix = "Graph-";
+
+const ENABLE = "enable";
+const DISABLE = "disable";
 // ----------------------------------------------------------------------
 // PAGE EVENT EXPORT FUNCTIONS
 // ----------------------------------------------------------------------
@@ -75,19 +78,38 @@ export function MaxSlider_change(event) {
 	slider();
 }
 
+export function ViewGraphButton_click(event) {
+    console.log("View Graph Button Clicked.");
+    let $item = $w.at(event.context);
+    let title = $item(controllers.RowTitle).text;
+    let index = title.substr(-1);
+    let graph = graphs[index];
+    viewGraph($item, graph._id, parseInt(index));
+}
+
+export function DeleteGraphButton_click(event) {
+    console.log("Delete Graph Button Clicked.");
+    let $item = $w.at(event.context);
+    let title = $item(controllers.RowTitle).text;
+    let index = title.substr(-1);
+    let graph = graphs[index];
+    removeGraph($item, graph._id, parseInt(index));
+}
+
 // ----------------------------------------------------------------------
 // PAGE LOGIC FUNCTIONS BELOW
 // ----------------------------------------------------------------------
 function initTable() {
     // Handle item addition, handle item view and delete event 
     $w(controllers.GraphHistory).onItemReady(($item, data, index) => {
-        console.log("Item aded, the id of the item is:" + data._id);
+        console.log("Item added, the id of the item is:" + data._id);
         $item(controllers.RowDescription).text = rowDescriptioon;
         $item(controllers.TauTitle).text = tauTitle;
         $item(controllers.DoseTitle).text = doseTitle;
         $item(controllers.MaxDoseTitle).text = maxDoseTitle;
         $item(controllers.DoseNoneComplianceTitle).text = doseNoneComplianceTitle;
         $item(controllers.TimeNoneComplianceTitle).text = timeNoneComplianceTitle;
+        console.log("Constant values set.");
 
         $item(controllers.RowTitle).text = graphPrefix + index;
         $item(controllers.TauValue).text = (formatNDecimal(parseFloat(data.tauValue))).toString();
@@ -95,9 +117,9 @@ function initTable() {
         $item(controllers.maxDoseValue).text = data.maxDoseValue.toString();
         $item(controllers.DoseNoneComplianceValue).text = data.doseNoneComplianceValue.toString();
         $item(controllers.TimeNoneComplianceValue).text = data.timeNoneComplianceValue.toString();
-
-        $item(controllers.ViewGraphButton).onClick(()=>{removeGraph($item, data._id, index);});
-        $item(controllers.RemoveGraphButton).onClick(()=>{viewGraph($item, data._id, index);}); 
+        console.log("Variable values set.");
+        
+        $item(controllers.ViewGraphButton).disable();
     });
 
     // Handle item removal
@@ -154,18 +176,21 @@ function addGraph() {
     $w(controllers.KaCurrentValue).text = graph.ka_mean.toString();
     $w(controllers.VdCurrentValue).text = graph.vd_mean.toString();
 
-    // Update the input parameters.
-    
+    graph.tauValue = $w(controllers.Tau).value;
+    graph.doseValue = $w(controllers.Dose).value;
+    graph.maxDoseValue = $w(controllers.MaxDose).value;
+    graph.doseNoneComplianceValue = $w(controllers.DoseNoneComply).value;
+    graph.timeNoneComplianceValue = $w(controllers.TimeNoneComply).value;
 
     graph.patient = generatePatient(graph);
     graph._id = generateIdString();
+
+    changeGraphButton(curGraphId, ENABLE);
+
     curGraphId = graph._id;
+    curGraph = graphs.length;
     graphs.push(graph);
     $w(controllers.GraphHistory).data = graphs;
-    console.log("Graph History Data: ===============");
-    console.log($w(controllers.GraphHistory).data);
-    console.log("Graphs repository: ================")
-    console.log(graphs);
     drawGraph(graph.patient);
 }
 
@@ -187,10 +212,13 @@ function removeGraph($item, id, index) {
 function viewGraph($item, id, index) {
     console.log("Previous graph id: " + curGraphId);
     console.log("Current graph id: " + id);
-    $w(controllers.GraphHistory).forItems([curGraphId], ($current) => {
-        $current(controllers.ViewGraphButton).enable();
-    });
+
+    changeGraphButton(curGraphId, ENABLE);
     $item(controllers.ViewGraphButton).disable();
+    $w(controllers.FCurrentValue).text = graphs[index].f_mean.toString();
+    $w(controllers.KaCurrentValue).text = graphs[index].ka_mean.toString();
+    $w(controllers.VdCurrentValue).text = graphs[index].vd_mean.toString();
+
     drawGraph(graphs[index].patient);
     curGraphId = id;
     curGraph = index;
@@ -283,4 +311,14 @@ function postMessage() {
 function formatNDecimal(val, n) {
     n = Math.pow(10, n);
     return Math.round(val * n) / n;
+}
+
+function changeGraphButton(graphId, type) {
+    $w(controllers.GraphHistory).forItems([graphId], ($item) => {
+        if(type === ENABLE) {
+            $item(controllers.ViewGraphButton).enable();
+        } else if (type === DISABLE) {
+            $item(controllers.ViewGraphButton).disable();
+        }
+    });
 }
