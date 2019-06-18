@@ -17,7 +17,7 @@ export let controllers = {
     // TABLE DISPLAY
     RowTitle: "#RowTitle",
     RowDescription: "#RowDescription",
-    TauTile: "#TauTitle",
+    TauTitle: "#TauTitle",
     TauValue: "#TauValue",
     DoseTitle: "#DoseTitle",
     DoseValue: "#DoseValue",
@@ -43,6 +43,6 @@ export let controllers = {
     VdCurrentValue: "#VdCurrentValue",
     
     // GRAPH SLIDERS
-	MinSlider: "#MinSlider",
-	MaxSlider: "#MaxSlider"
+	MinRangeInput: "#MinRangeInput",
+	MaxRangeInput: "#MaxRangeInput"
 }

@@ -6,6 +6,8 @@ import {compliance} from 'public/ChartStyling.js';
 import {controllers} from 'public/ComplianceControl.js';
 import {generateIdString} from 'public/IdGenerator.js';
 
+import wixWindow from 'wix-window';
+
 // ----------------------------------------------------------------------
 // GLOBAL CONTROL VARIALBES
 // ----------------------------------------------------------------------
@@ -36,15 +38,14 @@ let Calculate = {
     }
 }
 
-const tauTitle = "Tau (hours)";
+const tauTitle = "Tau (hr)";
 const doseTitle = "Dose (mg)";
 const maxDoseTitle = "Max Dosage";
 const doseNoneComplianceTitle = "Dose Non-compliance";
 const timeNoneComplianceTitle = "Time Non-compliance"; 
 const rowDescriptioon = "click view to view this graph, click delete to remove the graph from history";
-const lastGraphWarning = "You are not allowed to remove the last graph from history";
 
-const graphPrefix = "Graph-";
+const graphPrefix = "Graph #";
 
 const ENABLE = "enable";
 const DISABLE = "disable";
@@ -63,6 +64,7 @@ $w.onReady(function () {
 });
 
 export function RandomButton_click(event) {
+    return; // Do nothing for now
 	randomize();
 }
 
@@ -70,30 +72,39 @@ export function AddGraphButton_click(event) {
 	addGraph();
 }
 
-export function MinSlider_change(event) {
-	slider();
-}
-
-export function MaxSlider_change(event) {
-	slider();
-}
-
-export function ViewGraphButton_click(event) {
-    console.log("View Graph Button Clicked.");
+export function ViewGraphButton_click_1(event) {
     let $item = $w.at(event.context);
     let title = $item(controllers.RowTitle).text;
-    let index = title.substr(-1);
+    let index = parseInt(title.substr(-(title.length - title.indexOf("#")-1)))-1;
+    console.log("Index pressed: " + index);
     let graph = graphs[index];
-    viewGraph($item, graph._id, parseInt(index));
+    viewGraph($item, graph._id, index);
 }
 
-export function DeleteGraphButton_click(event) {
-    console.log("Delete Graph Button Clicked.");
+export function RemoveGraphButton_click(event) {
+	console.log("Delete Graph Button Clicked.");
     let $item = $w.at(event.context);
     let title = $item(controllers.RowTitle).text;
-    let index = title.substr(-1);
+    let index = parseInt(title.substr(-(title.length - title.indexOf("#")-1)))-1;
+    console.log("Index pressed: " + index);
     let graph = graphs[index];
-    removeGraph($item, graph._id, parseInt(index));
+    removeGraph($item, graph._id, index);
+}
+
+export function MinRangeInput_change(event) {
+	minInputChange();
+}
+
+export function MaxRangeInput_change(event) {
+	maxInputChange();
+}
+
+export function MinRangeInput_click(event) {
+	minInputChange();
+}
+
+export function MaxRangeInput_click(event) {
+	maxInputChange();
 }
 
 // ----------------------------------------------------------------------
@@ -107,19 +118,23 @@ function initTable() {
         $item(controllers.TauTitle).text = tauTitle;
         $item(controllers.DoseTitle).text = doseTitle;
         $item(controllers.MaxDoseTitle).text = maxDoseTitle;
-        $item(controllers.DoseNoneComplianceTitle).text = doseNoneComplianceTitle;
-        $item(controllers.TimeNoneComplianceTitle).text = timeNoneComplianceTitle;
+        $item(controllers.DoseNoneComplyTitle).text = doseNoneComplianceTitle;
+        $item(controllers.TimeNoneComplyTitle).text = timeNoneComplianceTitle;
         console.log("Constant values set.");
 
-        $item(controllers.RowTitle).text = graphPrefix + index;
-        $item(controllers.TauValue).text = (formatNDecimal(parseFloat(data.tauValue))).toString();
-        $item(controllers.DoseValue).text = data.doseValues.toString();
-        $item(controllers.maxDoseValue).text = data.maxDoseValue.toString();
-        $item(controllers.DoseNoneComplianceValue).text = data.doseNoneComplianceValue.toString();
-        $item(controllers.TimeNoneComplianceValue).text = data.timeNoneComplianceValue.toString();
+        console.log("index: " + index);
+        console.log(graphPrefix + (index + 1));
+        $item(controllers.RowTitle).text = graphPrefix + (index + 1);
+        $item(controllers.TauValue).text = (formatNDecimal(parseFloat(data.tauValue), 2)).toString();
+        var tab = formatNDecimal(data.doseValue/175, 0);
+        $item(controllers.DoseValue).text = tab === 1? "1 tablet" : tab.toString() + "tablets";
+        $item(controllers.MaxDoseValue).text = data.maxDoseValue.toString();
+        $item(controllers.DoseNoneComplyValue).text = formatNDecimal(data.doseNoneComplianceValue*100, 0).toString() + "%";
+        $item(controllers.TimeNoneComplyValue).text = formatNDecimal(data.timeNoneComplianceValue*100, 0).toString() + "%";
         console.log("Variable values set.");
         
         $item(controllers.ViewGraphButton).disable();
+        $item(controllers.ViewGraphButton).label = "current";
     });
 
     // Handle item removal
@@ -130,7 +145,9 @@ function initTable() {
 }
 
 function onLoad() {
+    $w(controllers.MaxDose).disable();
     var base = JSON.parse(JSON.stringify(Parameters));
+    graphs = new Array();
     base._id = generateIdString();
     curGraphId = base._id;
     base.patient = generatePatient(base);
@@ -139,12 +156,26 @@ function onLoad() {
     drawGraph(base.patient);
 }
 
+function minInputChange() {
+    var min = parseFloat($w(controllers.MinRangeInput).value);
+    $w(controllers.MaxRangeInput).min = min;
+    slider();    
+}
+
+function maxInputChange() {
+    var max = parseFloat($w(controllers.MaxRangeInput).value);
+    $w(controllers.MinRangeInput).max = max;
+    slider();
+}
+
 function slider() {
-    var min = $w(controllers.MinSlider).value;
-    var max = $w(controllers.MaxSlider).value;
+    var min = parseFloat($w(controllers.MinRangeInput).value);
+    var max = parseFloat($w(controllers.MaxRangeInput).value);
+    graphs[curGraph].patient.low = min;
+    graphs[curGraph].patient.ht = max - min;
     message.Data.forEach(row => {
-        row[22] = Math.min(min, max);
-        row[23] = Math.abs(max - min);
+        row[22] = min;
+        row[23] = max - min;
     });
     postMessage();
 }
@@ -172,41 +203,51 @@ function randomize() {
 
 function addGraph() {
     var graph = JSON.parse(JSON.stringify(Parameters));
-    $w(controllers.FCurrentValue).text = graph.f_mean.toString();
-    $w(controllers.KaCurrentValue).text = graph.ka_mean.toString();
-    $w(controllers.VdCurrentValue).text = graph.vd_mean.toString();
+    $w(controllers.FCurrentValue).text = formatNDecimal(graph.f_mean, 3).toString();
+    $w(controllers.KaCurrentValue).text = formatNDecimal(graph.ka_mean, 3).toString();
+    $w(controllers.VdCurrentValue).text = formatNDecimal(graph.vd_mean, 3).toString();
 
-    graph.tauValue = $w(controllers.Tau).value;
-    graph.doseValue = $w(controllers.Dose).value;
-    graph.maxDoseValue = $w(controllers.MaxDose).value;
-    graph.doseNoneComplianceValue = $w(controllers.DoseNoneComply).value;
-    graph.timeNoneComplianceValue = $w(controllers.TimeNoneComply).value;
+    graph.tauValue = parseFloat($w(controllers.Tau).value);
+    graph.doseValue = parseFloat($w(controllers.Dose).value);
+    graph.maxDoseValue = 23 /*$w(controllers.MaxDose).value*/;
+    graph.doseNoneComplianceValue = parseFloat($w(controllers.DoseNoneComply).value);
+    graph.timeNoneComplianceValue = parseFloat($w(controllers.TimeNoneComply).value);
 
     graph.patient = generatePatient(graph);
     graph._id = generateIdString();
+
+    $w(controllers.MinRangeInput).value = graph.patient.low;
+    $w(controllers.MaxRangeInput).value = graph.patient.low + graph.patient.ht;
 
     changeGraphButton(curGraphId, ENABLE);
 
     curGraphId = graph._id;
     curGraph = graphs.length;
     graphs.push(graph);
+
     $w(controllers.GraphHistory).data = graphs;
     drawGraph(graph.patient);
 }
 
 function removeGraph($item, id, index) {
     if(graphs.length === 1) {
-        //window.alert(lastGraphWarning);
+        //let target = "LAST_GRAPH_WARNING";
+        //wixWindow.openLightbox(target, {});
         return;
     }
-    curGraph = (index + 1) % graphs.length;
-    curGraphId = graphs[curGraph]._id;
-    console.log("After removing, showing graph #" + curGraph);
-    console.log("After removing, showing graph id: " + curGraphId);
-    $w(controllers.GraphHistory).forItems([curGraphId], ($current) => {
-        $current(controllers.ViewGraphButton).disable();
-    });
-    drawGraph(graphs[curGraph].patient);
+    graphs = graphs.filter(function(val, idx) {return idx !== index;});
+    if(curGraph === index) {
+        curGraph = (index) % graphs.length;
+        curGraphId = graphs[curGraph]._id;
+        changeGraphButton(curGraphId, DISABLE);
+        drawGraph(graphs[curGraph].patient);
+        console.log("After removing, showing graph #" + (curGraph+1));
+    }
+    $w(controllers.GraphHistory).data = graphs;
+    $w(controllers.GraphHistory).forEachItem(($cur, itemData, idx) => {
+        $cur(controllers.RowTitle).text = graphPrefix + (idx + 1);
+    })
+    console.log("Graph removed");
 }
 
 function viewGraph($item, id, index) {
@@ -215,9 +256,13 @@ function viewGraph($item, id, index) {
 
     changeGraphButton(curGraphId, ENABLE);
     $item(controllers.ViewGraphButton).disable();
+    $item(controllers.ViewGraphButton).label = "current";
     $w(controllers.FCurrentValue).text = graphs[index].f_mean.toString();
     $w(controllers.KaCurrentValue).text = graphs[index].ka_mean.toString();
     $w(controllers.VdCurrentValue).text = graphs[index].vd_mean.toString();
+
+    $w(controllers.MinRangeInput).value = graphs[index].patient.low;
+    $w(controllers.MaxRangeInput).value = graphs[index].patient.low + graphs[index].patient.ht;
 
     drawGraph(graphs[index].patient);
     curGraphId = id;
@@ -241,8 +286,8 @@ function getData(patient) {
         var rowData = new Array();
         rowData.push(i);
         rowData.push(calc(i, patient));
-        rowData.push(patient.low);
-        rowData.push(patient.ht);
+        rowData[22] = patient.low;
+        rowData[23] = patient.ht;
         data.push(rowData);
     }
     return data;
@@ -274,7 +319,7 @@ function generatePatient(condition) {
     patient["cl"] = patient.ke * patient.vd;
     patient["dose_non_compliance"] = condition.doseNoneComplianceValue;
     patient["time_non_compliance"] = condition.timeNoneComplianceValue;
-    patient["tau_std"] = patient.tau_mean * patient.time_non_compliance * 0.03;
+    patient["tau_std"] = patient.tau_mean * patient.time_non_compliance /* 0.03*/;
     patient["low"] = condition.low;
     patient["ht"] = condition.ht;
     patient["dose_no"] = 0;
@@ -285,12 +330,12 @@ function generatePatient(condition) {
 
 function updatePatientStartTime(patient, n) {
     var tauTime = new Array(1);
-    tauTime[0] = 8;
+    tauTime[0] = patient.tau_mean;
     var startTime = new Array(1);
     startTime[0] = 0; n--;
     while(n--) {
         var type = StepFunction.inv(Math.random(), [
-            {prob: patient.dose_non_compliance * (24.0 / patient.tau_mean) / 100.0, val: 1},
+            {prob: patient.dose_non_compliance /* (24.0 / patient.tau_mean) / 100.0*/, val: 1},
             {prob: 1, val: 2}
         ]);
         tauTime.push(type === 1? 0.00 : Normal.inv(Math.random(), patient.tau_mean, patient.tau_std));
@@ -305,6 +350,7 @@ function updatePatientStartTime(patient, n) {
 function postMessage() {
     // Update the graph legend to the graph title
     console.log("Message posted.");
+    console.log(message.Data);
     $w(controllers.GraphArea).postMessage(message, "*");
 }
 
@@ -317,8 +363,10 @@ function changeGraphButton(graphId, type) {
     $w(controllers.GraphHistory).forItems([graphId], ($item) => {
         if(type === ENABLE) {
             $item(controllers.ViewGraphButton).enable();
+            $item(controllers.ViewGraphButton).label = "view";
         } else if (type === DISABLE) {
             $item(controllers.ViewGraphButton).disable();
+            $item(controllers.ViewGraphButton).label = "current";
         }
     });
 }
