@@ -42,6 +42,7 @@ $w.onReady(function () {
             onLoad();
 		}
     });
+	onLoad();
 });
 
 export function RandomButton_click(event) {
@@ -80,6 +81,11 @@ export function MaxRangeInput_click(event) {
 	maxInputChange();
 }
 
+
+export function ResetButton_click(event) {
+    resetGraph();
+}
+
 // ----------------------------------------------------------------------
 // PAGE LOGIC FUNCTIONS BELOW
 // ----------------------------------------------------------------------
@@ -87,6 +93,14 @@ function onLoad() {
     currentPatient = JSON.parse(JSON.stringify(Parameters));
     currentPatient = generatePatient(currentPatient);
     drawGraph(currentPatient);
+}
+
+function resetGraph() {
+    $w(controllers.TauControl).value = Parameters.tauValue;
+    $w(controllers.DoseControl).value = Parameters.doseValue;
+    $w(controllers.DoseNonComplianceControl).value = Parameters.doseNoneComplianceValue;
+    $w(controllers.TimeNonComplianceControl).value = Parameters.timeNoneComplianceValue;
+    onLoad();
 }
 
 function minInputChange() {

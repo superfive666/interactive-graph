@@ -1,5 +1,5 @@
 export function compliance(h_max) {
-	return {
+	var res = {
 		legend: _legend,
 		hAxis: _hAxis(h_max),
 		vAxis: _vAxis(9),
@@ -10,6 +10,8 @@ export function compliance(h_max) {
 		chartArea: _chartArea,
 		series: _series(new Array(), {single: true})
 	}
+	res.series[0]["visibleInLegend"] = false;
+	return res;
 }
 
 export function chart(h_max, patients, settings) {

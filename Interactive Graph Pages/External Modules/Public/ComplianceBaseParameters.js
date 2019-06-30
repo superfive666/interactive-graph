@@ -1,7 +1,7 @@
 export let Parameters = {
     f_mean: 0.5,
-    doseValue: 175.0,
-    tauValue: 12.0,
+    doseValue: 175,
+    tauValue: 12,
     vd_mean: 10.215,
     ka_mean: 2.0,
     cl_mean: 0.59,
